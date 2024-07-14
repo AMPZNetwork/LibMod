@@ -14,10 +14,10 @@ base {
 }
 
 sourceSets {
-    main.java.srcDirs = files(parent.projectDir.toString() + "/src/fabric/main/java")
-    main.resources.srcDirs = files(parent.projectDir.toString() + "/src/fabric/main/resources")
-    test.java.srcDirs = files(parent.projectDir.toString() + "/src/fabric/test/java")
-    test.resources.srcDirs = files(parent.projectDir.toString() + "/src/fabric/test/java")
+    main.java.srcDirs = files("${parent.projectDir}/src/$project.name/main/java")
+    main.resources.srcDirs = files("${parent.projectDir}/src/$project.name/main/resources")
+    test.java.srcDirs = files("${parent.projectDir}/src/$project.name/test/java")
+    test.resources.srcDirs = files("${parent.projectDir}/src/$project.name/test/java")
 }
 
 tasks.register('dlServerJar', Download).configure {
@@ -47,7 +47,7 @@ tasks.register('testMod', Copy) {
     dependsOn clean, remapJar
     from remapJar.outputs.files.singleFile
     into "${projectDir}/run/mods"
-    rename { n -> "BanMod-fabric.jar" }
+    rename { n -> "LibMod-fabric.jar" }
 }
 
 repositories {
@@ -64,7 +64,7 @@ loom {
     splitEnvironmentSourceSets()
 
     mods {
-        "banMod-fabric-integration" {
+        "libMod-fabric-integration" {
             sourceSet sourceSets.main
             sourceSet sourceSets.client
         }
@@ -87,13 +87,14 @@ dependencies {
     // modImplementation "net.fabricmc.fabric-api:fabric-api-deprecated:${project.fabric_version}"
     include(modImplementation('me.lucko:fabric-permissions-api:0.3.1'))
 
-    // banMod
-    if (findProject("$prefix:japi") != null)
-        include project("$prefix:japi")
-    else include 'org.comroid:japi:+'
-    include project("$prefix:api")
     implementation project("$prefix:core")
     include project("$prefix:core")
+
+    // japi
+    if (findProject(":japi") != null)
+        include project(":japi")
+    else include 'org.comroid:japi:+'
+
     include 'com.fasterxml.jackson.core:jackson-databind:2.17.2'
     include 'javax.persistence:javax.persistence-api:2.2'
     include 'net.kyori:adventure-api:4.14.0'
@@ -208,12 +209,12 @@ publishing {
 }
 
 shadowJar {
-    dependsOn project("$prefix:api").simplifyArtifact
+    //dependsOn project("$prefix:api").simplifyArtifact
 }
 
 task simplifyArtifact(type: Copy) {
     dependsOn test, remappedShadowJar
     from remappedShadowJar.outputs.files.singleFile
     into "$rootDir/build/libs/"
-    rename { n -> "BanMod-fabric.jar" }
+    rename { n -> "LibMod-fabric.jar" }
 }

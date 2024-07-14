@@ -23,7 +23,7 @@ allprojects {
 subprojects {
     apply plugin: 'java-library'
 
-    group = 'com.ampznetwork.banmod'
+    group = 'com.ampznetwork.libmod'
     version = "0.1.${getCommitTimestampSeconds()}"
 
     compileJava.options.encoding = 'UTF-8'
@@ -40,19 +40,17 @@ subprojects {
     }
 
     dependencies {
-        if (!project.name.endsWith('api'))
-            api project("$prefix:api")
-
         if (project.name != 'japi') {
-            if (findProject("$prefix:japi") != null)
-                api project("$prefix:japi")
+            if (findProject(":japi") != null)
+                api project(":japi")
             else api 'org.comroid:japi:+'
-
-            // soft dependencies
-            compileOnly 'net.luckperms:api:5.4'
         }
 
+        // soft dependencies
+        compileOnly 'net.luckperms:api:5.4'
+
         // utility
+        api 'org.slf4j:slf4j-api:2.0.+'
         compileOnly 'org.projectlombok:lombok:+'
         annotationProcessor 'org.projectlombok:lombok:+'
 

@@ -4,20 +4,20 @@ plugins {
 }
 
 ext {
-    artifactName = 'banMod-api'
+    artifactName = 'libMod-api'
     projectDescription = 'Minecraft World Protection Mod'
     userbase = 'AMPZNetwork'
 }
 
-group = 'com.ampznetwork.banmod'
+group = 'com.ampznetwork.libmod'
 sourceCompatibility = '17'
 targetCompatibility = '17'
 
 sourceSets {
-    main.java.srcDirs = files(parent.projectDir.toString() + "/src/api/main/java")
-    main.resources.srcDirs = files(parent.projectDir.toString() + "/src/api/main/resources")
-    test.java.srcDirs = files(parent.projectDir.toString() + "/src/api/test/java")
-    test.resources.srcDirs = files(parent.projectDir.toString() + "/src/api/test/java")
+    main.java.srcDirs = files("${parent.projectDir}/src/$project.name/main/java")
+    main.resources.srcDirs = files("${parent.projectDir}/src/$project.name/main/resources")
+    test.java.srcDirs = files("${parent.projectDir}/src/$project.name/test/java")
+    test.resources.srcDirs = files("${parent.projectDir}/src/$project.name/test/java")
 }
 
 apply from: "$parent.projectDir/gradle/publishing.gradle"
@@ -33,18 +33,11 @@ dependencies {
     // json
     api 'com.fasterxml.jackson.core:jackson-databind:2.+'
 
-    // database
+    // persistence
     api 'javax.persistence:javax.persistence-api:2.2'
-    compileOnly 'org.hibernate:hibernate-core:5.6.0.Final'
-    compileOnly 'org.mariadb.jdbc:mariadb-java-client:3.4.0'
-    compileOnly 'com.mysql:mysql-connector-j:8.4.0'
-    compileOnly 'com.h2database:h2:2.2.224'
 
     // kyori
     api 'net.kyori:adventure-api:4.11.+'
-
-    // logger
-    compileOnly 'org.apache.logging.log4j:log4j-core:2.+'
 
     // utility
     compileOnly 'org.projectlombok:lombok:+'
@@ -52,9 +45,9 @@ dependencies {
 }
 
 task simplifyArtifact(type: Copy) {
-    // api module should be slim, and only contain banMod's own api
+    // api module should be slim, and only contain libMod's own api
     dependsOn test, jar
     from jar.outputs.files.singleFile
     into "$rootDir/build/libs/"
-    rename { n -> "BanMod-api.jar" }
+    rename { n -> "LibMod-api.jar" }
 }
