@@ -1,0 +1,67 @@
+def getCommitTimestampSeconds() {
+    // Run 'git log' command to get the timestamp of the latest commit
+    def result = new ByteArrayOutputStream()
+    exec {
+        commandLine 'git', 'log', '-1', '--format=%ct'
+        standardOutput = result
+    }
+
+    // Convert the timestamp to minutes
+    def timestampSeconds = result.toString().trim().toLong()
+
+    return timestampSeconds
+}
+
+allprojects {
+    apply plugin: 'idea'
+
+    ext {
+        prefix = rootProject.name.equals('LibMod') ? '' : ':LibMod'
+    }
+}
+
+subprojects {
+    apply plugin: 'java-library'
+
+    group = 'com.ampznetwork.banmod'
+    version = "0.1.${getCommitTimestampSeconds()}"
+
+    compileJava.options.encoding = 'UTF-8'
+
+    sourceCompatibility = 17
+    targetCompatibility = 17
+
+    repositories {
+        maven { url 'https://maven.comroid.org' }
+        maven { url 'https://repo.opencollab.dev/maven-releases/' }
+        mavenLocal()
+        mavenCentral()
+        maven { url 'https://jitpack.io' }
+    }
+
+    dependencies {
+        if (!project.name.endsWith('api'))
+            api project("$prefix:api")
+
+        if (project.name != 'japi') {
+            if (findProject("$prefix:japi") != null)
+                api project("$prefix:japi")
+            else api 'org.comroid:japi:+'
+
+            // soft dependencies
+            compileOnly 'net.luckperms:api:5.4'
+        }
+
+        // utility
+        compileOnly 'org.projectlombok:lombok:+'
+        annotationProcessor 'org.projectlombok:lombok:+'
+
+        // tests
+        testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.10.2'
+        testImplementation 'org.easymock:easymock:+'
+    }
+
+    test {
+        useJUnitPlatform()
+    }
+}

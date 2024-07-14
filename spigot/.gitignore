@@ -1,0 +1,6 @@
+*.*
+
+!.gitignore
+!eula.txt
+#!server.properties
+!plugins/WorldMod/config.yml

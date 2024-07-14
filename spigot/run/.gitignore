@@ -1,0 +1,6 @@
+*.*
+
+!.gitignore
+!eula.txt
+#!server.properties
+!config/banMod-config.json5
