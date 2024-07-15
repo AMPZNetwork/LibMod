@@ -1,0 +1,10 @@
+plugins {
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
+    id 'fabric-loom' version '1.6-SNAPSHOT'
+    id 'java-library'
+}
+
+dependencies {
+    minecraft "com.mojang:minecraft:${project.minecraft_version}"
+    mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
+}

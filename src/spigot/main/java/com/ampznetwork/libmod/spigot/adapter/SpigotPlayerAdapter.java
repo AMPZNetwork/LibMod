@@ -1,9 +1,8 @@
-package com.ampznetwork.banmod.spigot.adp.internal;
+package com.ampznetwork.libmod.spigot.adapter;
 
-import com.ampznetwork.banmod.api.entity.PlayerData;
-import com.ampznetwork.banmod.api.model.adp.BookAdapter;
-import com.ampznetwork.banmod.api.model.adp.PlayerAdapter;
-import com.ampznetwork.banmod.spigot.BanMod$Spigot;
+import com.ampznetwork.libmod.api.model.adp.BookAdapter;
+import com.ampznetwork.libmod.api.model.adp.PlayerAdapter;
+import com.ampznetwork.libmod.spigot.LibMod$Spigot;
 import lombok.Value;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
@@ -28,7 +27,7 @@ import static net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializ
 
 @Value
 public class SpigotPlayerAdapter implements PlayerAdapter {
-    BanMod$Spigot banMod;
+    LibMod$Spigot libMod;
 
     @Override
     public UUID getId(String name) {
@@ -37,7 +36,7 @@ public class SpigotPlayerAdapter implements PlayerAdapter {
                 .filter(player -> name.equals(player.getName()))
                 .findAny()
                 .map(OfflinePlayer::getUniqueId)
-                .or(() -> banMod.getEntityService().getPlayerData()
+                .or(() -> libMod.getEntityService().getPlayerData()
                         .filter(pd -> pd.getKnownNames().keySet()
                                 .stream().anyMatch(name::equals))
                         .map(PlayerData::getId)
@@ -48,28 +47,28 @@ public class SpigotPlayerAdapter implements PlayerAdapter {
     @Override
     public String getName(UUID playerId) {
         final var fetch = PlayerData.fetchUsername(playerId);
-        return Optional.ofNullable(banMod.getServer().getOfflinePlayer(playerId).getName())
-                .or(() -> banMod.getEntityService().getPlayerData(playerId)
+        return Optional.ofNullable(libMod.getServer().getOfflinePlayer(playerId).getName())
+                .or(() -> libMod.getEntityService().getPlayerData(playerId)
                         .flatMap(PlayerData::getLastKnownName))
                 .orElseGet(fetch::join);
     }
 
     @Override
     public boolean isOnline(UUID playerId) {
-        return banMod.getServer().getPlayer(playerId) != null;
+        return libMod.getServer().getPlayer(playerId) != null;
     }
 
     @Override
     public boolean checkOpLevel(UUID playerId, int $) {
-        if ($ > 1) banMod.log().warn("Spigot API does not properly support validating a certain OP level.");
-        var player = banMod.getServer().getPlayer(playerId);
+        if ($ > 1) libMod.log().warn("Spigot API does not properly support validating a certain OP level.");
+        var player = libMod.getServer().getPlayer(playerId);
         return player != null && player.isOp();
     }
 
     @Override
     public TriState checkPermission(UUID playerId, String _key, boolean explicit) {
         var key = _key.endsWith(".*") ? _key.substring(0, _key.length() - 1) : _key;
-        var player = banMod.getServer().getPlayer(playerId);
+        var player = libMod.getServer().getPlayer(playerId);
         if (player == null)
             return TriState.NOT_SET;
         if (explicit)
@@ -97,7 +96,7 @@ public class SpigotPlayerAdapter implements PlayerAdapter {
 
     @Override
     public void send(UUID playerId, TextComponent component) {
-        var player = banMod.getServer().getPlayer(playerId);
+        var player = libMod.getServer().getPlayer(playerId);
         if (player == null) return;
         var serialize = get().serialize(component);
         player.spigot().sendMessage(serialize);
@@ -106,7 +105,7 @@ public class SpigotPlayerAdapter implements PlayerAdapter {
     @Override
     public void broadcast(@Nullable String receiverPermission, Component component) {
         final var serialize = get().serialize(component);
-        banMod.getServer().getOnlinePlayers().stream()
+        libMod.getServer().getOnlinePlayers().stream()
                 .filter(player -> receiverPermission == null || player.hasPermission(receiverPermission))
                 .forEach(player -> player.spigot().sendMessage(serialize));
     }
@@ -126,13 +125,13 @@ public class SpigotPlayerAdapter implements PlayerAdapter {
                         .toArray(BaseComponent[]::new))
                 .toList());
         stack.setItemMeta(meta);
-        banMod.getServer().getPlayer(playerId).openBook(stack);
+        libMod.getServer().getPlayer(playerId).openBook(stack);
     }
 
     @Override
     public Stream<PlayerData> getCurrentPlayers() {
-        var service = banMod.getEntityService();
-        return banMod.getServer()
+        var service = libMod.getEntityService();
+        return libMod.getServer()
                 .getOnlinePlayers().stream()
                 .map(player -> service.getOrCreatePlayerData(player.getUniqueId())
                         .setUpdateOriginal(original -> original.pushKnownName(player.getName()))

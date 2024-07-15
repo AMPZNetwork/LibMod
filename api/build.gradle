@@ -1,6 +1,6 @@
 plugins {
-    id 'java-library'
     id 'com.github.johnrengelman.shadow' version '8.1.1'
+    id 'java-library'
 }
 
 ext {
@@ -22,8 +22,15 @@ sourceSets {
 
 apply from: "$parent.projectDir/gradle/publishing.gradle"
 
+compileJava {
+    classpath += project("$prefix:compile-forge").configurations.named('compileClasspath').get()
+    classpath += project("$prefix:compile-fabric").configurations.named('compileClasspath').get()
+}
+
 repositories {
     maven { url 'https://maven.comroid.org' }
+    maven { url "https://hub.spigotmc.org/nexus/content/repositories/snapshots/" }
+    maven { url "https://maven.minecraftforge.net" }
     mavenLocal()
     mavenCentral()
     maven { url 'https://jitpack.io' }
@@ -33,11 +40,20 @@ dependencies {
     // json
     api 'com.fasterxml.jackson.core:jackson-databind:2.+'
 
-    // persistence
-    api 'javax.persistence:javax.persistence-api:2.2'
-
     // kyori
     api 'net.kyori:adventure-api:4.11.+'
+
+    // minecraft
+    compileOnly 'org.spigotmc:spigot-api:1.20-R0.1-SNAPSHOT'
+
+    // database
+    api 'javax.persistence:javax.persistence-api:2.2'
+    compileOnly 'org.hibernate:hibernate-core:5.6.0.Final'
+    compileOnly 'org.jboss:jandex:2.4.5.Final'
+    compileOnly 'com.zaxxer:HikariCP:4.0.3'
+    compileOnly 'org.mariadb.jdbc:mariadb-java-client:3.4.0'
+    compileOnly 'com.mysql:mysql-connector-j:8.4.0'
+    compileOnly 'com.h2database:h2:2.2.224'
 
     // utility
     compileOnly 'org.projectlombok:lombok:+'
