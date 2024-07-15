@@ -1,6 +1,5 @@
 plugins {
     id 'com.github.johnrengelman.shadow' version '8.1.1'
-    id 'fabric-loom' version '1.6-SNAPSHOT'
     id 'java-library'
 }
 
@@ -34,9 +33,7 @@ dependencies {
     api project("$prefix:api")
 
     // minecraft
-    minecraft "com.mojang:minecraft:${project.minecraft_version}"
-    mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
-    api 'net.kyori:adventure-api:4.11.+'
+    compileOnly 'org.spigotmc:spigot-api:1.20-R0.1-SNAPSHOT'
 
     // database
     implementation 'org.hibernate:hibernate-core:5.6.0.Final'

@@ -1,11 +1,10 @@
 package com.ampznetwork.libmod.spigot;
 
 import com.ampznetwork.libmod.api.LibMod;
-import com.ampznetwork.libmod.api.database.EntityService;
 import com.ampznetwork.libmod.api.model.info.DatabaseInfo;
 import com.ampznetwork.libmod.core.command.LibModCommands;
 import com.ampznetwork.libmod.core.database.file.LocalEntityService;
-import com.ampznetwork.libmod.core.database.hibernate.HibernateEntityService;
+import com.ampznetwork.libmod.core.hibernate.HibernateEntityService;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.experimental.Delegate;

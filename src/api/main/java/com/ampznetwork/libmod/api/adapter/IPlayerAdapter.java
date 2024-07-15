@@ -1,6 +1,7 @@
-package com.ampznetwork.libmod.api.model.adp;
+package com.ampznetwork.libmod.api.adapter;
 
-import com.ampznetwork.libmod.api.LibMod;
+import com.ampznetwork.libmod.api.addon.Mod;
+import com.ampznetwork.libmod.api.addon.ModComponent;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import org.comroid.api.func.util.Command;
@@ -8,8 +9,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
-public interface PlayerAdapter extends Command.PermissionChecker.Adapter {
-    LibMod getLibMod();
+public interface IPlayerAdapter extends ModComponent, Command.PermissionChecker.Adapter {
+    Mod getMod();
 
     boolean isOnline(UUID playerId);
 
@@ -19,5 +20,5 @@ public interface PlayerAdapter extends Command.PermissionChecker.Adapter {
 
     void broadcast(@Nullable String recieverPermission, Component component);
 
-    void openBook(UUID playerId, BookAdapter book);
+    void openBook(UUID playerId, IBookAdapter book);
 }

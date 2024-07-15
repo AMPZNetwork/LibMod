@@ -1,6 +1,7 @@
-package com.ampznetwork.libmod.api.database;
+package com.ampznetwork.libmod.api.adapter;
 
-import com.ampznetwork.libmod.api.Mod;
+import com.ampznetwork.libmod.api.addon.Mod;
+import com.ampznetwork.libmod.api.addon.ModComponent;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,7 +13,7 @@ import org.hibernate.dialect.MariaDBDialect;
 import org.hibernate.dialect.MySQL57Dialect;
 
 @SuppressWarnings("UnusedReturnValue")
-public interface EntityService extends LifeCycle {
+public interface IEntityService extends ModComponent, LifeCycle {
     Mod getMod();
 
     <T> T save(T object);

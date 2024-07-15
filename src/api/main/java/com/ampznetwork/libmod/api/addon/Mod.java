@@ -1,4 +1,4 @@
-package com.ampznetwork.libmod.api;
+package com.ampznetwork.libmod.api.addon;
 
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -15,10 +15,18 @@ public interface Mod {
 
     Logger log();
 
-    LibMod getLib();
+    AddonApi api();
 
     Registry getRegistry();
 
     void reload();
 
+    interface Spigot extends Mod {
+    }
+
+    interface Fabric extends Mod {
+    }
+
+    interface Forge extends Mod {
+    }
 }

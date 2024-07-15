@@ -4,17 +4,17 @@ import net.kyori.adventure.text.Component;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.minecraft.text.Text;
 
-public interface DisplayAdapter<C> {
+public interface IDisplayAdapter<C> {
     C toDisplayable(Component component);
 
     String toPlaintext(Component component);
 
-    interface Spigot extends DisplayAdapter<BaseComponent> {
+    interface Spigot extends IDisplayAdapter<BaseComponent> {
     }
 
-    interface Fabric extends DisplayAdapter<Text> {
+    interface Fabric extends IDisplayAdapter<Text> {
     }
 
-    interface Forge extends DisplayAdapter<net.minecraftforge.server.command.TextComponentHelper> {
+    interface Forge extends IDisplayAdapter<net.minecraft.network.chat.Component> {
     }
 }

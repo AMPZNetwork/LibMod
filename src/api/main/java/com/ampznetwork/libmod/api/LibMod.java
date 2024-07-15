@@ -1,5 +1,7 @@
 package com.ampznetwork.libmod.api;
 
+import com.ampznetwork.libmod.api.addon.AddonApi;
+import com.ampznetwork.libmod.api.addon.Mod;
 import com.ampznetwork.libmod.api.model.info.DatabaseInfo;
 import lombok.experimental.UtilityClass;
 

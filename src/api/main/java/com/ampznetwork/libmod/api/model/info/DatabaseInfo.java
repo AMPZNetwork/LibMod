@@ -1,9 +1,9 @@
 package com.ampznetwork.libmod.api.model.info;
 
-import com.ampznetwork.libmod.api.database.EntityService;
+import com.ampznetwork.libmod.api.adapter.IEntityService;
 
 public record DatabaseInfo(
-        EntityService.DatabaseType type,
+        IEntityService.DatabaseType type,
         String url,
         String user,
         String pass

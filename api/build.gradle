@@ -40,10 +40,8 @@ dependencies {
     // json
     api 'com.fasterxml.jackson.core:jackson-databind:2.+'
 
-    // kyori
-    api 'net.kyori:adventure-api:4.11.+'
-
     // minecraft
+    api 'net.kyori:adventure-api:4.11.+'
     compileOnly 'org.spigotmc:spigot-api:1.20-R0.1-SNAPSHOT'
 
     // database
