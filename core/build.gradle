@@ -32,9 +32,6 @@ repositories {
 dependencies {
     api project("$prefix:api")
 
-    // minecraft
-    compileOnly 'org.spigotmc:spigot-api:1.20-R0.1-SNAPSHOT'
-
     // database
     implementation 'org.hibernate:hibernate-core:5.6.0.Final'
     implementation 'org.jboss:jandex:2.4.5.Final'
