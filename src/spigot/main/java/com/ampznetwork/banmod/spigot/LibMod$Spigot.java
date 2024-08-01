@@ -1,14 +1,9 @@
 package com.ampznetwork.banmod.spigot;
 
-import com.ampznetwork.banmod.api.BanMod;
-import com.ampznetwork.banmod.api.database.EntityService;
-import com.ampznetwork.banmod.api.entity.PunishmentCategory;
-import com.ampznetwork.banmod.api.model.info.DatabaseInfo;
-import com.ampznetwork.banmod.core.cmd.BanModCommands;
-import com.ampznetwork.banmod.core.database.file.LocalEntityService;
-import com.ampznetwork.banmod.core.database.hibernate.HibernateEntityService;
-import com.ampznetwork.banmod.spigot.adp.internal.SpigotEventDispatch;
 import com.ampznetwork.banmod.spigot.adp.internal.SpigotPlayerAdapter;
+import com.ampznetwork.libmod.api.LibMod;
+import com.ampznetwork.libmod.api.interop.database.IEntityService;
+import com.ampznetwork.libmod.api.model.info.DatabaseInfo;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.experimental.Delegate;
@@ -20,26 +15,23 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.comroid.api.func.util.Command;
 import org.comroid.api.java.StackTraceUtils;
-import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
 import java.util.stream.Stream;
 
 @Getter
-@Slf4j(topic = BanMod.Strings.AddonName)
-public class BanMod$Spigot extends JavaPlugin implements BanMod {
+@Slf4j(topic = LibMod.Strings.AddonName)
+public class LibMod$Spigot extends JavaPlugin implements LibMod {
     static {
         StackTraceUtils.EXTRA_FILTER_NAMES.add("com.ampznetwork");
     }
 
     private final SpigotPlayerAdapter playerAdapter = new SpigotPlayerAdapter(this);
-    private final SpigotEventDispatch eventDispatch = new SpigotEventDispatch(this);
+    private IEntityService entityService;
     private FileConfiguration config;
     private Command.Manager cmdr;
     @Delegate(types = {TabCompleter.class, CommandExecutor.class})
     private Command.Manager.Adapter$Spigot adapter;
-    private EntityService entityService;
-    private PunishmentCategory defaultCategory;
 
     @Override
     public Logger log() {
@@ -96,22 +88,9 @@ public class BanMod$Spigot extends JavaPlugin implements BanMod {
     }
 
     @Override
-    public @Nullable String getBanAppealUrl() {
-        var url = getConfig().get("banmod.appealUrl", null);
-        var txt = url == null ? null : url.toString();
-        if (txt != null && txt.isBlank()) txt = null;
-        return txt;
-    }
-
-    @Override
-    public boolean allowUnsafeConnections() {
-        return config.getBoolean("banmod.allow-unsafe-connections", false);
-    }
-
-    @Override
     public DatabaseInfo getDatabaseInfo() {
-        var dbImpl = EntityService.Type.valueOf(config.getString("banmod.entity-service", "database").toUpperCase());
-        var dbType = EntityService.DatabaseType.valueOf(config.getString("banmod.database.type", "h2"));
+        var dbImpl = IEntityService.Type.valueOf(config.getString("banmod.entity-service", "database").toUpperCase());
+        var dbType = IEntityService.DatabaseType.valueOf(config.getString("banmod.database.type", "h2"));
         var dbUrl = config.getString("banmod.database.url", "jdbc:h2:file:./BanMod.h2");
         var dbUser = config.getString("banmod.database.username", "sa");
         var dbPass = config.getString("banmod.database.password", "");

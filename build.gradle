@@ -46,6 +46,11 @@ subprojects {
             else api 'org.comroid:japi:+'
         }
 
+        if (project.name != 'api' && !project.name.startsWith('compile'))
+            api project("$prefix:api")
+        if (project.name != 'api' && project.name != 'core' && !project.name.startsWith('compile'))
+            api project("$prefix:core")
+
         // soft dependencies
         compileOnly 'net.luckperms:api:5.4'
 
