@@ -1,7 +1,8 @@
 package com.ampznetwork.libmod.api.messaging;
 
-import com.ampznetwork.banmod.api.BanMod;
-import com.ampznetwork.libmod.api.model.model.info.DatabaseInfo;
+import com.ampznetwork.libmod.api.LibMod;
+import com.ampznetwork.libmod.api.interop.database.IEntityService;
+import com.ampznetwork.libmod.api.model.info.DatabaseInfo;
 import lombok.Value;
 import lombok.experimental.NonFinal;
 import org.comroid.api.attr.Named;
@@ -45,7 +46,7 @@ public interface MessagingService {
         public static final Set<Type<?, ?>> REGISTRY = new HashSet<>();
         String name;
 
-        public abstract @Nullable Implementation createService(BanMod mod, EntityService entities, Config config);
+        public abstract @Nullable Implementation createService(LibMod mod, IEntityService entities, Config config);
 
         public interface Provider {
             String getMessagingServiceTypeName();

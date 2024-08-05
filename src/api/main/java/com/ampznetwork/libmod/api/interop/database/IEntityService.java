@@ -1,6 +1,7 @@
 package com.ampznetwork.libmod.api.interop.database;
 
 import com.ampznetwork.libmod.api.entity.DbObject;
+import com.ampznetwork.libmod.api.model.EntityType;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,11 +15,11 @@ import org.jetbrains.annotations.Nullable;
 import java.util.UUID;
 
 public interface IEntityService {
-    <K, T extends DbObject, B> EntityAccessor<K, T, B> getAccessor(EntityType<K, T, B> type);
+    <T extends DbObject, B extends DbObject.Builder<T, B>> EntityAccessor<T, B> getAccessor(EntityType<T, B> type);
 
     <T extends DbObject> T save(T object);
 
-    void refresh(EntityType<?, ?, ?> type, UUID... ids);
+    void refresh(EntityType<?, ?> type, UUID... ids);
 
     void uncache(Object id, @Nullable DbObject obj);
 

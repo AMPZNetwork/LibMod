@@ -1,6 +1,5 @@
 package com.ampznetwork.libmod.api.entity;
 
-import com.ampznetwork.libmod.api.interop.database.EntityType;
 import com.ampznetwork.libmod.api.model.convert.UuidVarchar36Converter;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,9 +23,9 @@ import static org.comroid.api.net.REST.Method.GET;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Player extends DbObject {
-    public static final EntityType<UUID, Player, Player.Builder> TYPE       =
-            new EntityType<>(UUID.class, Player.class, Player.Builder.class);
-    public static       BiConsumer<UUID, String>                 CACHE_NAME = null;
+    public static final LibModEntityType<UUID, Player, Builder> TYPE       =
+            new LibModEntityType<>(UUID.class, Player.class, Player.Builder.class);
+    public static       BiConsumer<UUID, String>                CACHE_NAME = null;
 
     public static CompletableFuture<UUID> fetchId(String name) {
         var future = REST.get("https://api.mojang.com/users/profiles/minecraft/" + name)
