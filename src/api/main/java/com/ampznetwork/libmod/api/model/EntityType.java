@@ -2,24 +2,42 @@ package com.ampznetwork.libmod.api.model;
 
 import com.ampznetwork.libmod.api.entity.DbObject;
 import lombok.Value;
+import org.comroid.api.Polyfill;
 import org.comroid.api.map.Cache;
 
-import javax.persistence.spi.PersistenceUnitInfo;
+import java.lang.ref.WeakReference;
+import java.util.Comparator;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 
 @Value
-public class EntityType<Entity extends DbObject, Builder extends DbObject.Builder<Entity, Builder>> {
+public class EntityType<Entity extends DbObject, Builder> {
     public static final Map<String, EntityType<?, ?>> REGISTRY = new ConcurrentHashMap<>();
 
-    PersistenceUnitInfo persistenceUnit;
+    public static <T extends DbObject> Optional<EntityType<T, ?>> find(Class<T> type) {
+        return REGISTRY.values().stream()
+                .sorted(Comparator.<EntityType<?, ?>>comparingInt(EntityType::getImplementationDepth).reversed())
+                .filter(it -> type.isAssignableFrom(it.entityType))
+                .findFirst()
+                .map(Polyfill::uncheckedCast);
+    }
+
     Cache<UUID, Entity> cache;
     Supplier<Builder>   builder;
     EntityType<?, ?>    parent;
     Class<Entity>       entityType;
     Class<Builder>      builderType;
+
+    public EntityType(Supplier<Builder> builder, EntityType<?, ?> parent, Class<Entity> entityType, Class<Builder> builderType) {
+        this.cache       = new Cache<>(DbObject::getId, (id, it) -> {}, WeakReference::new);
+        this.builder     = builder;
+        this.parent      = parent;
+        this.entityType  = entityType;
+        this.builderType = builderType;
+    }
 
     public String getDtype() {
         return entityType.getSimpleName();

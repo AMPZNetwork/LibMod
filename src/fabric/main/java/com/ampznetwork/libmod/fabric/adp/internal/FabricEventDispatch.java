@@ -1,4 +1,4 @@
-package com.ampznetwork.libmod.fabric.adapter;
+package com.ampznetwork.libmod.fabric.adp.internal;
 
 import com.ampznetwork.worldmod.api.WorldMod;
 import com.ampznetwork.worldmod.api.game.Flag;

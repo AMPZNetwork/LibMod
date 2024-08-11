@@ -1,4 +1,4 @@
-package com.ampznetwork.libmod.fabric.adapter;
+package com.ampznetwork.libmod.fabric.adp.internal;
 
 import com.ampznetwork.worldmod.api.model.adp.BookAdapter;
 import com.ampznetwork.worldmod.api.model.adp.PlayerAdapter;

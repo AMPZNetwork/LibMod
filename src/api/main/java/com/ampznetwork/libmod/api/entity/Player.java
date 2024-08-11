@@ -2,9 +2,9 @@ package com.ampznetwork.libmod.api.entity;
 
 import com.ampznetwork.libmod.api.model.convert.UuidVarchar36Converter;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 import org.comroid.api.net.REST;
 import org.jetbrains.annotations.Nullable;
 
@@ -19,12 +19,10 @@ import static org.comroid.api.net.REST.Method.GET;
 
 @Data
 @Entity
-@Builder
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
 public class Player extends DbObject {
-    public static final LibModEntityType<UUID, Player, Builder> TYPE       =
-            new LibModEntityType<>(UUID.class, Player.class, Player.Builder.class);
     public static       BiConsumer<UUID, String>                CACHE_NAME = null;
 
     public static CompletableFuture<UUID> fetchId(String name) {

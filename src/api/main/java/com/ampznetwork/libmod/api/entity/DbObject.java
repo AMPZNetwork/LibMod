@@ -18,7 +18,6 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Transient;
-import java.util.Comparator;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 
@@ -41,10 +40,8 @@ public abstract class DbObject {
     protected String dtype = getClass().getSimpleName();
 
     @Transient
-    public EntityType<?, ?> getEntityType() {
-        return EntityType.REGISTRY.values().stream()
-                .filter(type -> type.getEntityType().isAssignableFrom(getClass()))
-                .max(Comparator.comparingInt(EntityType::getImplementationDepth))
+    public final EntityType<?, ?> getEntityType() {
+        return EntityType.find(getClass())
                 .orElseThrow(() -> new NoSuchElementException("Could not resolve entity type for class " + getClass()));
     }
 }

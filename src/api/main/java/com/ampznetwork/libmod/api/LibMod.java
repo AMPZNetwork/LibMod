@@ -1,7 +1,6 @@
 package com.ampznetwork.libmod.api;
 
 import com.ampznetwork.libmod.api.adapter.SubMod;
-import com.ampznetwork.libmod.api.interop.database.IEntityService;
 import com.ampznetwork.libmod.api.interop.game.IPlayerAdapter;
 import com.ampznetwork.libmod.api.messaging.MessagingService;
 import com.ampznetwork.libmod.api.model.info.DatabaseInfo;
@@ -13,13 +12,11 @@ import org.slf4j.Logger;
 import java.util.Collection;
 
 public interface LibMod extends MessagingService.Type.Provider {
-    Collection<? extends SubMod> getRegisteredSubMods();
+    Collection<SubMod> getRegisteredSubMods();
 
     DatabaseInfo getDatabaseInfo();
 
     IPlayerAdapter getPlayerAdapter();
-
-    IEntityService getEntityService();
 
     void register(SubMod mod);
 
