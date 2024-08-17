@@ -1,5 +1,6 @@
 package com.ampznetwork.libmod.api.entity;
 
+import com.ampznetwork.libmod.api.model.EntityType;
 import com.ampznetwork.libmod.api.model.convert.UuidVarchar36Converter;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,6 +10,7 @@ import org.comroid.api.net.REST;
 import org.jetbrains.annotations.Nullable;
 
 import javax.persistence.Entity;
+import javax.persistence.Table;
 import javax.persistence.Transient;
 import java.util.Optional;
 import java.util.UUID;
@@ -22,7 +24,10 @@ import static org.comroid.api.net.REST.Method.GET;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "libmod_players")
 public class Player extends DbObject {
+    public static final EntityType<Player, Builder> TYPE
+            = new EntityType<>(Player::builder, null, Player.class, Builder.class);
     public static       BiConsumer<UUID, String>                CACHE_NAME = null;
 
     public static CompletableFuture<UUID> fetchId(String name) {

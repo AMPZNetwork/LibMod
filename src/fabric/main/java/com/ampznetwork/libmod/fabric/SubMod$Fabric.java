@@ -1,7 +1,7 @@
 package com.ampznetwork.libmod.fabric;
 
 import com.ampznetwork.libmod.api.LibMod;
-import com.ampznetwork.libmod.api.adapter.SubMod;
+import com.ampznetwork.libmod.api.SubMod;
 import com.ampznetwork.libmod.api.entity.DbObject;
 import com.ampznetwork.libmod.api.interop.database.IEntityService;
 import com.ampznetwork.libmod.core.database.hibernate.HibernateEntityService;

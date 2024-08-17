@@ -17,6 +17,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.Table;
 import javax.persistence.Transient;
 import java.util.NoSuchElementException;
 import java.util.UUID;
@@ -27,6 +28,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
+@Table(name = "libmod_entities")
 @Inheritance(strategy = InheritanceType.JOINED)
 public abstract class DbObject {
     @Id

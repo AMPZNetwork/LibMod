@@ -1,6 +1,5 @@
-package com.ampznetwork.libmod.api.adapter;
+package com.ampznetwork.libmod.api;
 
-import com.ampznetwork.libmod.api.LibMod;
 import com.ampznetwork.libmod.api.entity.DbObject;
 import com.ampznetwork.libmod.api.interop.database.IEntityService;
 import org.comroid.api.attr.Named;

@@ -1,6 +1,5 @@
 package com.ampznetwork.libmod.api;
 
-import com.ampznetwork.libmod.api.adapter.SubMod;
 import com.ampznetwork.libmod.api.interop.game.IPlayerAdapter;
 import com.ampznetwork.libmod.api.messaging.MessagingService;
 import com.ampznetwork.libmod.api.model.info.DatabaseInfo;
