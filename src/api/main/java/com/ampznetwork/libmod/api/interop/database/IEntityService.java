@@ -15,15 +15,15 @@ import org.jetbrains.annotations.Nullable;
 import java.util.UUID;
 
 public interface IEntityService {
-    <T extends DbObject, B extends DbObject.Builder<T, B>> EntityAccessor<T, B> getAccessor(EntityType<T, B> type);
+    <K, T extends DbObject<K>, B extends DbObject.Builder<K, T, B>> EntityAccessor<K, T, B> getAccessor(EntityType<K, T, B> type);
 
-    <T extends DbObject> T save(T object);
+    <T extends DbObject<?>> T save(T object);
 
-    void refresh(EntityType<?, ?> type, UUID... ids);
+    void refresh(EntityType<UUID, ?, ?> type, UUID... ids);
 
-    void uncache(Object id, @Nullable DbObject obj);
+    <K> void uncache(K id, @Nullable DbObject<K> obj);
 
-    int delete(Object... objects);
+    int delete(@SuppressWarnings("rawtypes") DbObject... objects);
 
     @Getter
     @AllArgsConstructor

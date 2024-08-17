@@ -100,7 +100,7 @@ public class PollingMessagingService extends MessagingServiceBase<HibernateEntit
                                 where ne.ident = :ident and ne.timestamp = :timestamp
                                 """)
                         .setParameter("me", ident)
-                        .setParameter("ident", event.getIdent())
+                        .setParameter("ident", event.getId())
                         .setParameter("timestamp", event.getTimestamp())
                         .executeUpdate();
                 if (ack != 1) {

@@ -79,22 +79,22 @@ public class HibernateEntityService extends Container.Base implements IEntitySer
             DatabaseInfo info, Function<HikariDataSource, PersistenceUnitInfo> unitProvider,
             @MagicConstant(stringValues = { "update", "validate" }) String hbm2ddl
     ) {
-        var config = Map.of(
-                "hibernate.connection.driver_class", info.type()
-                        .getDriverClass()
-                        .getCanonicalName(),
-                "hibernate.connection.url", info.url(),
-                "hibernate.connection.username", info.user(),
-                "hibernate.connection.password", info.pass(),
-                "hibernate.dialect", info.type()
-                        .getDialectClass()
-                        .getCanonicalName(),
-                "hibernate.show_sql", String.valueOf("true".equals(System.getenv("TRACE"))),
-                "hibernate.hbm2ddl.auto", hbm2ddl);
+        var config = Map.of("hibernate.connection.driver_class",
+                info.type().getDriverClass().getCanonicalName(),
+                "hibernate.connection.url",
+                info.url(),
+                "hibernate.connection.username",
+                info.user(),
+                "hibernate.connection.password",
+                info.pass(),
+                "hibernate.dialect",
+                info.type().getDialectClass().getCanonicalName(),
+                "hibernate.show_sql",
+                String.valueOf("true".equals(System.getenv("TRACE"))),
+                "hibernate.hbm2ddl.auto",
+                hbm2ddl);
         var dataSource = new HikariDataSource() {{
-            setDriverClassName(info.type()
-                    .getDriverClass()
-                    .getCanonicalName());
+            setDriverClassName(info.type().getDriverClass().getCanonicalName());
             setJdbcUrl(info.url());
             setUsername(info.user());
             setPassword(info.pass());
@@ -134,56 +134,51 @@ public class HibernateEntityService extends Container.Base implements IEntitySer
 
         // cleanup task
         scheduler.scheduleAtFixedRate(() -> {
-            if (messagingService instanceof PollingMessagingService polling)
-                polling.cleanup();
-            EntityType.REGISTRY.values().stream()
-                    .map(EntityType::getCache)
-                    .forEach(Cache::clear);
+            if (messagingService instanceof PollingMessagingService polling) polling.cleanup();
+            EntityType.REGISTRY.values().stream().map(EntityType::getCache).forEach(Cache::clear);
         }, 10, 10, TimeUnit.MINUTES);
     }
 
     @Override
-    public <T extends DbObject, B extends DbObject.Builder<T, B>> EntityAccessor<T, B> getAccessor(EntityType<T, B> type) {
+    public <K, T extends DbObject<K>, B extends DbObject.Builder<K, T, B>> EntityAccessor<K, T, B> getAccessor(EntityType<K, T, B> type) {
         return null;
     }
 
     @Override
-    public <T extends DbObject> T save(T object) {
+    public <T extends DbObject<?>> T save(T object) {
         var persistent = wrapTransaction(() -> {
-            if (manager.contains(object))
-                try {
-                    manager.persist(object);
-                    // now a persistent object!
-                    return object;
-                } catch (Throwable t) {
-                    Debug.log(log, "persist() failed for " + object, t);
-                }
+            if (manager.contains(object)) try {
+                manager.persist(object);
+                // now a persistent object!
+                return object;
+            } catch (Throwable t) {
+                Debug.log(log, "persist() failed for " + object, t);
+            }
             // try merging as a fallback action
             return manager.merge(object);
         });
-        if (!(object instanceof NotifyEvent))
-            Polyfill.<Cache<UUID, DbObject>>uncheckedCast(EntityType.REGISTRY.get(object.getDtype()).getCache())
-                    .push(persistent);
+        if (!(object instanceof NotifyEvent)) Polyfill.<Cache<UUID, DbObject>>uncheckedCast(EntityType.REGISTRY.get(object.getDtype()).getCache())
+                .push(persistent);
         return persistent;
     }
 
     @Override
-    public void refresh(EntityType<?, ?> type, UUID... ids) {
+    public void refresh(EntityType<UUID, ?, ?> type, UUID... ids) {
         // todo
     }
 
     @Override
-    public void uncache(Object id, @Nullable DbObject obj) {
+    public <K> void uncache(K id, @Nullable DbObject<K> obj) {
     }
 
     @Override
-    public int delete(Object... infractions) {
+    public int delete(@SuppressWarnings("rawtypes") DbObject... objects) {
         var transaction = manager.getTransaction();
         var c           = 0;
         synchronized (transaction) {
             try {
                 transaction.begin();
-                for (Object each : infractions) {
+                for (Object each : objects) {
                     each = manager.merge(each);
                     manager.remove(each);
                     c += 1;
@@ -227,9 +222,7 @@ public class HibernateEntityService extends Container.Base implements IEntitySer
             transaction.begin();
 
             try ( // need a session
-                  var session = manager.unwrap(Session.class)
-                          .getSessionFactory()
-                          .openSession()
+                  var session = manager.unwrap(Session.class).getSessionFactory().openSession()
             ) {
                 // isolate
                 session.doWork(con -> con.setTransactionIsolation(isolation));
@@ -248,33 +241,48 @@ public class HibernateEntityService extends Container.Base implements IEntitySer
     }
 
     @Value
-    private class EntityContainer<T extends DbObject, B extends DbObject.Builder<T, B>> implements EntityAccessor<T, B> {
-        @lombok.experimental.Delegate EntityType<T, B> type;
+    private class EntityContainer<K, T extends DbObject<K>, B extends DbObject.Builder<K, T, B>> implements EntityAccessor<K, T, B> {
+        @lombok.experimental.Delegate EntityType<K, T, B> type;
 
         @Override
-        public Stream<T> all() {
-            return manager.createQuery("select it from %s it".formatted(type.getDtype()), getEntityType())
-                    .getResultStream()
-                    .peek(type.getCache()::push);
+        public EntityManager getManager() {
+            return manager;
         }
 
         @Override
-        public Optional<T> get(UUID id) {
-            return type.getCache().wrap(id).stream()
+        public Stream<T> all() {
+            return manager.createQuery("select it from %s it".formatted(type.getDtype()), getEntityType()).getResultStream().peek(type.getCache()::push);
+        }
+
+        @Override
+        public Stream<T> querySelect(Query query) {
+            return HibernateEntityService.this.wrapQuery(q -> Polyfill.uncheckedCast(q.getResultStream()), query);
+        }
+
+        @Override
+        public Optional<T> get(K id) {
+            return type.getCache()
+                    .wrap(id)
+                    .stream()
                     .map(Polyfill::<T>uncheckedCast)
                     .collect(Streams.or(() -> manager.createQuery("select it from %s it where it.id = :id".formatted(type.getDtype()), getEntityType())
                             .setParameter("id", id)
-                            .getResultStream().peek(type.getCache()::push)))
+                            .getResultStream()
+                            .peek(type.getCache()::push)))
                     .findAny();
         }
 
         @Override
-        public GetOrCreate<T, B> getOrCreate(UUID key) {
+        public GetOrCreate<T, B> getOrCreate(K key) {
             return new GetOrCreate<>(() -> get(key).orElse(null),
                     () -> type.builder().id(key),
                     DbObject.Builder::build,
-                    HibernateEntityService.this::save)
-                    .addCompletionCallback(type.getCache()::push);
+                    HibernateEntityService.this::save).addCompletionCallback(type.getCache()::push);
+        }
+
+        @Override
+        public void queryUpdate(Query query) {
+            wrapQuery(Query::executeUpdate, query);
         }
     }
 

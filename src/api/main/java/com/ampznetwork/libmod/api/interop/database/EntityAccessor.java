@@ -2,17 +2,37 @@ package com.ampznetwork.libmod.api.interop.database;
 
 import com.ampznetwork.libmod.api.entity.DbObject;
 import org.comroid.api.func.util.GetOrCreate;
+import org.intellij.lang.annotations.Language;
+import org.jetbrains.annotations.Nullable;
 
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
+import java.util.Map;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.stream.Stream;
 
-public interface EntityAccessor<It extends DbObject, Builder extends DbObject.Builder<It, Builder>> {
+public interface EntityAccessor<Key, It extends DbObject<Key>, Builder extends DbObject.Builder<Key, It, Builder>> {
+    EntityManager getManager();
+
     Class<It> getEntityType();
 
     Stream<It> all();
 
-    Optional<It> get(UUID key);
+    default Stream<It> querySelect(@Language("SQL") String query) {return querySelect(query, null);}
 
-    GetOrCreate<It, Builder> getOrCreate(UUID key);
+    default Stream<It> querySelect(@Language("SQL") String query, @Nullable Map<String, Object> parameters) {
+        //noinspection SqlSourceToSinkFlow
+        var q = getManager().createNativeQuery(query, getEntityType());
+        if (parameters != null)
+            parameters.forEach(q::setParameter);
+        return querySelect(q);
+    }
+
+    Stream<It> querySelect(Query query);
+
+    Optional<It> get(Key key);
+
+    GetOrCreate<It, Builder> getOrCreate(Key key);
+
+    void queryUpdate(Query query);
 }
