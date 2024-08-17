@@ -10,7 +10,7 @@ import org.slf4j.Logger;
 
 import java.util.Collection;
 
-public interface LibMod extends MessagingService.Type.Provider {
+public interface LibMod extends SubMod, MessagingService.Type.Provider {
     Collection<SubMod> getRegisteredSubMods();
 
     DatabaseInfo getDatabaseInfo();
@@ -18,6 +18,11 @@ public interface LibMod extends MessagingService.Type.Provider {
     IPlayerAdapter getPlayerAdapter();
 
     void register(SubMod mod);
+
+    @Override
+    default Class<?> getModuleType() {
+        return LibMod.class;
+    }
 
     @UtilityClass
     final class Strings {
