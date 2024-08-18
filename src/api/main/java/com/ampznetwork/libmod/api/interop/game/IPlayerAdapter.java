@@ -4,6 +4,7 @@ import com.ampznetwork.libmod.api.LibMod;
 import com.ampznetwork.libmod.api.adapter.BookAdapter;
 import com.ampznetwork.libmod.api.entity.Player;
 import net.kyori.adventure.text.Component;
+import org.comroid.api.data.Vector;
 import org.comroid.api.func.util.Command;
 import org.jetbrains.annotations.Nullable;
 
@@ -27,6 +28,10 @@ public interface IPlayerAdapter extends Command.PermissionChecker.Adapter {
     }
 
     boolean isOnline(UUID playerId);
+
+    String getWorldName(UUID playerId);
+
+    Vector.N3 getPosition(UUID playerId);
 
     void kick(UUID playerId, Component reason);
 

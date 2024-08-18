@@ -17,10 +17,10 @@ import java.util.Set;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PROTECTED, makeFinal = true)
 public abstract class SubMod$Fabric extends FabricModBase implements SubMod {
-    LibMod                         lib;
     Set<Capability>                capabilities;
     Set<Class<? extends DbObject>> entityTypes;
-    @NonFinal HibernateEntityService entityService;
+    @NonFinal           HibernateEntityService entityService;
+    @NonFinal protected LibMod                 lib;
 
     @Override
     public IEntityService getEntityService() {

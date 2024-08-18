@@ -46,7 +46,6 @@ public abstract class DbObject<K> {
     @Data
     @Entity
     @SuperBuilder
-    @NoArgsConstructor
     @AllArgsConstructor
     public static abstract class ByUuid extends DbObject<UUID> {
         @Override
@@ -58,7 +57,6 @@ public abstract class DbObject<K> {
     @Data
     @Entity
     @SuperBuilder
-    @NoArgsConstructor
     @AllArgsConstructor
     public static abstract class ByName extends DbObject<String> {
         @Override
@@ -70,7 +68,6 @@ public abstract class DbObject<K> {
     @Data
     @Entity
     @SuperBuilder
-    @NoArgsConstructor
     @AllArgsConstructor
     public static abstract class ByPoiName extends DbObject<String> {
         @Override
