@@ -51,7 +51,7 @@ public final class NotifyEvent extends DbObject<BigInteger> implements DataNode 
             NotifyEvent.class,
             NotifyEvent.Builder.class);
     @Id @lombok.Builder.Default                       Instant                                                  timestamp   = Instant.now();
-    @lombok.Builder.Default                           Type             type        = Type.SYNC;
+    @lombok.Builder.Default Type type = Type.SYNC;
     @lombok.Builder.Default @Nullable
     @Convert(converter = UuidBinary16Converter.class) UUID                                                     relatedId   = null;
     @lombok.Builder.Default @Nullable

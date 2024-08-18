@@ -43,7 +43,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-import static org.comroid.api.Polyfill.uncheckedCast;
+import static org.comroid.api.Polyfill.*;
 
 @Slf4j
 @Value

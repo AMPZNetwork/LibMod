@@ -40,16 +40,12 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-import static java.util.function.Predicate.not;
-import static java.util.stream.Stream.concat;
-import static java.util.stream.Stream.empty;
+import static java.util.function.Predicate.*;
 import static java.util.stream.Stream.of;
-import static net.minecraft.server.command.CommandManager.RegistrationEnvironment;
-import static net.minecraft.server.command.CommandManager.argument;
-import static net.minecraft.server.command.CommandManager.literal;
-import static org.comroid.api.func.util.Debug.isDebug;
-import static org.comroid.api.func.util.Streams.expand;
-import static org.comroid.api.func.util.Streams.expandRecursive;
+import static java.util.stream.Stream.*;
+import static net.minecraft.server.command.CommandManager.*;
+import static org.comroid.api.func.util.Debug.*;
+import static org.comroid.api.func.util.Streams.*;
 
 @Value
 @Slf4j

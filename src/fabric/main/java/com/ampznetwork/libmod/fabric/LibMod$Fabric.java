@@ -16,7 +16,7 @@ import net.minecraft.text.Text;
 import java.util.ArrayList;
 import java.util.List;
 
-import static net.kyori.adventure.text.serializer.gson.GsonComponentSerializer.gson;
+import static net.kyori.adventure.text.serializer.gson.GsonComponentSerializer.*;
 
 @Value
 public class LibMod$Fabric extends SubMod$Fabric implements LibMod, ModInitializer, ServerLifecycleEvents.ServerStarting {
@@ -25,6 +25,7 @@ public class LibMod$Fabric extends SubMod$Fabric implements LibMod, ModInitializ
     public static Text component2text(Component component) {
         return Text.Serializer.fromJson(gson().serialize(component));
     }
+
     List<SubMod>        registeredSubMods = new ArrayList<>();
     FabricPlayerAdapter playerAdapter     = new FabricPlayerAdapter(this);
     @NonFinal MinecraftServer server;

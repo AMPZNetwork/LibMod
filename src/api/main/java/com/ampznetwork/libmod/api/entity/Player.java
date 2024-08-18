@@ -17,7 +17,7 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
 
-import static org.comroid.api.net.REST.Method.GET;
+import static org.comroid.api.net.REST.Method.*;
 
 @Data
 @Entity

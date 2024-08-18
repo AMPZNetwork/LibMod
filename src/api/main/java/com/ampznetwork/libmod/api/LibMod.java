@@ -17,12 +17,12 @@ public interface LibMod extends SubMod, MessagingService.Type.Provider {
 
     IPlayerAdapter getPlayerAdapter();
 
-    void register(SubMod mod);
-
     @Override
     default Class<?> getModuleType() {
         return LibMod.class;
     }
+
+    void register(SubMod mod);
 
     @UtilityClass
     final class Strings {

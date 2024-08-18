@@ -28,7 +28,7 @@ public class EntityType<ID, Entity extends DbObject<ID>, Builder> {
     Supplier<Builder>    builder;
     EntityType<ID, ?, ?> parent;
     Class<Entity>        entityType;
-    Class<Builder>      builderType;
+    Class<Builder> builderType;
 
     public EntityType(Supplier<Builder> builder, EntityType<ID, ?, ?> parent, Class<Entity> entityType, Class<Builder> builderType) {
         this.cache       = new Cache<>(DbObject::getId, (id, it) -> {}, WeakReference::new);

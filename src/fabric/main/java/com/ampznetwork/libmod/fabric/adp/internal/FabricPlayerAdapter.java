@@ -30,8 +30,8 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Stream;
 
-import static net.kyori.adventure.text.Component.text;
-import static net.kyori.adventure.text.serializer.gson.GsonComponentSerializer.gson;
+import static net.kyori.adventure.text.Component.*;
+import static net.kyori.adventure.text.serializer.gson.GsonComponentSerializer.*;
 
 @Value
 @Log4j2
