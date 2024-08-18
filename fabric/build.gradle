@@ -56,7 +56,6 @@ repositories {
     // Loom adds the essential maven repositories to download Minecraft and libraries from automatically.
     // See https://docs.gradle.org/current/userguide/declaring_repositories.html
     // for more information about repositories.
-    maven { url 'https://maven.wispforest.io/releases' }
     mavenCentral()
 }
 
@@ -94,6 +93,8 @@ dependencies {
     if (findProject(":japi") != null)
         include project(":japi")
     else include 'org.comroid:japi:+'
+
+    include(modImplementation(project(':LibMod:fabric')))
 
     include 'com.fasterxml.jackson.core:jackson-databind:2.17.2'
     include 'javax.persistence:javax.persistence-api:2.2'
@@ -155,12 +156,6 @@ dependencies {
     include 'com.google.protobuf:protobuf-java:3.25.1'
     include 'com.google.code.gson:gson:2.10'
     include 'org.apache.logging.log4j:log4j-core:2.19.0'
-
-
-    // owo lib
-    modImplementation "io.wispforest:owo-lib:${project.owo_version}"
-    include "io.wispforest:owo-sentinel:${project.owo_version}"
-    annotationProcessor modImplementation("io.wispforest:owo-lib:${project.owo_version}")
 }
 
 tasks.withType(JavaCompile).configureEach {
