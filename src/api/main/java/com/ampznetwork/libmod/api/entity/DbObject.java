@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import org.comroid.api.Polyfill;
 import org.comroid.api.text.Capitalization;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -36,20 +37,24 @@ public abstract class DbObject<K> {
     @Convert(converter = UuidVarchar36Converter.class)
     @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
     @Column(columnDefinition = "varchar(255)", updatable = false, nullable = false)
-    protected K id = randomId();
+    protected K id = randomId(getClass());
 
     @Basic @lombok.Builder.Default
     protected String dtype = getClass().getSimpleName();
 
-    protected abstract K randomId();
+    private static <K> K randomId(Class<?> type) {
+        if (ByUuid.class.isAssignableFrom(type)) return Polyfill.uncheckedCast(ByUuid.randomId());
+        if (ByName.class.isAssignableFrom(type)) return Polyfill.uncheckedCast(ByName.randomId());
+        if (ByPoiName.class.isAssignableFrom(type)) return Polyfill.uncheckedCast(ByPoiName.randomId());
+        throw new UnsupportedOperationException();
+    }
 
     @Data
     @Entity
     @SuperBuilder
     @AllArgsConstructor
     public static abstract class ByUuid extends DbObject<UUID> {
-        @Override
-        protected UUID randomId() {
+        protected static UUID randomId() {
             return UUID.randomUUID();
         }
     }
@@ -59,8 +64,7 @@ public abstract class DbObject<K> {
     @SuperBuilder
     @AllArgsConstructor
     public static abstract class ByName extends DbObject<String> {
-        @Override
-        protected String randomId() {
+        protected static String randomId() {
             return NameGenerator.NOUNS.apply(Capitalization.lower_snake_case);
         }
     }
@@ -70,8 +74,7 @@ public abstract class DbObject<K> {
     @SuperBuilder
     @AllArgsConstructor
     public static abstract class ByPoiName extends DbObject<String> {
-        @Override
-        protected String randomId() {
+        protected static String randomId() {
             return NameGenerator.POI.get();
         }
     }
