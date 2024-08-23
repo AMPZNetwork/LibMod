@@ -3,11 +3,12 @@ package com.ampznetwork.libmod.api;
 import com.ampznetwork.libmod.api.entity.DbObject;
 import com.ampznetwork.libmod.api.interop.database.IEntityService;
 import org.comroid.api.attr.Named;
+import org.comroid.api.func.Specifiable;
 import org.comroid.api.func.util.Command;
 
 import java.util.Set;
 
-public interface SubMod {
+public interface SubMod extends Specifiable<SubMod> {
     LibMod getLib();
 
     Command.Manager getCmdr();

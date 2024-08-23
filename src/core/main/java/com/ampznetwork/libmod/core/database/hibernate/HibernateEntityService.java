@@ -26,6 +26,7 @@ import org.comroid.api.tree.UncheckedCloseable;
 import org.hibernate.Session;
 import org.hibernate.jpa.HibernatePersistenceProvider;
 import org.intellij.lang.annotations.MagicConstant;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import javax.persistence.EntityManager;
@@ -109,6 +110,13 @@ public class HibernateEntityService extends Container.Base implements IEntitySer
     EntityManager            manager;
     ScheduledExecutorService scheduler;
     @Nullable MessagingService messagingService;
+
+    @ApiStatus.Experimental
+    public HibernateEntityService(LibMod lib) {
+        this(lib, dataSource -> new PersistenceUnitBase(LibMod.class, dataSource, lib.getRegisteredSubMods().stream()
+                .flatMap(it -> it.getEntityTypes().stream())
+                .toArray(Class[]::new)));
+    }
 
     public HibernateEntityService(LibMod lib, SubMod mod) {
         this(lib, dataSource -> new PersistenceUnitBase(mod.getModuleType(), dataSource, mod.getEntityTypes().toArray(new Class[0])));
