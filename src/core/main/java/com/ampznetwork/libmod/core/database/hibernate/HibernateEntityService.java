@@ -285,7 +285,17 @@ public class HibernateEntityService extends Container.Base implements IEntitySer
             return new GetOrCreate<>(() -> get(key).orElse(null),
                     () -> type.builder().id(key),
                     DbObject.Builder::build,
-                    HibernateEntityService.this::save).addCompletionCallback(type.getCache()::push);
+                    HibernateEntityService.this::save)
+                    .addCompletionCallback(it -> {
+                        // push to cache
+                        type.getCache().push(it);
+
+                        // push to messaging service
+                        if (it.getId() instanceof UUID uuid && messagingService != null)
+                            messagingService.push()
+                                    .complete(notif -> notif.relatedId(uuid)
+                                            .relatedType(Polyfill.uncheckedCast(it.getEntityType())));
+                    });
         }
 
         @Override

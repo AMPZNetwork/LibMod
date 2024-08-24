@@ -28,7 +28,6 @@ import java.io.Serializable;
 import java.math.BigInteger;
 import java.time.Instant;
 import java.util.Collection;
-import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.Predicate;
@@ -58,12 +57,6 @@ public final class NotifyEvent extends DbObject<BigInteger> implements DataNode 
     @Convert(converter = EntityTypeConverter.class)   EntityType<UUID, ?, ?>                                   relatedType = null;
     @lombok.Builder.Default
     @Column(columnDefinition = "bigint")              BigInteger                                               acknowledge = BigInteger.valueOf(0);
-
-    @Override
-    protected BigInteger randomId() {
-        var rng = new Random();
-        return BigInteger.valueOf(rng.nextInt());
-    }
 
     @Getter
     public enum Type implements Named, Predicate<EntityType<?, ?, ?>> {

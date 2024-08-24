@@ -1,5 +1,6 @@
 package com.ampznetwork.libmod.api.entity;
 
+import com.ampznetwork.libmod.api.model.EntityType;
 import com.ampznetwork.libmod.api.model.convert.UuidVarchar36Converter;
 import com.ampznetwork.libmod.api.util.NameGenerator;
 import lombok.AllArgsConstructor;
@@ -41,6 +42,10 @@ public abstract class DbObject<K> {
 
     @Basic @lombok.Builder.Default
     protected String dtype = getClass().getSimpleName();
+
+    public EntityType<K, ? extends DbObject<K>, ?> getEntityType() {
+        return Polyfill.uncheckedCast(EntityType.REGISTRY.get(dtype));
+    }
 
     private static <K> K randomId(Class<?> type) {
         if (ByUuid.class.isAssignableFrom(type)) return Polyfill.uncheckedCast(ByUuid.randomId());

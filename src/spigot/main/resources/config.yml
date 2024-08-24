@@ -7,17 +7,16 @@ database:
 
 # messaging service for cross-server
 messaging-service:
-  type: polling-db # polling-db or rabbit-mq
+  type: none # 'none', 'polling-db' or 'rabbit-mq'
 
-  # uncomment this example section to use polling-db with a different database
+  # uncomment this example section to use 'polling-db' with a different database
   #database:
   #  type: MariaDB
   #  url: jdbc:mariadb://localhost:3306/banmod_messaging
   #  username: anonymous
   #  password: anonymous
-
-  # you can adjust the interval of polling. this will define how long punishments will lag between servers
+  # you can adjust the polling interval. this will define how long punishments will lag between servers
   #interval: 2s
 
-  # uncomment this example config for rabbit-mq
+  # uncomment this example config for 'rabbit-mq'
   #uri: amqp://anonymous:anonymous@localhost:5672/banmod_messaging
