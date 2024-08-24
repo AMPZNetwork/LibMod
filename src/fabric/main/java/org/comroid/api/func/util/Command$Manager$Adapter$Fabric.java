@@ -1,5 +1,7 @@
 package org.comroid.api.func.util;
 
+import com.ampznetwork.libmod.api.LibMod;
+import com.ampznetwork.libmod.fabric.LibMod$Fabric;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.arguments.BoolArgumentType;
@@ -82,7 +84,7 @@ public class Command$Manager$Adapter$Fabric extends Command.Manager.Adapter
         try {
             usage = cmdr.createUsageBase(this, fullCommand, context);
         } catch (Throwable t) {
-            BanMod.Resources.printExceptionWithIssueReportUrl(log, "An internal error occurred during command preparation", t);
+            LibMod.Resources.printExceptionWithIssueReportUrl(log, "An internal error occurred during command preparation", t);
             var result = handleThrowable(t);
             handleResponse(Command.Usage.builder()
                     .manager(cmdr)
@@ -116,7 +118,7 @@ public class Command$Manager$Adapter$Fabric extends Command.Manager.Adapter
             cmdr.execute(usage, args);
             return 1;
         } catch (Throwable t) {
-            BanMod.Resources.printExceptionWithIssueReportUrl(log, "An internal error occurred during command execution", t);
+            LibMod.Resources.printExceptionWithIssueReportUrl(log, "An internal error occurred during command execution", t);
             var result = handleThrowable(t);
             handleResponse(usage, result);
             return 0;
@@ -151,7 +153,7 @@ public class Command$Manager$Adapter$Fabric extends Command.Manager.Adapter
                 .flatMap(Streams.cast(ServerCommandSource.class))
                 .findAny().orElseThrow();
         if (response instanceof Component component)
-            source.sendMessage(BanMod$Fabric.component2text(component));
+            source.sendMessage(LibMod$Fabric.component2text(component));
         else source.sendMessage(Text.of(String.valueOf(response)));
     }
 

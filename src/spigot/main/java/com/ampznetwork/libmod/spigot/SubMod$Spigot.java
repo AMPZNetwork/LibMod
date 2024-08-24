@@ -1,6 +1,5 @@
 package com.ampznetwork.libmod.spigot;
 
-import com.ampznetwork.banmod.spigot.LibMod$Spigot;
 import com.ampznetwork.libmod.api.SubMod;
 import com.ampznetwork.libmod.api.entity.DbObject;
 import com.ampznetwork.libmod.core.database.hibernate.HibernateEntityService;

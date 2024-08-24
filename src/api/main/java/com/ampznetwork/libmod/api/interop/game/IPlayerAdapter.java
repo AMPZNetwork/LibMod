@@ -21,9 +21,10 @@ public interface IPlayerAdapter extends Command.PermissionChecker.Adapter {
     }
 
     default String getName(UUID playerId) {
-        return getLib().getEntityService()
+        //noinspection RedundantCast
+        return ((Player) getLib().getEntityService()
                 .getAccessor(Player.TYPE)
-                .getOrCreate(playerId).get()
+                .getOrCreate(playerId).get())
                 .getOrFetchUsername().join();
     }
 

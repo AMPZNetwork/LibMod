@@ -34,6 +34,12 @@ public interface LibMod extends SubMod, MessagingService.Type.Provider {
 
     @UtilityClass
     final class Resources {
+        public static String DefaultDbType               = "h2";
+        public static String DefaultDbUrl                = "jdbc:h2:file:./database.h2";
+        public static String DefaultDbUsername           = "sa";
+        public static String DefaultDbPassword           = "";
+        public static String DefaultMessagingServiceType = "polling-db";
+
         public static void printExceptionWithIssueReportUrl(Logger log, String message, Throwable t) {
             log.error(message, new RuntimeException("An unexpected internal error occurred. Please open a bugreport at " + Strings.IssuesUrl, t));
         }

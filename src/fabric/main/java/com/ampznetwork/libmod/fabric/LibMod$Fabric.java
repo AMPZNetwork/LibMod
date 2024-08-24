@@ -4,26 +4,29 @@ import com.ampznetwork.libmod.api.LibMod;
 import com.ampznetwork.libmod.api.SubMod;
 import com.ampznetwork.libmod.api.messaging.MessagingService;
 import com.ampznetwork.libmod.api.model.info.DatabaseInfo;
-import com.ampznetwork.libmod.fabric.adp.internal.FabricPlayerAdapter;
+import com.ampznetwork.libmod.fabric.adp.FabricPlayerAdapter;
+import com.google.gson.JsonParseException;
+import com.mojang.serialization.JsonOps;
 import lombok.Value;
 import lombok.experimental.NonFinal;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.text.Text;
+import net.minecraft.text.TextCodecs;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static net.kyori.adventure.text.serializer.gson.GsonComponentSerializer.*;
 
 @Value
 public class LibMod$Fabric extends SubMod$Fabric implements LibMod, ModInitializer, ServerLifecycleEvents.ServerStarting {
     public static LibMod INSTANCE;
 
     public static Text component2text(Component component) {
-        return Text.Serializer.fromJson(gson().serialize(component));
+        var json = GsonComponentSerializer.gson().serializeToTree(component);
+        return TextCodecs.STRINGIFIED_CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(JsonParseException::new);
     }
 
     List<SubMod>        registeredSubMods = new ArrayList<>();
