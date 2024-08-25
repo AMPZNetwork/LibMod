@@ -4,17 +4,16 @@ import com.ampznetwork.libmod.api.model.EntityType;
 import lombok.Value;
 
 import javax.persistence.AttributeConverter;
-import java.util.UUID;
 
 @Value
-public class EntityTypeConverter implements AttributeConverter<EntityType<UUID, ?, ?>, String> {
+public class EntityTypeConverter implements AttributeConverter<EntityType<?, ?, ?>, String> {
     @Override
-    public String convertToDatabaseColumn(EntityType<UUID, ?, ?> attribute) {
+    public String convertToDatabaseColumn(EntityType<?, ?, ?> attribute) {
         return attribute.getDtype();
     }
 
     @Override
-    public EntityType<UUID, ?, ?> convertToEntityAttribute(String dbData) {
+    public EntityType<?, ?, ?> convertToEntityAttribute(String dbData) {
         return EntityType.REGISTRY.get(dbData);
     }
 }
