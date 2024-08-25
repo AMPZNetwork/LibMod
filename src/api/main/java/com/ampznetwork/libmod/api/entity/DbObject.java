@@ -47,7 +47,7 @@ public abstract class DbObject<K> {
         return Polyfill.uncheckedCast(EntityType.REGISTRY.get(dtype));
     }
 
-    private static <K> K randomId(Class<?> type) {
+    public static <K> K randomId(Class<?> type) {
         if (ByUuid.class.isAssignableFrom(type)) return Polyfill.uncheckedCast(ByUuid.randomId());
         if (ByName.class.isAssignableFrom(type)) return Polyfill.uncheckedCast(ByName.randomId());
         if (ByPoiName.class.isAssignableFrom(type)) return Polyfill.uncheckedCast(ByPoiName.randomId());

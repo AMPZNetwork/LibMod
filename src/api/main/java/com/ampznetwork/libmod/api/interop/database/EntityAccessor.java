@@ -9,10 +9,13 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 public interface EntityAccessor<Key, It extends DbObject<Key>, Builder extends DbObject.Builder<Key, It, Builder>> {
     EntityManager getManager();
+
+    IEntityService getService();
 
     Class<It> getEntityType();
 
@@ -32,7 +35,24 @@ public interface EntityAccessor<Key, It extends DbObject<Key>, Builder extends D
 
     Optional<It> get(Key key);
 
+    default GetOrCreate<It, Builder> create() {
+        Key          id;
+        Optional<It> result;
+        do {
+            result = get(id = DbObject.randomId(getEntityType()));
+        } while (result.isPresent());
+        return getOrCreate(id).setGet(null);
+    }
+
     GetOrCreate<It, Builder> getOrCreate(Key key);
+
+    default Optional<It> update(Key key, Consumer<It> modify) {
+        return get(key).filter(it -> {
+            modify.accept(it);
+            getService().save(it);
+            return true;
+        });
+    }
 
     void queryUpdate(Query query);
 }

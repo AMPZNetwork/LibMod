@@ -167,6 +167,10 @@ public class HibernateEntityService extends Container.Base implements IEntitySer
         });
         if (!(object instanceof NotifyEvent)) Polyfill.<Cache<UUID, DbObject>>uncheckedCast(EntityType.REGISTRY.get(object.getDtype()).getCache())
                 .push(persistent);
+        if (messagingService != null && object.getId() instanceof UUID uuid)
+            messagingService.push().complete(bld -> bld
+                    .relatedId(uuid)
+                    .relatedType(Polyfill.uncheckedCast(object.getEntityType())));
         return persistent;
     }
 
@@ -255,6 +259,11 @@ public class HibernateEntityService extends Container.Base implements IEntitySer
         @Override
         public EntityManager getManager() {
             return manager;
+        }
+
+        @Override
+        public IEntityService getService() {
+            return HibernateEntityService.this;
         }
 
         @Override

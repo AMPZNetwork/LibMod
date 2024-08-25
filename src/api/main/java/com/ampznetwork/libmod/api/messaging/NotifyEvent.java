@@ -6,13 +6,13 @@ import com.ampznetwork.libmod.api.model.convert.EntityTypeConverter;
 import com.ampznetwork.libmod.api.model.convert.UuidBinary16Converter;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.FieldDefaults;
+import lombok.experimental.SuperBuilder;
 import org.comroid.api.attr.Named;
 import org.comroid.api.data.seri.DataNode;
 import org.jetbrains.annotations.ApiStatus;
@@ -34,7 +34,7 @@ import java.util.function.Predicate;
 
 @Data
 @Entity
-@Builder
+@SuperBuilder
 @ApiStatus.Internal
 @AllArgsConstructor
 @RequiredArgsConstructor
