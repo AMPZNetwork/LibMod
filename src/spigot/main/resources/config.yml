@@ -5,7 +5,7 @@ database:
   username: sa
   password:
 
-# messaging service for cross-server
+# messaging service for cross-server synchronization
 messaging-service:
   type: none # 'none', 'polling-db' or 'rabbit-mq'
 

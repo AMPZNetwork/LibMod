@@ -24,11 +24,11 @@ import static org.comroid.api.net.REST.Method.*;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "libmod_players")
-public class Player extends DbObject.ByUuid {
-    public static final EntityType<UUID, Player, Builder> TYPE
+@Table(name = "playerdata")
+public class Player extends DbObject {
+    public static final EntityType<Player, Builder> TYPE
             = new EntityType<>(Player::builder, null, Player.class, Builder.class);
-    public static       BiConsumer<UUID, String>          CACHE_NAME = null;
+    public static       BiConsumer<UUID, String>    CACHE_NAME = null;
 
     public static CompletableFuture<UUID> fetchId(String name) {
         var future = REST.get("https://api.mojang.com/users/profiles/minecraft/" + name)

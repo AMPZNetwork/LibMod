@@ -12,7 +12,7 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
-public interface EntityAccessor<Key, It extends DbObject<Key>, Builder extends DbObject.Builder<Key, It, Builder>> {
+public interface EntityAccessor<Key, It extends DbObject, Builder extends DbObject.Builder<Key, It, Builder>> {
     EntityManager getManager();
 
     IEntityService getService();

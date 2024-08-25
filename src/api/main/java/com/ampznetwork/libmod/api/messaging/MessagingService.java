@@ -23,7 +23,7 @@ public interface MessagingService {
 
     AlmostComplete<NotifyEvent.Builder> push();
 
-    Event.Bus<DbObject<?>> getSyncEventBus();
+    Event.Bus<DbObject> getSyncEventBus();
 
     interface Config {
         boolean inheritDatasource();

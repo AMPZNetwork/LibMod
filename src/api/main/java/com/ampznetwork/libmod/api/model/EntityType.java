@@ -9,28 +9,29 @@ import java.lang.ref.WeakReference;
 import java.util.Comparator;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 
 @Value
-public class EntityType<ID, Entity extends DbObject<ID>, Builder> {
-    public static final Map<String, EntityType<?, ?, ?>> REGISTRY = new ConcurrentHashMap<>();
+public class EntityType<Entity extends DbObject, Builder> {
+    public static final Map<String, EntityType<?, ?>> REGISTRY = new ConcurrentHashMap<>();
 
-    public static <ID, T extends DbObject<ID>> Optional<EntityType<ID, T, ?>> find(Class<? extends T> type) {
+    public static <T extends DbObject> Optional<EntityType<T, ?>> find(Class<? extends T> type) {
         return REGISTRY.values().stream()
-                .sorted(Comparator.<EntityType<?, ?, ?>>comparingInt(EntityType::getImplementationDepth).reversed())
+                .sorted(Comparator.<EntityType<?, ?>>comparingInt(EntityType::getImplementationDepth).reversed())
                 .filter(it -> type.isAssignableFrom(it.entityType))
                 .findFirst()
                 .map(Polyfill::uncheckedCast);
     }
 
-    Cache<ID, Entity>    cache;
-    Supplier<Builder>    builder;
-    EntityType<ID, ?, ?> parent;
-    Class<Entity>        entityType;
+    Cache<UUID, Entity> cache;
+    Supplier<Builder>   builder;
+    EntityType<?, ?>    parent;
+    Class<Entity>       entityType;
     Class<Builder> builderType;
 
-    public EntityType(Supplier<Builder> builder, EntityType<ID, ?, ?> parent, Class<Entity> entityType, Class<Builder> builderType) {
+    public EntityType(Supplier<Builder> builder, EntityType<?, ?> parent, Class<Entity> entityType, Class<Builder> builderType) {
         this.cache       = new Cache<>(DbObject::getId, (id, it) -> {}, WeakReference::new);
         this.builder     = builder;
         this.parent      = parent;

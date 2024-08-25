@@ -148,12 +148,12 @@ public class HibernateEntityService extends Container.Base implements IEntitySer
     }
 
     @Override
-    public <K, T extends DbObject<K>, B extends DbObject.Builder<K, T, B>> EntityAccessor<K, T, B> getAccessor(EntityType<K, T, B> type) {
+    public <K, T extends DbObject, B extends DbObject.Builder<K, T, B>> EntityAccessor<K, T, B> getAccessor(EntityType<T, B> type) {
         return null;
     }
 
     @Override
-    public <T extends DbObject<?>> T save(T object) {
+    public <T extends DbObject> T save(T object) {
         var persistent = wrapTransaction(() -> {
             if (manager.contains(object)) try {
                 manager.persist(object);
@@ -175,12 +175,12 @@ public class HibernateEntityService extends Container.Base implements IEntitySer
     }
 
     @Override
-    public void refresh(EntityType<UUID, ?, ?> type, UUID... ids) {
+    public void refresh(EntityType<?, ?> type, UUID... ids) {
         // todo
     }
 
     @Override
-    public <K> void uncache(K id, @Nullable DbObject<K> obj) {
+    public <K> void uncache(K id, @Nullable DbObject obj) {
     }
 
     @Override
@@ -253,8 +253,8 @@ public class HibernateEntityService extends Container.Base implements IEntitySer
     }
 
     @Value
-    private class EntityContainer<K, T extends DbObject<K>, B extends DbObject.Builder<K, T, B>> implements EntityAccessor<K, T, B> {
-        @lombok.experimental.Delegate EntityType<K, T, B> type;
+    private class EntityContainer<K, T extends DbObject, B extends DbObject.Builder<K, T, B>> implements EntityAccessor<K, T, B> {
+        @lombok.experimental.Delegate EntityType<T, B> type;
 
         @Override
         public EntityManager getManager() {

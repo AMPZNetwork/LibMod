@@ -43,23 +43,23 @@ import java.util.function.Predicate;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @EqualsAndHashCode(of = { "timestamp" }, callSuper = true)
 @ToString(of = { "type", "timestamp", "relatedId", "relatedType" })
-public final class NotifyEvent extends DbObject<BigInteger> implements DataNode {
-    public static final                               EntityType<BigInteger, NotifyEvent, NotifyEvent.Builder> TYPE
-                                                                                                                           = new EntityType<>(NotifyEvent::builder,
+public final class NotifyEvent extends DbObject implements DataNode {
+    public static final         EntityType<NotifyEvent, Builder> TYPE
+                                                                           = new EntityType<>(NotifyEvent::builder,
             null,
             NotifyEvent.class,
             NotifyEvent.Builder.class);
-    @Id @lombok.Builder.Default                       Instant                                                  timestamp   = Instant.now();
-    @lombok.Builder.Default Type type = Type.SYNC;
-    @lombok.Builder.Default @Nullable
-    @Convert(converter = UuidBinary16Converter.class) UUID                                                     relatedId   = null;
-    @lombok.Builder.Default @Nullable
-    @Convert(converter = EntityTypeConverter.class)   EntityType<UUID, ?, ?>                                   relatedType = null;
-    @lombok.Builder.Default
-    @Column(columnDefinition = "bigint")              BigInteger                                               acknowledge = BigInteger.valueOf(0);
+    @Id @lombok.Builder.Default Instant                          timestamp = Instant.now();
+    @lombok.Builder.Default     Type                             type      = Type.SYNC;
+    @lombok.Builder.Default @Nullable @Convert(converter = UuidBinary16Converter.class)
+    UUID             relatedId   = null;
+    @lombok.Builder.Default @Nullable @Convert(converter = EntityTypeConverter.class)
+    EntityType<?, ?> relatedType = null;
+    @lombok.Builder.Default @Column(columnDefinition = "bigint")
+    BigInteger       acknowledge = BigInteger.valueOf(0);
 
     @Getter
-    public enum Type implements Named, Predicate<EntityType<?, ?, ?>> {
+    public enum Type implements Named, Predicate<EntityType<?, ?>> {
         /**
          * sent immediately after connecting for the first time, together with an {@code ident} value
          */
@@ -72,14 +72,14 @@ public final class NotifyEvent extends DbObject<BigInteger> implements DataNode 
 
         @SuppressWarnings("rawtypes") private final Set<EntityType> allowedTypes;
 
-        Type(Collection<EntityType<?, ?, ?>> allowedTypes) {this(allowedTypes.toArray(new EntityType[0]));}
+        Type(Collection<EntityType<?, ?>> allowedTypes) {this(allowedTypes.toArray(new EntityType[0]));}
 
         Type(@SuppressWarnings("rawtypes") EntityType... allowedTypes) {
             this.allowedTypes = Set.of(allowedTypes);
         }
 
         @Override
-        public boolean test(EntityType<?, ?, ?> entityType) {
+        public boolean test(EntityType<?, ?> entityType) {
             return allowedTypes.contains(entityType);
         }
     }

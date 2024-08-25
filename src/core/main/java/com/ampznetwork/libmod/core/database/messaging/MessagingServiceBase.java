@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit;
 @NonFinal
 public abstract class MessagingServiceBase<Entities extends IEntityService> extends Component.Base implements MessagingService {
     protected Entities entities;
-    Event.Bus<DbObject<?>> syncEventBus = new Event.Bus<>();
+    Event.Bus<DbObject> syncEventBus = new Event.Bus<>();
     protected @NonFinal BigInteger ident;
 
     public MessagingServiceBase(Entities entities, Duration interval) {
