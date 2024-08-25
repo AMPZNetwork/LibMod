@@ -148,8 +148,8 @@ public class HibernateEntityService extends Container.Base implements IEntitySer
     }
 
     @Override
-    public <K, T extends DbObject, B extends DbObject.Builder<K, T, B>> EntityAccessor<K, T, B> getAccessor(EntityType<T, B> type) {
-        return null;
+    public <T extends DbObject, B extends DbObject.Builder<T, B>> EntityAccessor<T, B> getAccessor(EntityType<T, B> type) {
+        //todo
     }
 
     @Override
@@ -253,7 +253,7 @@ public class HibernateEntityService extends Container.Base implements IEntitySer
     }
 
     @Value
-    private class EntityContainer<K, T extends DbObject, B extends DbObject.Builder<K, T, B>> implements EntityAccessor<K, T, B> {
+    private class EntityContainer<K, T extends DbObject, B extends DbObject.Builder<K, T, B>> implements EntityAccessor<T, B> {
         @lombok.experimental.Delegate EntityType<T, B> type;
 
         @Override

@@ -9,17 +9,39 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
-public interface EntityAccessor<Key, It extends DbObject, Builder extends DbObject.Builder<Key, It, Builder>> {
-    EntityManager getManager();
-
+public interface EntityAccessor<It extends DbObject, Builder extends DbObject.Builder<It, Builder>> extends QueryOps<UUID, It, Builder> {
     IEntityService getService();
+
+    EntityManager getManager();
 
     Class<It> getEntityType();
 
-    Stream<It> all();
+    //@Language(value = "SQL",prefix = "select x.* from libmod_player x where x.",suffix = " = :key")
+    Stream<It> querySelect(Query query);
+
+    void queryUpdate(Query query);
+
+    default Optional<It> update(UUID key, Consumer<It> modify) {
+        return get(key).filter(it -> {
+            modify.accept(it);
+            getService().save(it);
+            return true;
+        });
+    }
+
+    default GetOrCreate<It, Builder> create() {
+        UUID         id;
+        Optional<It> result;
+        do {
+            result = get(id = UUID.randomUUID());
+        } while (result.isPresent());
+        return getOrCreate(id).setGet(null);
+    }
 
     default Stream<It> querySelect(@Language("SQL") String query) {return querySelect(query, null);}
 
@@ -31,28 +53,23 @@ public interface EntityAccessor<Key, It extends DbObject, Builder extends DbObje
         return querySelect(q);
     }
 
-    Stream<It> querySelect(Query query);
+    default <Key> QueryOps<Key, It, Builder> by(final Function<It, Key> keyFunction) {
+        return new QueryOps<>() {
+            @Override
+            public Stream<It> all() {
+                return EntityAccessor.this.all();
+            }
 
-    Optional<It> get(Key key);
+            @Override
+            public Optional<It> get(Key key) {
+                return all().filter(it -> keyFunction.apply(it).equals(key)).findFirst();
+            }
 
-    default GetOrCreate<It, Builder> create() {
-        Key          id;
-        Optional<It> result;
-        do {
-            result = get(id = DbObject.randomId(getEntityType()));
-        } while (result.isPresent());
-        return getOrCreate(id).setGet(null);
+            @Override
+            public GetOrCreate<It, Builder> getOrCreate(Key key) {
+                return EntityAccessor.this.getOrCreate(UUID.randomUUID())
+                        .setGet(() -> get(key).orElse(null));
+            }
+        };
     }
-
-    GetOrCreate<It, Builder> getOrCreate(Key key);
-
-    default Optional<It> update(Key key, Consumer<It> modify) {
-        return get(key).filter(it -> {
-            modify.accept(it);
-            getService().save(it);
-            return true;
-        });
-    }
-
-    void queryUpdate(Query query);
 }
