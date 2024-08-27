@@ -21,6 +21,8 @@ public interface SubMod extends Specifiable<SubMod> {
 
     IEntityService getEntityService() throws UnsupportedOperationException;
 
+    void executeSync(Runnable task);
+
     default boolean hasCapability(Capability capability) {
         return getCapabilities().contains(capability);
     }

@@ -16,11 +16,14 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
 @Value
 public class LibMod$Spigot extends SubMod$Spigot implements LibMod {
-    List<SubMod>        registeredSubMods = new ArrayList<>();
-    SpigotPlayerAdapter playerAdapter     = new SpigotPlayerAdapter(this);
+    List<SubMod>             registeredSubMods = new ArrayList<>();
+    SpigotPlayerAdapter      playerAdapter     = new SpigotPlayerAdapter(this);
+    ScheduledExecutorService scheduler         = Executors.newScheduledThreadPool(4);
 
     public LibMod$Spigot() {
         super(Set.of(Capability.Database), Set.of(Player.class));

@@ -2,12 +2,12 @@ package com.ampznetwork.libmod.api.util;
 
 import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.SneakyThrows;
 import lombok.experimental.FieldDefaults;
 import org.comroid.api.Polyfill;
 import org.comroid.api.text.Capitalization;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.Collection;
@@ -34,7 +34,6 @@ public enum NameGenerator implements IntFunction<String>, Function<Capitalizatio
     List<Set<String>> nameLists;
     Random            rng = new Random();
 
-    @SneakyThrows
     NameGenerator(int defaultLength, String... nameListResourceUrls) {
         this.defaultLength = defaultLength;
         this.nameLists     = Arrays.stream(nameListResourceUrls)
@@ -46,6 +45,8 @@ public enum NameGenerator implements IntFunction<String>, Function<Capitalizatio
                             var br = new BufferedReader(isr)
                     ) {
                         return br.lines().collect(Collectors.toSet());
+                    } catch (IOException e) {
+                        throw new RuntimeException("Unable to load words", e);
                     }
                 })
                 .collect(Collectors.toList());

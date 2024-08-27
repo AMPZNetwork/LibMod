@@ -21,9 +21,9 @@ import org.jetbrains.annotations.Nullable;
 import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import java.io.Serializable;
 import java.math.BigInteger;
 import java.time.Instant;
@@ -38,19 +38,20 @@ import java.util.function.Predicate;
 @ApiStatus.Internal
 @AllArgsConstructor
 @RequiredArgsConstructor
-@Table(name = "banmod_notify")
 @IdClass(NotifyEvent.CompositeKey.class)
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @EqualsAndHashCode(of = { "timestamp" }, callSuper = true)
 @ToString(of = { "type", "timestamp", "relatedId", "relatedType" })
+@Table(name = "messaging", uniqueConstraints = @UniqueConstraint(columnNames = {"ident","timestamp"}))
 public final class NotifyEvent extends DbObject implements DataNode {
-    public static final         EntityType<NotifyEvent, Builder> TYPE
-                                                                           = new EntityType<>(NotifyEvent::builder,
+    public static final EntityType<NotifyEvent, Builder> TYPE
+            = new EntityType<>(NotifyEvent::builder,
             null,
             NotifyEvent.class,
             NotifyEvent.Builder.class);
-    @Id @lombok.Builder.Default Instant                          timestamp = Instant.now();
-    @lombok.Builder.Default     Type                             type      = Type.SYNC;
+    BigInteger ident;
+    @lombok.Builder.Default Instant timestamp = Instant.now();
+    @lombok.Builder.Default Type    type      = Type.SYNC;
     @lombok.Builder.Default @Nullable @Convert(converter = UuidBinary16Converter.class)
     UUID             relatedId   = null;
     @lombok.Builder.Default @Nullable @Convert(converter = EntityTypeConverter.class)
@@ -90,3 +91,4 @@ public final class NotifyEvent extends DbObject implements DataNode {
         Instant    timestamp;
     }
 }
+

@@ -7,6 +7,7 @@ import com.ampznetwork.libmod.api.messaging.NotifyEvent;
 import lombok.Value;
 import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
+import org.comroid.api.Polyfill;
 import org.comroid.api.func.util.AlmostComplete;
 import org.comroid.api.func.util.Debug;
 import org.comroid.api.func.util.Event;
@@ -27,12 +28,12 @@ public abstract class MessagingServiceBase<Entities extends IEntityService> exte
     public MessagingServiceBase(Entities entities, Duration interval) {
         this.entities = entities;
 
-        entities.getScheduler()
+        entities.getLib().getScheduler()
                 .scheduleWithFixedDelay(() -> {
                             try {
                                 dispatch(pollNotifier());
                             } catch (Throwable t) {
-                                Debug.log(entities.getBanMod().log(), "An error occurred during event dispatch", t);
+                                Debug.log(log, "An error occurred during event dispatch", t);
                             }
                         },
                         interval.toMillis(),
@@ -47,23 +48,25 @@ public abstract class MessagingServiceBase<Entities extends IEntityService> exte
     @Override
     public final AlmostComplete<NotifyEvent.Builder> push() {
         return new AlmostComplete<>(NotifyEvent::builder, builder -> {
-            builder.id(ident);
+            builder.ident(ident);
             var event = builder.build();
             var relatedType = event.getRelatedType();
             var eventType   = event.getType();
             if (relatedType != null && !eventType.test(relatedType))
                 throw new IllegalArgumentException("%s event does not allow %s payloads".formatted(eventType, relatedType));
             var relatedId = event.getRelatedId();
-            syncEventBus.accept(entities.getAccessor(relatedType).get(relatedId).orElse(null), SYNC_INBOUND);
+            syncEventBus.accept(entities.getAccessor(Polyfill.uncheckedCast(relatedType)).get(relatedId).orElse(null), SYNC_INBOUND);
             push(event);
         });
     }
 
     private void dispatch(NotifyEvent... events) {
         if (events.length == 0) return;
-        if (events.length > 1)
+        if (events.length > 1) {
             for (var event : events)
                 dispatch(event);
+            return;
+        }
         var event = events[0];
 
         // nothing to do for HELLO
@@ -86,6 +89,6 @@ public abstract class MessagingServiceBase<Entities extends IEntityService> exte
 
         // handle SYNC
         entities.refresh(relatedType, relatedId);
-        syncEventBus.accept(entities.getAccessor(relatedType).get(relatedId).orElse(null), SYNC_INBOUND);
+        syncEventBus.accept(entities.getAccessor(Polyfill.uncheckedCast(relatedType)).get(relatedId).orElse(null), SYNC_INBOUND);
     }
 }

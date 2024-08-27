@@ -1,5 +1,6 @@
 package com.ampznetwork.libmod.api.interop.database;
 
+import com.ampznetwork.libmod.api.LibMod;
 import com.ampznetwork.libmod.api.entity.DbObject;
 import com.ampznetwork.libmod.api.model.EntityType;
 import lombok.AccessLevel;
@@ -15,6 +16,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.UUID;
 
 public interface IEntityService {
+    LibMod getLib();
+
     <T extends DbObject, B extends DbObject.Builder<T, B>> EntityAccessor<T, B> getAccessor(EntityType<T, B> type);
 
     <T extends DbObject> T save(T object);

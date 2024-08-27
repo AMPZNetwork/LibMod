@@ -9,6 +9,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import org.comroid.annotations.Default;
 import org.comroid.api.text.Capitalization;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -36,8 +37,8 @@ public abstract class DbObject {
     @GeneratedValue(generator = "UUID") @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
     @Column(columnDefinition = "varchar(255)", updatable = false, nullable = false)
     protected UUID             id    = UUID.randomUUID();
-    @Basic @lombok.Builder.Default @Convert(converter = EntityTypeConverter.class)
-    protected EntityType<?, ?> dtype = EntityType.REGISTRY.get(getClass().getSimpleName());
+    @Basic @Convert(converter = EntityTypeConverter.class)
+    protected final EntityType<?, ?> dtype = EntityType.REGISTRY.get(getClass().getSimpleName());
 
     @Data
     @Entity
@@ -46,7 +47,7 @@ public abstract class DbObject {
     @AllArgsConstructor
     @Table(uniqueConstraints = @UniqueConstraint(columnNames = "name"))
     public static abstract class WithName extends DbObject {
-        private @Basic String name = NameGenerator.NOUNS.apply(Capitalization.lower_snake_case);
+        private @Basic @Default String name = NameGenerator.NOUNS.apply(Capitalization.lower_snake_case);
     }
 
     @Data
@@ -56,6 +57,6 @@ public abstract class DbObject {
     @AllArgsConstructor
     @Table(uniqueConstraints = @UniqueConstraint(columnNames = "name"))
     public static abstract class WithPoiName extends DbObject {
-        private @Basic String name = NameGenerator.POI.get();
+        private @Basic @Default String name = NameGenerator.POI.get();
     }
 }

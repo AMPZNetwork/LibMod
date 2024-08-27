@@ -37,6 +37,7 @@ import java.sql.Connection;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -110,6 +111,7 @@ public class HibernateEntityService extends Container.Base implements IEntitySer
     EntityManager            manager;
     ScheduledExecutorService scheduler;
     @Nullable MessagingService messagingService;
+    Map<String, EntityContainer<?, ?>> accessors = new ConcurrentHashMap<>();
 
     @ApiStatus.Experimental
     public HibernateEntityService(LibMod lib) {
@@ -149,7 +151,7 @@ public class HibernateEntityService extends Container.Base implements IEntitySer
 
     @Override
     public <T extends DbObject, B extends DbObject.Builder<T, B>> EntityAccessor<T, B> getAccessor(EntityType<T, B> type) {
-        //todo
+        return uncheckedCast(accessors.computeIfAbsent(type.getDtype(), k -> new EntityContainer<>(type)));
     }
 
     @Override
@@ -167,10 +169,10 @@ public class HibernateEntityService extends Container.Base implements IEntitySer
         });
         if (!(object instanceof NotifyEvent)) Polyfill.<Cache<UUID, DbObject>>uncheckedCast(EntityType.REGISTRY.get(object.getDtype()).getCache())
                 .push(persistent);
-        if (messagingService != null && object.getId() instanceof UUID uuid)
+        if (messagingService != null)
             messagingService.push().complete(bld -> bld
-                    .relatedId(uuid)
-                    .relatedType(Polyfill.uncheckedCast(object.getEntityType())));
+                    .relatedId(object.getId())
+                    .relatedType(Polyfill.uncheckedCast(object.getDtype())));
         return persistent;
     }
 
@@ -180,7 +182,7 @@ public class HibernateEntityService extends Container.Base implements IEntitySer
     }
 
     @Override
-    public <K> void uncache(K id, @Nullable DbObject obj) {
+    public void uncache(UUID id, @Nullable DbObject obj) {
     }
 
     @Override
@@ -253,7 +255,7 @@ public class HibernateEntityService extends Container.Base implements IEntitySer
     }
 
     @Value
-    private class EntityContainer<K, T extends DbObject, B extends DbObject.Builder<K, T, B>> implements EntityAccessor<T, B> {
+    private class EntityContainer<T extends DbObject, B extends DbObject.Builder<T, B>> implements EntityAccessor<T, B> {
         @lombok.experimental.Delegate EntityType<T, B> type;
 
         @Override
@@ -277,7 +279,7 @@ public class HibernateEntityService extends Container.Base implements IEntitySer
         }
 
         @Override
-        public Optional<T> get(K id) {
+        public Optional<T> get(UUID id) {
             return type.getCache()
                     .wrap(id)
                     .stream()
@@ -290,7 +292,7 @@ public class HibernateEntityService extends Container.Base implements IEntitySer
         }
 
         @Override
-        public GetOrCreate<T, B> getOrCreate(K key) {
+        public GetOrCreate<T, B> getOrCreate(UUID key) {
             return new GetOrCreate<>(() -> get(key).orElse(null),
                     () -> type.builder().id(key),
                     DbObject.Builder::build,
@@ -300,10 +302,10 @@ public class HibernateEntityService extends Container.Base implements IEntitySer
                         type.getCache().push(it);
 
                         // push to messaging service
-                        if (it.getId() instanceof UUID uuid && messagingService != null)
+                        if (messagingService != null)
                             messagingService.push()
-                                    .complete(notif -> notif.relatedId(uuid)
-                                            .relatedType(Polyfill.uncheckedCast(it.getEntityType())));
+                                    .complete(notif -> notif.relatedId(it.getId())
+                                            .relatedType(Polyfill.uncheckedCast(it.getDtype())));
                     });
         }
 

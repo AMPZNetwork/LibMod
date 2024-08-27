@@ -6,6 +6,7 @@ import com.ampznetwork.libmod.core.database.hibernate.HibernateEntityService;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
 import lombok.experimental.NonFinal;
+import org.bukkit.Bukkit;
 
 import java.util.Set;
 
@@ -38,5 +39,10 @@ public abstract class SubMod$Spigot extends SpigotPluginBase implements SubMod {
         super.onEnable();
 
         this.entityService = new HibernateEntityService(lib, this);
+    }
+
+    @Override
+    public final void executeSync(Runnable task) {
+        Bukkit.getScheduler().runTask(this, task);
     }
 }

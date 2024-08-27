@@ -1,6 +1,5 @@
 package com.ampznetwork.libmod.fabric;
 
-import com.ampznetwork.libmod.api.LibMod;
 import com.ampznetwork.libmod.api.SubMod;
 import com.ampznetwork.libmod.api.entity.DbObject;
 import com.ampznetwork.libmod.api.interop.database.IEntityService;
@@ -20,7 +19,7 @@ public abstract class SubMod$Fabric extends FabricModBase implements SubMod {
     Set<Capability>                capabilities;
     Set<Class<? extends DbObject>> entityTypes;
     @NonFinal           HibernateEntityService entityService;
-    @NonFinal protected LibMod                 lib;
+    @NonFinal protected LibMod$Fabric          lib;
 
     @Override
     public IEntityService getEntityService() {
@@ -31,8 +30,16 @@ public abstract class SubMod$Fabric extends FabricModBase implements SubMod {
 
     @Override
     public void onInitialize() {
+        lib = LibMod$Fabric.INSTANCE;
+        lib.register(this);
+
         super.onInitialize();
 
         this.entityService = new HibernateEntityService(lib, this);
+    }
+
+    @Override
+    public final void executeSync(Runnable task) {
+        lib.getTicker().getQueue().add(task);
     }
 }

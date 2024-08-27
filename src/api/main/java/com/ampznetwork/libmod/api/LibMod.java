@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
 import java.util.Collection;
+import java.util.concurrent.ScheduledExecutorService;
 
 public interface LibMod extends SubMod, MessagingService.Type.Provider {
     Collection<SubMod> getRegisteredSubMods();
@@ -16,6 +17,8 @@ public interface LibMod extends SubMod, MessagingService.Type.Provider {
     DatabaseInfo getDatabaseInfo();
 
     IPlayerAdapter getPlayerAdapter();
+
+    ScheduledExecutorService getScheduler();
 
     @Override
     default Class<?> getModuleType() {

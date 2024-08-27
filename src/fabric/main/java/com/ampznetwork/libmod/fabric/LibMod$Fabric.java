@@ -7,6 +7,7 @@ import com.ampznetwork.libmod.api.model.info.DatabaseInfo;
 import com.ampznetwork.libmod.fabric.adp.FabricPlayerAdapter;
 import com.ampznetwork.libmod.fabric.config.Config;
 import com.ampznetwork.libmod.fabric.config.LibModConfig;
+import com.ampznetwork.libmod.fabric.ticker.TickerEntity;
 import com.google.gson.JsonParseException;
 import com.mojang.serialization.JsonOps;
 import lombok.Value;
@@ -23,20 +24,25 @@ import org.comroid.api.Polyfill;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
 @Value
-public class LibMod$Fabric extends SubMod$Fabric implements LibMod, ModInitializer, ServerLifecycleEvents.ServerStarting {
-    public static LibMod INSTANCE;
+public class LibMod$Fabric extends SubMod$Fabric implements LibMod, ModInitializer,
+        ServerLifecycleEvents.ServerStarting, ServerLifecycleEvents.ServerStarted {
+    public static LibMod$Fabric INSTANCE;
 
     public static Text component2text(Component component) {
         var json = GsonComponentSerializer.gson().serializeToTree(component);
         return TextCodecs.STRINGIFIED_CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(JsonParseException::new);
     }
 
-    List<SubMod>        registeredSubMods = new ArrayList<>();
-    FabricPlayerAdapter playerAdapter = new FabricPlayerAdapter(this);
-    LibModConfig        config        = Config.createAndLoad(LibModConfig.class);
+    List<SubMod>             registeredSubMods = new ArrayList<>();
+    FabricPlayerAdapter      playerAdapter     = new FabricPlayerAdapter(this);
+    LibModConfig             config            = Config.createAndLoad(LibModConfig.class);
+    ScheduledExecutorService scheduler         = Executors.newScheduledThreadPool(4);
     @NonFinal MinecraftServer server;
+    @NonFinal TickerEntity    ticker;
 
     {
         INSTANCE = this;
@@ -82,5 +88,11 @@ public class LibMod$Fabric extends SubMod$Fabric implements LibMod, ModInitializ
     @Override
     public void onServerStarting(MinecraftServer server) {
         this.server = server;
+    }
+
+    @Override
+    public void onServerStarted(MinecraftServer server) {
+        this.ticker = new TickerEntity();
+        server.getOverworld().spawnEntity(ticker);
     }
 }

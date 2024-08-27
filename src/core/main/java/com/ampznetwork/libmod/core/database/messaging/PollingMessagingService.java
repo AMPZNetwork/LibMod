@@ -4,6 +4,7 @@ import com.ampznetwork.libmod.api.messaging.MessagingService;
 import com.ampznetwork.libmod.api.messaging.NotifyEvent;
 import com.ampznetwork.libmod.core.database.hibernate.HibernateEntityService;
 import lombok.Value;
+import lombok.extern.slf4j.Slf4j;
 import org.comroid.api.Polyfill;
 import org.comroid.api.func.util.Debug;
 import org.comroid.api.func.util.Stopwatch;
@@ -20,6 +21,7 @@ import java.util.Random;
 import java.util.stream.Stream;
 
 @Value
+@Slf4j
 public class PollingMessagingService extends MessagingServiceBase<HibernateEntityService> implements MessagingService.PollingDatabase {
     public static final Duration EventExpireTime = Duration.ofHours(1);
     EntityManager manager;
@@ -104,9 +106,7 @@ public class PollingMessagingService extends MessagingServiceBase<HibernateEntit
                         .setParameter("timestamp", event.getTimestamp())
                         .executeUpdate();
                 if (ack != 1) {
-                    entities.getMod()
-                            .log()
-                            .warn("Failed to acknowledge notification {}; ignoring it", event);
+                    log.warn("Failed to acknowledge notification {}; ignoring it", event);
                     handle.remove(event);
                 }
             }
@@ -116,7 +116,7 @@ public class PollingMessagingService extends MessagingServiceBase<HibernateEntit
         var duration = stopwatch.stop();
         if (!Debug.isDebug() && events.length == 0)
             return events;
-        Debug.log(entities.getMod().log(), "Accepting %d events took %sms".formatted(events.length, duration.toMillis()));
+        Debug.log(log, "Accepting %d events took %sms".formatted(events.length, duration.toMillis()));
 
         return events;
     }
