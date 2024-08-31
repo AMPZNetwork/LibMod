@@ -293,7 +293,7 @@ public class HibernateEntityService extends Container.Base implements IEntitySer
 
         @Override
         public GetOrCreate<T, B> getOrCreate(UUID key) {
-            return new GetOrCreate<>(() -> get(key).orElse(null),
+            return new GetOrCreate<>(key == null ? () -> null : () -> get(key).orElse(null),
                     () -> type.builder().id(key),
                     DbObject.Builder::build,
                     HibernateEntityService.this::save)

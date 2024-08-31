@@ -11,7 +11,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.stream.Stream;
 
 public interface EntityAccessor<It extends DbObject, Builder extends DbObject.Builder<It, Builder>> extends QueryOps<UUID, It, Builder> {
@@ -51,25 +50,5 @@ public interface EntityAccessor<It extends DbObject, Builder extends DbObject.Bu
         if (parameters != null)
             parameters.forEach(q::setParameter);
         return querySelect(q);
-    }
-
-    default <Key> QueryOps<Key, It, Builder> by(final Function<It, Key> keyFunction) {
-        return new QueryOps<>() {
-            @Override
-            public Stream<It> all() {
-                return EntityAccessor.this.all();
-            }
-
-            @Override
-            public Optional<It> get(Key key) {
-                return all().filter(it -> keyFunction.apply(it).equals(key)).findFirst();
-            }
-
-            @Override
-            public GetOrCreate<It, Builder> getOrCreate(Key key) {
-                return EntityAccessor.this.getOrCreate(UUID.randomUUID())
-                        .setGet(() -> get(key).orElse(null));
-            }
-        };
     }
 }
