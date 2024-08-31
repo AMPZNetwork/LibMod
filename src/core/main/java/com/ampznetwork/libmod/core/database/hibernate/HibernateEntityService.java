@@ -178,11 +178,17 @@ public class HibernateEntityService extends Container.Base implements IEntitySer
 
     @Override
     public void refresh(EntityType<?, ?> type, UUID... ids) {
-        // todo
+        for (UUID id : ids) {
+            DbObject dbObject = type.getCache().get(id);
+            if (dbObject != null)
+                manager.refresh(dbObject);
+        }
     }
 
     @Override
     public void uncache(UUID id, @Nullable DbObject obj) {
+        if (obj != null)
+            obj.getDtype().getCache().remove(id);
     }
 
     @Override
