@@ -12,6 +12,6 @@ public abstract class FabricModBase implements ModInitializer {
 
     @Override
     public void onInitialize() {
-        adp.initialize();
+        cmdr.initialize();
     }
 }

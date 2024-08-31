@@ -78,7 +78,8 @@ public class HibernateEntityService extends Container.Base implements IEntitySer
     }
 
     public static Unit buildPersistenceUnit(
-            DatabaseInfo info, Function<HikariDataSource, PersistenceUnitInfo> unitProvider,
+            DatabaseInfo info,
+            Function<HikariDataSource, PersistenceUnitInfo> unitProvider,
             @MagicConstant(stringValues = { "update", "validate" }) String hbm2ddl
     ) {
         var config = Map.of("hibernate.connection.driver_class",
@@ -150,8 +151,8 @@ public class HibernateEntityService extends Container.Base implements IEntitySer
     }
 
     @Override
-    public <T extends DbObject, B extends DbObject.Builder<T, B>> EntityAccessor<T, B> getAccessor(EntityType<T, B> type) {
-        return uncheckedCast(accessors.computeIfAbsent(type.getDtype(), k -> new EntityContainer<>(type)));
+    public <T extends DbObject, B extends DbObject.Builder<T, B>> EntityAccessor<T, B> getAccessor(EntityType<T, ? super B> type) {
+        return uncheckedCast(accessors.computeIfAbsent(type.getDtype(), k -> new EntityContainer<>(uncheckedCast(type))));
     }
 
     @Override

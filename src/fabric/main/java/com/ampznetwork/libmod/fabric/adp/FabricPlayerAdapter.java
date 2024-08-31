@@ -4,11 +4,9 @@ import com.ampznetwork.libmod.api.adapter.BookAdapter;
 import com.ampznetwork.libmod.api.entity.Player;
 import com.ampznetwork.libmod.api.interop.game.IPlayerAdapter;
 import com.ampznetwork.libmod.fabric.LibMod$Fabric;
-import io.netty.buffer.Unpooled;
 import lombok.Value;
 import lombok.extern.log4j.Log4j2;
 import me.lucko.fabric.api.permissions.v0.Permissions;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.util.TriState;
 import net.minecraft.item.ItemStack;
@@ -16,9 +14,8 @@ import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.nbt.NbtString;
-import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.Identifier;
+import net.minecraft.util.Hand;
 import org.comroid.api.data.Vector;
 import org.comroid.api.func.util.Command;
 import org.comroid.api.net.REST;
@@ -136,13 +133,8 @@ public class FabricPlayerAdapter implements IPlayerAdapter {
                 .collect(NbtList::new, Collection::add, Collection::addAll);
 
         tag.put("pages", pages);
-        stack.setNbt(tag);
 
-        // Create a PacketByteBuf and write the stack item stack to it
-        PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
-        buf.writeItemStack(stack);
-
-        ServerPlayNetworking.send(plr, new Identifier("minecraft", "book_open"), buf);
+        plr.useBook(stack, Hand.MAIN_HAND);
     }
 
     @Override

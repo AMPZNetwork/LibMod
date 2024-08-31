@@ -23,6 +23,8 @@ public abstract class SubMod$Spigot extends SpigotPluginBase implements SubMod {
     public void onLoad() {
         super.onLoad();
 
+        saveDefaultConfig();
+
         this.lib = getPlugin(LibMod$Spigot.class);
         lib.register(this);
     }

@@ -26,7 +26,7 @@ import static org.comroid.api.net.REST.Method.*;
 @AllArgsConstructor
 @Table(name = "playerdata")
 public class Player extends DbObject {
-    public static final EntityType<Player, Builder> TYPE
+    public static final EntityType<Player, Builder<?, ?>> TYPE
             = new EntityType<>(Player::builder, null, Player.class, Builder.class);
     public static       BiConsumer<UUID, String>    CACHE_NAME = null;
 

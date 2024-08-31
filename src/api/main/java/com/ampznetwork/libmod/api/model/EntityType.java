@@ -31,12 +31,12 @@ public class EntityType<Entity extends DbObject, Builder> {
     Class<Entity>       entityType;
     Class<Builder> builderType;
 
-    public EntityType(Supplier<Builder> builder, EntityType<?, ?> parent, Class<Entity> entityType, Class<Builder> builderType) {
+    public EntityType(Supplier<? extends Builder> builder, EntityType<?, ?> parent, Class<Entity> entityType, Class<? extends Builder> builderType) {
         this.cache       = new Cache<>(DbObject::getId, (id, it) -> {}, WeakReference::new);
-        this.builder     = builder;
+        this.builder     = Polyfill.uncheckedCast(builder);
         this.parent      = parent;
         this.entityType  = entityType;
-        this.builderType = builderType;
+        this.builderType = Polyfill.uncheckedCast(builderType);
     }
 
     public String getDtype() {

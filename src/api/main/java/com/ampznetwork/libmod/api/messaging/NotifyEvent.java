@@ -44,7 +44,7 @@ import java.util.function.Predicate;
 @ToString(of = { "type", "timestamp", "relatedId", "relatedType" })
 @Table(name = "messaging", uniqueConstraints = @UniqueConstraint(columnNames = {"ident","timestamp"}))
 public final class NotifyEvent extends DbObject implements DataNode {
-    public static final EntityType<NotifyEvent, Builder> TYPE
+    public static final EntityType<NotifyEvent, Builder<?, ?>> TYPE
             = new EntityType<>(NotifyEvent::builder,
             null,
             NotifyEvent.class,
