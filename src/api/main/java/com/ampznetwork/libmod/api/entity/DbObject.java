@@ -1,7 +1,6 @@
 package com.ampznetwork.libmod.api.entity;
 
 import com.ampznetwork.libmod.api.model.EntityType;
-import com.ampznetwork.libmod.api.model.convert.EntityTypeConverter;
 import com.ampznetwork.libmod.api.model.convert.UuidVarchar36Converter;
 import com.ampznetwork.libmod.api.util.NameGenerator;
 import lombok.AllArgsConstructor;
@@ -22,6 +21,7 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 import java.util.UUID;
 
@@ -37,7 +37,7 @@ public abstract class DbObject {
     @GeneratedValue(generator = "UUID") @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
     @Column(columnDefinition = "varchar(255)", updatable = false, nullable = false)
     protected UUID             id    = UUID.randomUUID();
-    @Basic @Convert(converter = EntityTypeConverter.class)
+    @Transient
     protected final EntityType<?, ?> dtype = EntityType.REGISTRY.get(getClass().getSimpleName());
 
     @Data

@@ -25,7 +25,7 @@ import static org.comroid.api.net.REST.Method.*;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "playerdata")
+@Table(name = "players")
 public class Player extends DbObject {
     /*
     watch me literally not give a single fuck at this point.
