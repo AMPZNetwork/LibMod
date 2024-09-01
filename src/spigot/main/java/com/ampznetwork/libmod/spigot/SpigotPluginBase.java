@@ -7,7 +7,7 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.comroid.api.func.util.Command;
 
-public class SpigotPluginBase extends JavaPlugin {
+public abstract class SpigotPluginBase extends JavaPlugin {
     @Getter
     protected     Command.Manager                cmdr = new Command.Manager();
     @Delegate(types = { TabCompleter.class, CommandExecutor.class })
@@ -15,6 +15,8 @@ public class SpigotPluginBase extends JavaPlugin {
 
     @Override
     public void onLoad() {
+        cmdr.addChild(this);
+
         super.onLoad();
 
         cmdr.initialize();

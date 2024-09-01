@@ -9,13 +9,18 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+import org.comroid.api.func.util.Command;
+import org.comroid.api.func.util.Streams;
 
+import java.util.Objects;
 import java.util.Set;
+import java.util.UUID;
 
 @Getter
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PROTECTED, makeFinal = true)
-public abstract class SubMod$Spigot extends SpigotPluginBase implements SubMod {
+public abstract class SubMod$Spigot extends SpigotPluginBase implements SubMod, Command.PermissionChecker {
     protected           Set<Capability>                capabilities;
     protected           Set<Class<? extends DbObject>> entityTypes;
     protected @NonFinal LibMod$Spigot                  lib;
@@ -42,11 +47,24 @@ public abstract class SubMod$Spigot extends SpigotPluginBase implements SubMod {
     public void onEnable() {
         super.onEnable();
 
-        this.entityService = lib.getEntityService();
+        if (lib != null)
+            this.entityService = lib.getEntityService();
     }
 
     @Override
     public final void executeSync(Runnable task) {
         Bukkit.getScheduler().runTask(this, task);
+    }
+
+    @Override
+    public boolean userHasPermission(Command.Usage usage, Object key) {
+        var userId = usage.getContext().stream()
+                .flatMap(Streams.cast(UUID.class))
+                .findAny().orElseThrow();
+        return lib.getLuckPerms()
+                .getPlayerAdapter(Player.class)
+                .getPermissionData(Objects.requireNonNull(Bukkit.getPlayer(userId), "Unexpected state: Player is offline " + userId))
+                .checkPermission(key.toString())
+                .asBoolean();
     }
 }

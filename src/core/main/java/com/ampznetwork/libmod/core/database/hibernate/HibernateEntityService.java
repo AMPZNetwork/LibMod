@@ -292,9 +292,7 @@ public class HibernateEntityService extends Container.Base implements IEntitySer
                     .wrap(id)
                     .stream()
                     .map(Polyfill::<T>uncheckedCast)
-                    .collect(Streams.or(() -> manager.createQuery("select it from %s it where it.id = :id".formatted(type.getDtype()), getEntityType())
-                            .setParameter("id", id)
-                            .getResultStream()
+                    .collect(Streams.or(() -> Stream.ofNullable(manager.find(getEntityType(), id))
                             .peek(type.getCache()::push)))
                     .findAny();
         }

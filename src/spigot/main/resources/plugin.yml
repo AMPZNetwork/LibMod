@@ -8,8 +8,10 @@ default-permission: op
 api-version: '1.18'
 database: true
 load: STARTUP
-softdepend:
+depend:
   - LuckPerms
+softdepend:
+  - PlaceholderAPI
 libraries:
   # kyori
   - net.kyori:adventure-api:4.14.0

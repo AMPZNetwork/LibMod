@@ -10,13 +10,11 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import org.comroid.annotations.Default;
 import org.comroid.api.text.Capitalization;
-import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
@@ -34,8 +32,8 @@ import java.util.UUID;
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public abstract class DbObject {
     @Id @lombok.Builder.Default @Convert(converter = UuidVarchar36Converter.class)
-    @GeneratedValue(generator = "UUID") @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
-    @Column(columnDefinition = "varchar(255)", updatable = false, nullable = false)
+    //@GeneratedValue(generator = "UUID") @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
+    @Column(columnDefinition = "varchar(36)", updatable = false, nullable = false)
     protected UUID             id    = UUID.randomUUID();
     @Transient
     protected final EntityType<?, ?> dtype = EntityType.REGISTRY.get(getClass().getSimpleName());

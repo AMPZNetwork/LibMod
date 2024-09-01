@@ -12,6 +12,9 @@ import com.ampznetwork.libmod.spigot.adp.SpigotPlayerAdapter;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.experimental.FieldDefaults;
+import lombok.experimental.NonFinal;
+import net.luckperms.api.LuckPerms;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.comroid.api.Polyfill;
 import org.jetbrains.annotations.Contract;
@@ -19,6 +22,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -26,6 +30,7 @@ import java.util.concurrent.ScheduledExecutorService;
 @Getter
 @FieldDefaults(level = AccessLevel.PROTECTED, makeFinal = true)
 public class LibMod$Spigot extends SubMod$Spigot implements LibMod {
+    @NonFinal LuckPerms luckPerms;
     List<SubMod>             registeredSubMods = new ArrayList<>();
     SpigotPlayerAdapter      playerAdapter     = new SpigotPlayerAdapter(this);
     ScheduledExecutorService scheduler         = Executors.newScheduledThreadPool(4);
@@ -44,7 +49,15 @@ public class LibMod$Spigot extends SubMod$Spigot implements LibMod {
     }
 
     @Override
+    public void onLoad() {
+        super.onLoad();
+
+        lib = this;
+    }
+
+    @Override
     public void onEnable() {
+        luckPerms = Objects.requireNonNull(Bukkit.getServicesManager().getRegistration(LuckPerms.class)).getProvider();
         super.onEnable();
 
         entityService = new HibernateEntityService(this, dataSource -> new PersistenceUnitBase(

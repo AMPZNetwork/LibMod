@@ -106,6 +106,8 @@ dependencies {
     implementation 'org.spigotmc:spigot-api:1.20-R0.1-SNAPSHOT'
     implementation 'net.kyori:adventure-platform-bungeecord:4.3.3'
 
+    // luckperms
+    compileOnly 'net.luckperms:api:5.4'
     // placeholderapi
     compileOnly 'me.clip:placeholderapi:2.9.+'
 }
