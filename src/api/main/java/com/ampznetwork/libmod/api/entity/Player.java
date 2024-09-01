@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import org.comroid.api.Polyfill;
 import org.comroid.api.net.REST;
 import org.jetbrains.annotations.Nullable;
 
@@ -26,8 +27,16 @@ import static org.comroid.api.net.REST.Method.*;
 @AllArgsConstructor
 @Table(name = "playerdata")
 public class Player extends DbObject {
-    public static final EntityType<Player, Builder<?, ?>> TYPE
-            = new EntityType<>(Player::builder, null, Player.class, Builder.class);
+    /*
+    watch me literally not give a single fuck at this point.
+    i've spent years and years trying to find a good solution to instantiate a self-referencing type generic
+    but they are always impossible to compile.
+
+    so now, fuck that shit and we're abusing Polyfill.uncheckedCast().
+    fuck you, java. fix your type generics.
+     */
+    public static final EntityType<Player, Builder<Player, ?>> TYPE
+            = Polyfill.uncheckedCast(new EntityType<>(Player::builder, null, Player.class, Builder.class));
     public static       BiConsumer<UUID, String>    CACHE_NAME = null;
 
     public static CompletableFuture<UUID> fetchId(String name) {

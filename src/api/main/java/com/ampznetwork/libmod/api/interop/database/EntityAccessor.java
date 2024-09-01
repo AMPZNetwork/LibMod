@@ -13,7 +13,7 @@ import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
-public interface EntityAccessor<It extends DbObject, Builder extends DbObject.Builder<It, Builder>> extends QueryOps<UUID, It, Builder> {
+public interface EntityAccessor<It extends DbObject, Builder extends DbObject.Builder<It, ?>> extends QueryOps<UUID, It, Builder> {
     IEntityService getService();
 
     EntityManager getManager();

@@ -18,7 +18,7 @@ import java.util.UUID;
 public interface IEntityService {
     LibMod getLib();
 
-    <T extends DbObject, B extends DbObject.Builder<T, B>> EntityAccessor<T, B> getAccessor(EntityType<T, ? super B> type);
+    <T extends DbObject, B extends DbObject.Builder<T, ?>> EntityAccessor<T, B> getAccessor(EntityType<T, ? super B> type);
 
     <T extends DbObject> T save(T object);
 

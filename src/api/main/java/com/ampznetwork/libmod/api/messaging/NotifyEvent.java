@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.SuperBuilder;
+import org.comroid.api.Polyfill;
 import org.comroid.api.attr.Named;
 import org.comroid.api.data.seri.DataNode;
 import org.jetbrains.annotations.ApiStatus;
@@ -44,11 +45,8 @@ import java.util.function.Predicate;
 @ToString(of = { "type", "timestamp", "relatedId", "relatedType" })
 @Table(name = "messaging", uniqueConstraints = @UniqueConstraint(columnNames = {"ident","timestamp"}))
 public final class NotifyEvent extends DbObject implements DataNode {
-    public static final EntityType<NotifyEvent, Builder<?, ?>> TYPE
-            = new EntityType<>(NotifyEvent::builder,
-            null,
-            NotifyEvent.class,
-            NotifyEvent.Builder.class);
+    public static final EntityType<NotifyEvent, Builder<NotifyEvent, ?>> TYPE
+            = Polyfill.uncheckedCast(new EntityType<>(NotifyEvent::builder, null, NotifyEvent.class, NotifyEvent.Builder.class));
     BigInteger ident;
     @lombok.Builder.Default Instant timestamp = Instant.now();
     @lombok.Builder.Default Type    type      = Type.SYNC;

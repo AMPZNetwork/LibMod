@@ -151,7 +151,7 @@ public class HibernateEntityService extends Container.Base implements IEntitySer
     }
 
     @Override
-    public <T extends DbObject, B extends DbObject.Builder<T, B>> EntityAccessor<T, B> getAccessor(EntityType<T, ? super B> type) {
+    public <T extends DbObject, B extends DbObject.Builder<T, ?>> EntityAccessor<T, B> getAccessor(EntityType<T, ? super B> type) {
         return uncheckedCast(accessors.computeIfAbsent(type.getDtype(), k -> new EntityContainer<>(uncheckedCast(type))));
     }
 

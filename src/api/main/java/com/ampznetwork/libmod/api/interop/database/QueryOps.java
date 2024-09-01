@@ -7,7 +7,7 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-public interface QueryOps<Key, It extends DbObject, Builder extends DbObject.Builder<It, Builder>> {
+public interface QueryOps<Key, It extends DbObject, Builder extends DbObject.Builder<It, ?>> {
     Stream<It> all();
 
     Optional<It> get(Key key);

@@ -3,16 +3,18 @@ package com.ampznetwork.libmod.spigot;
 import com.ampznetwork.libmod.api.SubMod;
 import com.ampznetwork.libmod.api.entity.DbObject;
 import com.ampznetwork.libmod.core.database.hibernate.HibernateEntityService;
+import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.Value;
+import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
 import org.bukkit.Bukkit;
 
 import java.util.Set;
 
-@Value
-@NonFinal
+@Getter
 @RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PROTECTED, makeFinal = true)
 public abstract class SubMod$Spigot extends SpigotPluginBase implements SubMod {
     protected           Set<Capability>                capabilities;
     protected           Set<Class<? extends DbObject>> entityTypes;

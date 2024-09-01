@@ -7,7 +7,9 @@ import com.ampznetwork.libmod.api.interop.database.IEntityService;
 import com.ampznetwork.libmod.api.messaging.MessagingService;
 import com.ampznetwork.libmod.api.model.info.DatabaseInfo;
 import com.ampznetwork.libmod.spigot.adp.SpigotPlayerAdapter;
-import lombok.Value;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.experimental.FieldDefaults;
 import org.bukkit.configuration.ConfigurationSection;
 import org.comroid.api.Polyfill;
 import org.jetbrains.annotations.Contract;
@@ -19,7 +21,8 @@ import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
-@Value
+@Getter
+@FieldDefaults(level = AccessLevel.PROTECTED, makeFinal = true)
 public class LibMod$Spigot extends SubMod$Spigot implements LibMod {
     List<SubMod>             registeredSubMods = new ArrayList<>();
     SpigotPlayerAdapter      playerAdapter     = new SpigotPlayerAdapter(this);
