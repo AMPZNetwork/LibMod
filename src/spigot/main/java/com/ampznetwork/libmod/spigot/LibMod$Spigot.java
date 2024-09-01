@@ -6,6 +6,8 @@ import com.ampznetwork.libmod.api.entity.Player;
 import com.ampznetwork.libmod.api.interop.database.IEntityService;
 import com.ampznetwork.libmod.api.messaging.MessagingService;
 import com.ampznetwork.libmod.api.model.info.DatabaseInfo;
+import com.ampznetwork.libmod.core.database.hibernate.HibernateEntityService;
+import com.ampznetwork.libmod.core.database.hibernate.PersistenceUnitBase;
 import com.ampznetwork.libmod.spigot.adp.SpigotPlayerAdapter;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -39,6 +41,20 @@ public class LibMod$Spigot extends SubMod$Spigot implements LibMod {
                 Resources.DefaultDbUrl,
                 Resources.DefaultDbUsername,
                 Resources.DefaultDbPassword);
+    }
+
+    @Override
+    public void onEnable() {
+        super.onEnable();
+
+        entityService = new HibernateEntityService(this, dataSource -> new PersistenceUnitBase(
+                "LibMod shared Database",
+                LibMod.class,
+                dataSource,
+                registeredSubMods.stream()
+                        .flatMap(sub -> sub.getEntityTypes().stream())
+                        .toArray(Class[]::new)
+        ));
     }
 
     @Override

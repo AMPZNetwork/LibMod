@@ -33,6 +33,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.persistence.spi.PersistenceProvider;
 import javax.persistence.spi.PersistenceUnitInfo;
+import javax.sql.DataSource;
 import java.sql.Connection;
 import java.util.Map;
 import java.util.Optional;
@@ -79,7 +80,7 @@ public class HibernateEntityService extends Container.Base implements IEntitySer
 
     public static Unit buildPersistenceUnit(
             DatabaseInfo info,
-            Function<HikariDataSource, PersistenceUnitInfo> unitProvider,
+            Function<DataSource, PersistenceUnitInfo> unitProvider,
             @MagicConstant(stringValues = { "update", "validate" }) String hbm2ddl
     ) {
         var config = Map.of("hibernate.connection.driver_class",
@@ -125,11 +126,11 @@ public class HibernateEntityService extends Container.Base implements IEntitySer
         this(lib, dataSource -> new PersistenceUnitBase(mod.getModuleType(), dataSource, mod.getEntityTypes().toArray(new Class[0])));
     }
 
-    public HibernateEntityService(LibMod mod, Function<HikariDataSource, PersistenceUnitInfo> persistenceUnitProvider) {
+    public HibernateEntityService(LibMod mod, Function<DataSource, PersistenceUnitInfo> persistenceUnitProvider) {
         this(mod, persistenceUnitProvider, mod.getDatabaseInfo());
     }
 
-    public HibernateEntityService(LibMod mod, Function<HikariDataSource, PersistenceUnitInfo> persistenceUnitProvider, DatabaseInfo dbInfo) {
+    public HibernateEntityService(LibMod mod, Function<DataSource, PersistenceUnitInfo> persistenceUnitProvider, DatabaseInfo dbInfo) {
         // boot up hibernate
         this.lib = mod;
         var unit = buildPersistenceUnit(dbInfo, persistenceUnitProvider, "update");

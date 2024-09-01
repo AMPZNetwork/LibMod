@@ -42,7 +42,7 @@ public abstract class SubMod$Spigot extends SpigotPluginBase implements SubMod {
     public void onEnable() {
         super.onEnable();
 
-        this.entityService = new HibernateEntityService(lib, this);
+        this.entityService = lib.getEntityService();
     }
 
     @Override
