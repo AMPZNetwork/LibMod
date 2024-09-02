@@ -3,7 +3,7 @@ package com.ampznetwork.libmod.api.messaging;
 import com.ampznetwork.libmod.api.entity.DbObject;
 import com.ampznetwork.libmod.api.model.EntityType;
 import com.ampznetwork.libmod.api.model.convert.EntityTypeConverter;
-import com.ampznetwork.libmod.api.model.convert.UuidBinary16Converter;
+import com.ampznetwork.libmod.api.model.convert.UuidVarchar36Converter;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -50,7 +50,10 @@ public final class NotifyEvent extends DbObject implements DataNode {
     BigInteger ident;
     @lombok.Builder.Default Instant timestamp = Instant.now();
     @lombok.Builder.Default Type    type      = Type.SYNC;
-    @lombok.Builder.Default @Nullable @Convert(converter = UuidBinary16Converter.class)
+    @lombok.Builder.Default @Nullable
+    @Column(columnDefinition = "varchar(36)")
+    @org.hibernate.annotations.Type(type = "uuid-char")
+    @Convert(converter = UuidVarchar36Converter.class, disableConversion = true)
     UUID             relatedId   = null;
     @lombok.Builder.Default @Nullable @Convert(converter = EntityTypeConverter.class)
     EntityType<?, ?> relatedType = null;

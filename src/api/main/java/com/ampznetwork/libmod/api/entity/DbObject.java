@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import org.comroid.annotations.Default;
 import org.comroid.api.text.Capitalization;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -31,7 +32,7 @@ import java.util.UUID;
 @EqualsAndHashCode(of = "id")
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public abstract class DbObject {
-    @Id @lombok.Builder.Default @Convert(converter = UuidVarchar36Converter.class)
+    @Id @lombok.Builder.Default @Convert(converter = UuidVarchar36Converter.class) @Type(type = "uuid-char")
     //@GeneratedValue(generator = "UUID") @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
     @Column(columnDefinition = "varchar(36)", updatable = false, nullable = false)
     protected UUID             id    = UUID.randomUUID();

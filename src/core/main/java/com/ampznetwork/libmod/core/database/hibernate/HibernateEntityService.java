@@ -83,20 +83,16 @@ public class HibernateEntityService extends Container.Base implements IEntitySer
             Function<DataSource, PersistenceUnitInfo> unitProvider,
             @MagicConstant(stringValues = { "update", "validate" }) String hbm2ddl
     ) {
-        var config = Map.of("hibernate.connection.driver_class",
-                info.type().getDriverClass().getCanonicalName(),
-                "hibernate.connection.url",
-                info.url(),
-                "hibernate.connection.username",
-                info.user(),
-                "hibernate.connection.password",
-                info.pass(),
-                "hibernate.dialect",
-                info.type().getDialectClass().getCanonicalName(),
-                "hibernate.show_sql",
-                String.valueOf("true".equals(System.getenv("TRACE"))),
-                "hibernate.hbm2ddl.auto",
-                hbm2ddl);
+        var config = Map.of("hibernate.connection.driver_class", info.type().getDriverClass().getCanonicalName(),
+                "hibernate.connection.url", info.url(),
+                "hibernate.connection.username", info.user(),
+                "hibernate.connection.password", info.pass(),
+                "hibernate.connection.CharSet", "utf8",
+                "hibernate.connection.characterEncoding", "utf8",
+                "hibernate.connection.useUnicode", true,
+                "hibernate.dialect", info.type().getDialectClass().getCanonicalName(),
+                "hibernate.show_sql", String.valueOf("true".equals(System.getenv("TRACE"))),
+                "hibernate.hbm2ddl.auto", hbm2ddl);
         var dataSource = new HikariDataSource() {{
             setDriverClassName(info.type().getDriverClass().getCanonicalName());
             setJdbcUrl(info.url());
@@ -169,7 +165,7 @@ public class HibernateEntityService extends Container.Base implements IEntitySer
             // try merging as a fallback action
             return manager.merge(object);
         });
-        if (!(object instanceof NotifyEvent)) Polyfill.<Cache<UUID, DbObject>>uncheckedCast(EntityType.REGISTRY.get(object.getDtype()).getCache())
+        if (!(object instanceof NotifyEvent)) Polyfill.<Cache<UUID, DbObject>>uncheckedCast(EntityType.REGISTRY.get(object.getDtype().getDtype()).getCache())
                 .push(persistent);
         if (messagingService != null)
             messagingService.push().complete(bld -> bld
@@ -267,23 +263,28 @@ public class HibernateEntityService extends Container.Base implements IEntitySer
         @lombok.experimental.Delegate EntityType<T, B> type;
 
         @Override
-        public EntityManager getManager() {
-            return manager;
-        }
-
-        @Override
         public IEntityService getService() {
             return HibernateEntityService.this;
         }
 
         @Override
-        public Stream<T> all() {
-            return manager.createQuery("select it from %s it".formatted(type.getDtype()), getEntityType()).getResultStream().peek(type.getCache()::push);
+        public EntityManager getManager() {
+            return manager;
         }
 
         @Override
         public Stream<T> querySelect(Query query) {
             return HibernateEntityService.this.wrapQuery(q -> Polyfill.uncheckedCast(q.getResultStream()), query);
+        }
+
+        @Override
+        public void queryUpdate(Query query) {
+            wrapQuery(Query::executeUpdate, query);
+        }
+
+        @Override
+        public Stream<T> all() {
+            return manager.createQuery("select it from %s it".formatted(type.getDtype()), getEntityType()).getResultStream().peek(type.getCache()::push);
         }
 
         @Override
@@ -313,11 +314,6 @@ public class HibernateEntityService extends Container.Base implements IEntitySer
                                     .complete(notif -> notif.relatedId(it.getId())
                                             .relatedType(Polyfill.uncheckedCast(it.getDtype())));
                     });
-        }
-
-        @Override
-        public void queryUpdate(Query query) {
-            wrapQuery(Query::executeUpdate, query);
         }
     }
 
