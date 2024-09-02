@@ -5,6 +5,7 @@ import com.ampznetwork.libmod.api.SubMod;
 import com.ampznetwork.libmod.api.entity.Player;
 import com.ampznetwork.libmod.api.interop.database.IEntityService;
 import com.ampznetwork.libmod.api.messaging.MessagingService;
+import com.ampznetwork.libmod.api.messaging.NotifyEvent;
 import com.ampznetwork.libmod.api.model.info.DatabaseInfo;
 import com.ampznetwork.libmod.core.database.hibernate.HibernateEntityService;
 import com.ampznetwork.libmod.core.database.hibernate.PersistenceUnitBase;
@@ -36,7 +37,7 @@ public class LibMod$Spigot extends SubMod$Spigot implements LibMod {
     ScheduledExecutorService scheduler         = Executors.newScheduledThreadPool(4);
 
     public LibMod$Spigot() {
-        super(Set.of(Capability.Database), Set.of(Player.class));
+        super(Set.of(Capability.Database), Set.of(Player.class, NotifyEvent.class));
     }
 
     @Override
@@ -91,7 +92,7 @@ public class LibMod$Spigot extends SubMod$Spigot implements LibMod {
                 return new MessagingService.PollingDatabase.Config(dbInfo, interval);
             case "rabbit-mq":
                 return new MessagingService.RabbitMQ.Config(cfg.getString("messaging-service.uri",
-                        "amqp://anonymous:anonymous@localhost:5672/banmod_messaging"));
+                        "amqp://anonymous:anonymous@localhost:5672/messaging"));
             default:
                 throw new UnsupportedOperationException("Unknown messaging service type: " + getMessagingServiceTypeName());
         }
