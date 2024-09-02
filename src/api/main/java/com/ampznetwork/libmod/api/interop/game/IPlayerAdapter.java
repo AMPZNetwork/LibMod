@@ -8,6 +8,7 @@ import org.comroid.api.data.Vector;
 import org.comroid.api.func.util.Command;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Stream;
 
@@ -15,6 +16,13 @@ public interface IPlayerAdapter extends Command.PermissionChecker.Adapter {
     LibMod getLib();
 
     Stream<Player> getCurrentPlayers();
+
+    default Optional<Player> getPlayer(UUID playerId) {
+        return getCurrentPlayers()
+                .filter(plr -> plr.getId().equals(playerId))
+                .findAny()
+                .or(() -> getLib().getEntityService().getAccessor(Player.TYPE).get(playerId));
+    }
 
     default UUID getId(String name) {
         return Player.fetchId(name).join();
