@@ -37,6 +37,8 @@ public class EntityType<Entity extends DbObject, Builder> {
         this.parent      = parent;
         this.entityType  = entityType;
         this.builderType = Polyfill.uncheckedCast(builderType);
+
+        REGISTRY.put(entityType.getSimpleName(), this);
     }
 
     public String getDtype() {
