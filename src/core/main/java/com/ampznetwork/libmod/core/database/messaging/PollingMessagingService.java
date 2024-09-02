@@ -39,7 +39,7 @@ public class PollingMessagingService extends MessagingServiceBase<HibernateEntit
         //noinspection unchecked
         var occupied = ((Stream<BigInteger>) service.wrapQuery(Connection.TRANSACTION_SERIALIZABLE, Query::getResultList, session.createSQLQuery("""
                 select BIT_OR(ne.ident) as x
-                from banmod_notify ne
+                from messaging ne
                 group by ne.ident, ne.timestamp
                 order by ne.timestamp desc
                 limit 50;
@@ -62,7 +62,7 @@ public class PollingMessagingService extends MessagingServiceBase<HibernateEntit
 
         // ack all old events
         service.wrapQuery(Query::executeUpdate, manager.createNativeQuery("""
-                update banmod_notify ne
+                update messaging ne
                 set ne.acknowledge = (ne.acknowledge | :me)
                 """).setParameter("me", ident));
 
@@ -72,7 +72,7 @@ public class PollingMessagingService extends MessagingServiceBase<HibernateEntit
 
     public void cleanup() {
         entities.wrapQuery(Query::executeUpdate, session.createNativeQuery("""
-                delete from banmod_notify
+                delete from messaging
                 where timestamp < :expire or (timestamp & ident) > 0;
                 """).setParameter("expire", Instant.now().minus(EventExpireTime)));
     }
@@ -88,7 +88,7 @@ public class PollingMessagingService extends MessagingServiceBase<HibernateEntit
         var events = entities.wrapTransaction(Connection.TRANSACTION_REPEATABLE_READ, () -> {
             var handle = Polyfill.<List<NotifyEvent>>uncheckedCast(manager.createNativeQuery("""
                             select ne.*
-                            from banmod_notify ne
+                            from messaging ne
                             where ne.ident != :me and (ne.acknowledge & :me) = 0
                             order by ne.timestamp
                             """, NotifyEvent.class)
@@ -97,7 +97,7 @@ public class PollingMessagingService extends MessagingServiceBase<HibernateEntit
             for (var event : handle.toArray(new NotifyEvent[0])) {
                 // acknowledge
                 var ack = manager.createNativeQuery("""
-                                update banmod_notify ne
+                                update messaging ne
                                 set ne.acknowledge = (ne.acknowledge | :me)
                                 where ne.ident = :ident and ne.timestamp = :timestamp
                                 """)
