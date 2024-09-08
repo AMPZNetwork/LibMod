@@ -58,7 +58,7 @@ public class Player extends DbObject {
         return future;
     }
 
-    private @Nullable String name;
+    private String name;
 
     @Transient @JsonIgnore
     public CompletableFuture<String> getOrFetchUsername() {
