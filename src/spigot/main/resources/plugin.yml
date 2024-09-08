@@ -27,6 +27,8 @@ libraries:
   - org.mariadb.jdbc:mariadb-java-client:3.4.0
   - com.mysql:mysql-connector-j:8.4.0
   - com.h2database:h2:2.2.224
+  # rabbitmq
+  - com.rabbitmq:amqp-client:5.18.0
 commands:
   reload:
     description: Reloads Configuration Files

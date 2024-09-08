@@ -22,7 +22,7 @@ public class RabbitMessagingService extends MessagingServiceBase<IEntityService>
 
         var rabbit   = Rabbit.of(uri).orElseThrow();
         var exchange = rabbit.exchange("banmod");
-        (this.route = exchange.route("", NotifyEvent.class)).register(this);
+        (this.route = exchange.route("", NotifyEvent.CONVERTER)).register(this);
     }
 
     @Override
