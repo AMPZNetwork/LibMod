@@ -3,6 +3,7 @@ package com.ampznetwork.libmod.api.entity;
 import com.ampznetwork.libmod.api.model.EntityType;
 import com.ampznetwork.libmod.api.model.convert.UuidVarchar36Converter;
 import com.ampznetwork.libmod.api.util.NameGenerator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -36,7 +37,7 @@ public abstract class DbObject {
     //@GeneratedValue(generator = "UUID") @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
     @Column(columnDefinition = "varchar(36)", updatable = false, nullable = false)
     protected UUID             id    = UUID.randomUUID();
-    @Transient
+    @Transient @JsonIgnore
     protected final EntityType<?, ?> dtype = EntityType.REGISTRY.get(getClass().getSimpleName());
 
     @Data

@@ -2,6 +2,7 @@ package com.ampznetwork.libmod.api.entity;
 
 import com.ampznetwork.libmod.api.model.EntityType;
 import com.ampznetwork.libmod.api.model.convert.UuidVarchar36Converter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -59,7 +60,7 @@ public class Player extends DbObject {
 
     private @Nullable String name;
 
-    @Transient
+    @Transient @JsonIgnore
     public CompletableFuture<String> getOrFetchUsername() {
         return Optional.ofNullable(name)
                 .map(CompletableFuture::completedFuture)
