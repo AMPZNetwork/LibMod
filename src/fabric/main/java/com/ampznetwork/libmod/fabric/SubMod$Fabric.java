@@ -19,7 +19,7 @@ public abstract class SubMod$Fabric extends FabricModBase implements SubMod {
     Set<Capability>                capabilities;
     Set<Class<? extends DbObject>> entityTypes;
     @NonFinal           HibernateEntityService entityService;
-    @NonFinal protected LibMod$Fabric          lib;
+    @NonFinal protected LibModFabric           lib;
 
     @Override
     public IEntityService getEntityService() {
@@ -30,7 +30,7 @@ public abstract class SubMod$Fabric extends FabricModBase implements SubMod {
 
     @Override
     public void onInitialize() {
-        lib = LibMod$Fabric.INSTANCE;
+        lib = LibModFabric.INSTANCE;
         lib.register(this);
 
         super.onInitialize();

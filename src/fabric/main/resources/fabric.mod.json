@@ -16,7 +16,7 @@
   "environment": "server",
   "entrypoints": {
     "main": [
-      "com.ampznetwork.libmod.fabric.LibMod$Fabric"
+      "com.ampznetwork.libmod.fabric.LibModFabric"
     ]
   },
   "depends": {

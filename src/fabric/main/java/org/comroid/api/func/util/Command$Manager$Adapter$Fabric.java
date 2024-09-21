@@ -1,7 +1,7 @@
 package org.comroid.api.func.util;
 
 import com.ampznetwork.libmod.api.LibMod;
-import com.ampznetwork.libmod.fabric.LibMod$Fabric;
+import com.ampznetwork.libmod.fabric.LibModFabric;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.arguments.BoolArgumentType;
@@ -153,7 +153,7 @@ public class Command$Manager$Adapter$Fabric extends Command.Manager.Adapter
                 .flatMap(Streams.cast(ServerCommandSource.class))
                 .findAny().orElseThrow();
         if (response instanceof Component component)
-            source.sendMessage(LibMod$Fabric.component2text(component));
+            source.sendMessage(LibModFabric.component2text(component));
         else source.sendMessage(Text.of(String.valueOf(response)));
     }
 

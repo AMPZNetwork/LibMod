@@ -3,7 +3,7 @@ package com.ampznetwork.libmod.fabric.adp;
 import com.ampznetwork.libmod.api.adapter.BookAdapter;
 import com.ampznetwork.libmod.api.entity.Player;
 import com.ampznetwork.libmod.api.interop.game.IPlayerAdapter;
-import com.ampznetwork.libmod.fabric.LibMod$Fabric;
+import com.ampznetwork.libmod.fabric.LibModFabric;
 import lombok.Value;
 import lombok.extern.log4j.Log4j2;
 import me.lucko.fabric.api.permissions.v0.Permissions;
@@ -33,7 +33,7 @@ import static net.kyori.adventure.text.serializer.gson.GsonComponentSerializer.*
 @Value
 @Log4j2
 public class FabricPlayerAdapter implements IPlayerAdapter {
-    LibMod$Fabric lib;
+    LibModFabric lib;
 
     @Override
     public Stream<Player> getCurrentPlayers() {
@@ -83,7 +83,7 @@ public class FabricPlayerAdapter implements IPlayerAdapter {
 
     @Override
     public void kick(UUID playerId, Component reason) {
-        var serialize = LibMod$Fabric.component2text(reason);
+        var serialize = LibModFabric.component2text(reason);
         Optional.ofNullable(lib.getServer())
                 .map(MinecraftServer::getPlayerManager)
                 .map(manager -> manager.getPlayer(playerId))
@@ -94,7 +94,7 @@ public class FabricPlayerAdapter implements IPlayerAdapter {
 
     @Override
     public void send(UUID playerId, Component component) {
-        var serialize = LibMod$Fabric.component2text(component);
+        var serialize = LibModFabric.component2text(component);
         var player    = lib.getServer().getPlayerManager().getPlayer(playerId);
         if (player == null) return;
         player.sendMessage(serialize);
@@ -102,7 +102,7 @@ public class FabricPlayerAdapter implements IPlayerAdapter {
 
     @Override
     public void broadcast(@Nullable String recieverPermission, Component component) {
-        var serialize = LibMod$Fabric.component2text(component);
+        var serialize = LibModFabric.component2text(component);
         lib.getServer().getPlayerManager()
                 .getPlayerList().stream()
                 .filter(player -> recieverPermission == null

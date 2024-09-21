@@ -31,11 +31,11 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
 @Value
-public class LibMod$Fabric extends SubMod$Fabric implements LibMod, ModInitializer,
+public class LibModFabric extends SubMod$Fabric implements LibMod, ModInitializer,
         ServerLifecycleEvents.ServerStarting, ServerLifecycleEvents.ServerStarted {
-    public static LibMod$Fabric INSTANCE;
+    public static LibModFabric INSTANCE;
 
-    public LibMod$Fabric() {
+    public LibModFabric() {
         super(Set.of(Capability.Database), Set.of(Player.class, NotifyEvent.class));
     }
 
@@ -99,7 +99,7 @@ public class LibMod$Fabric extends SubMod$Fabric implements LibMod, ModInitializ
 
     @Override
     public void onServerStarted(MinecraftServer server) {
-        this.ticker = new TickerEntity();
-        server.getOverworld().spawnEntity(ticker);
+        //this.ticker = new TickerEntity();
+        //server.getOverworld().spawnEntity(ticker);
     }
 }

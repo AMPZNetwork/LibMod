@@ -109,7 +109,7 @@ dependencies {
     // luckperms
     compileOnly 'net.luckperms:api:5.4'
     // placeholderapi
-    compileOnly 'me.clip:placeholderapi:2.9.+'
+    compileOnly 'me.clip:placeholderapi:2.+'
 }
 
 def targetJavaVersion = 21
