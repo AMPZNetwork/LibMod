@@ -44,7 +44,7 @@ import java.util.function.Predicate;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @EqualsAndHashCode(of = { "timestamp" }, callSuper = true)
 @ToString(of = { "type", "timestamp", "relatedId", "relatedType" })
-@Table(name = "messaging", uniqueConstraints = @UniqueConstraint(columnNames = {"ident","timestamp"}))
+@Table(name = "libmod_messaging", uniqueConstraints = @UniqueConstraint(columnNames = {"ident","timestamp"}))
 public final class NotifyEvent extends DbObject implements DataNode {
     public static final EntityType<NotifyEvent, Builder<NotifyEvent, ?>> TYPE
                                                                                    = Polyfill.uncheckedCast(new EntityType<>(NotifyEvent::builder, null, NotifyEvent.class, NotifyEvent.Builder.class));

@@ -40,7 +40,8 @@ public abstract class SubMod$Spigot extends SpigotPluginBase implements SubMod, 
     public void onDisable() {
         super.onDisable();
 
-        entityService.close();
+        if (entityService != null)
+            entityService.close();
     }
 
     @Override

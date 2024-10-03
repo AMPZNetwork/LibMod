@@ -47,5 +47,5 @@ public interface IPlayerAdapter extends Command.PermissionChecker.Adapter {
 
     void broadcast(@Nullable String recieverPermission, Component component);
 
-    void openBook(UUID playerId, BookAdapter book);
+    void openBook(Player player, BookAdapter book);
 }

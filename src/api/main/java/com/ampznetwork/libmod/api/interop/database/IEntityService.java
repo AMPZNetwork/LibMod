@@ -13,7 +13,10 @@ import org.hibernate.dialect.MariaDBDialect;
 import org.hibernate.dialect.MySQLDialect;
 import org.jetbrains.annotations.Nullable;
 
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import java.util.UUID;
+import java.util.function.Function;
 
 public interface IEntityService {
     LibMod getLib();
@@ -27,6 +30,8 @@ public interface IEntityService {
     void uncache(UUID id, @Nullable DbObject obj);
 
     int delete(@SuppressWarnings("rawtypes") DbObject... objects);
+
+    Query createQuery(Function<EntityManager,Query>factory);
 
     @Getter
     @AllArgsConstructor

@@ -12,7 +12,6 @@ import org.comroid.annotations.Doc;
 import org.comroid.api.Polyfill;
 import org.comroid.api.net.REST;
 import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.Nullable;
 
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
@@ -41,7 +40,7 @@ import static org.comroid.api.net.REST.Method.*;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "players")
+@Table(name = "libmod_players")
 public class Player extends DbObject {
     /*
     watch me literally not give a single fuck at this point.
@@ -59,13 +58,13 @@ public class Player extends DbObject {
     @ElementCollection
     @Column(name = "seen")
     @MapKeyColumn(name = "name")
-    @CollectionTable(name = "playerdata_names", joinColumns = @JoinColumn(name = "id"))
+    @CollectionTable(name = "libmod_playerdata_names", joinColumns = @JoinColumn(name = "id"))
     Map<@Doc("name") String, @Doc("seen") Instant> knownNames = new HashMap<>();
     @Singular
     @ElementCollection
     @Column(name = "seen")
     @MapKeyColumn(name = "ip")
-    @CollectionTable(name = "playerdata_ips", joinColumns = @JoinColumn(name = "id"))
+    @CollectionTable(name = "libmod_playerdata_ips", joinColumns = @JoinColumn(name = "id"))
     Map<@Doc("ip") String, @Doc("seen") Instant>   knownIPs   = new HashMap<>();
 
     public static CompletableFuture<UUID> fetchId(String name) {

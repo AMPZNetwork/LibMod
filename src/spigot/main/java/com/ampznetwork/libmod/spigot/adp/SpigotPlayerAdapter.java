@@ -109,8 +109,8 @@ public class SpigotPlayerAdapter implements IPlayerAdapter {
     }
 
     @Override
-    public void openBook(UUID playerId, BookAdapter book) {
-        if (!isOnline(playerId))
+    public void openBook(Player player, BookAdapter book) {
+        if (!isOnline(player.getId()))
             throw new AssertionError("Target player is not online");
         var stack = new ItemStack(Material.WRITTEN_BOOK, 1);
         var meta  = Objects.requireNonNull((BookMeta) stack.getItemMeta(), "item meta");
@@ -123,7 +123,7 @@ public class SpigotPlayerAdapter implements IPlayerAdapter {
                         .toArray(BaseComponent[]::new))
                 .toList());
         stack.setItemMeta(meta);
-        lib.getServer().getPlayer(playerId).openBook(stack);
+        lib.getServer().getPlayer(player.getId()).openBook(stack);
     }
 
     @Override

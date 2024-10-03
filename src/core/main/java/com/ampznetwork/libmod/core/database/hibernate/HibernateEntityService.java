@@ -211,6 +211,11 @@ public class HibernateEntityService extends Container.Base implements IEntitySer
         return c;
     }
 
+    @Override
+    public Query createQuery(Function<EntityManager, Query> factory) {
+        return factory.apply(manager);
+    }
+
     @SuppressWarnings("UnusedReturnValue")
     public <T> T wrapQuery(Function<Query, T> executor, Query query) {return wrapQuery(Connection.TRANSACTION_READ_COMMITTED, executor, query);}
 
