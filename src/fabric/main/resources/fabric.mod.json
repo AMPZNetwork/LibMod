@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
-  "id": "worldmod",
+  "id": "libmod",
   "version": "${version}",
-  "name": "WorldMod",
-  "description": "World Protection Mod",
+  "name": "LibMod",
+  "description": "Core Library Mod for AMPZNetwork Mods",
   "authors": [
     "Kaleidox"
   ],
   "contact": {
-    "homepage": "https://github.com/AMPZNetwork/WorldMod",
-    "sources": "https://github.com/AMPZNetwork/WorldMod"
+    "homepage": "https://github.com/AMPZNetwork/LibMod",
+    "sources": "https://github.com/AMPZNetwork/LibMod"
   },
   "license": "GPL-3.0",
   "icon": "assets/worldmod/icon.png",
   "environment": "server",
   "entrypoints": {
     "main": [
-      "com.ampznetwork.worldmod.fabric.WorldMod$Fabric"
+      "com.ampznetwork.libmod.fabric.LibModFabric"
     ]
   },
   "depends": {

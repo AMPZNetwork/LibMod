@@ -10,8 +10,8 @@ ext {
 }
 
 group = 'com.ampznetwork.libmod'
-sourceCompatibility = '17'
-targetCompatibility = '17'
+sourceCompatibility = 21
+targetCompatibility = 21
 
 sourceSets {
     main.java.srcDirs = files("${parent.projectDir}/src/$project.name/main/java")
@@ -35,6 +35,10 @@ dependencies {
 
     // persistence
     api 'javax.persistence:javax.persistence-api:2.2'
+    api 'org.hibernate:hibernate-core:5.6.0.Final'
+    compileOnly 'org.mariadb.jdbc:mariadb-java-client:3.4.0'
+    compileOnly 'com.mysql:mysql-connector-j:8.4.0'
+    compileOnly 'com.h2database:h2:2.2.224'
 
     // kyori
     api 'net.kyori:adventure-api:4.11.+'

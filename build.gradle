@@ -28,8 +28,8 @@ subprojects {
 
     compileJava.options.encoding = 'UTF-8'
 
-    sourceCompatibility = 17
-    targetCompatibility = 17
+    sourceCompatibility = 21
+    targetCompatibility = 21
 
     repositories {
         maven { url 'https://maven.comroid.org' }
@@ -45,6 +45,11 @@ subprojects {
                 api project(":japi")
             else api 'org.comroid:japi:+'
         }
+
+        if (project.name != 'api' && !project.name.startsWith('compile'))
+            api project("$prefix:api")
+        if (project.name != 'api' && project.name != 'core' && !project.name.startsWith('compile'))
+            api project("$prefix:core")
 
         // soft dependencies
         compileOnly 'net.luckperms:api:5.4'

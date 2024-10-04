@@ -7,7 +7,7 @@ plugins {
     id 'maven-publish'
 }
 
-group = project.maven_group
+group = project.maven_group + '.libmod'
 
 base {
     archivesName = project.archives_base_name
@@ -56,7 +56,6 @@ repositories {
     // Loom adds the essential maven repositories to download Minecraft and libraries from automatically.
     // See https://docs.gradle.org/current/userguide/declaring_repositories.html
     // for more information about repositories.
-    maven { url 'https://maven.wispforest.io/releases' }
     mavenCentral()
 }
 
@@ -151,16 +150,11 @@ dependencies {
     include 'blue.endless:jankson:1.2.2'
     include 'javax.activation:javax.activation-api:1.2.0'
     include 'com.fasterxml.jackson.core:jackson-databind:2.17.2'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.17.2'
     include 'com.mysql:mysql-connector-j:8.4.0'
     include 'com.google.protobuf:protobuf-java:3.25.1'
     include 'com.google.code.gson:gson:2.10'
     include 'org.apache.logging.log4j:log4j-core:2.19.0'
-
-
-    // owo lib
-    modImplementation "io.wispforest:owo-lib:${project.owo_version}"
-    include "io.wispforest:owo-sentinel:${project.owo_version}"
-    annotationProcessor modImplementation("io.wispforest:owo-lib:${project.owo_version}")
 }
 
 tasks.withType(JavaCompile).configureEach {
@@ -173,8 +167,8 @@ java {
     // If you remove this line, sources will not be generated.
     withSourcesJar()
 
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
 }
 
 jar {
