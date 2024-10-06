@@ -17,6 +17,8 @@ public interface IPlayerAdapter extends Command.PermissionChecker.Adapter {
 
     Stream<Player> getCurrentPlayers();
 
+    String getDisplayName(UUID playerId);
+
     default Optional<Player> getPlayer(UUID playerId) {
         return getCurrentPlayers()
                 .filter(plr -> plr.getId().equals(playerId))

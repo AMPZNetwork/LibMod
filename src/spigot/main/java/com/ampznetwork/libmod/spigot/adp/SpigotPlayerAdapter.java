@@ -41,6 +41,11 @@ public class SpigotPlayerAdapter implements IPlayerAdapter {
     }
 
     @Override
+    public String getDisplayName(UUID playerId) {
+        return lib.getServer().getPlayer(playerId).getDisplayName();
+    }
+
+    @Override
     public UUID getId(String name) {
         final var fetch = Player.fetchId(name);
         return Arrays.stream(Bukkit.getOfflinePlayers())
