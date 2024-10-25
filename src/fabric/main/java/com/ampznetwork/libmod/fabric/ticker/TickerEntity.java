@@ -19,6 +19,10 @@ public class TickerEntity extends Entity {
     }
 
     @Override
+    protected void initDataTracker() {
+    }
+
+    @Override
     public void tick() {
         super.tick();
 
@@ -26,9 +30,10 @@ public class TickerEntity extends Entity {
             queue.poll().run();
     }
 
+    /*1.21.1
     @Override
     protected void initDataTracker(DataTracker.Builder builder) {
-    }
+    }*/
 
     @Override
     protected void readCustomDataFromNbt(NbtCompound nbt) {

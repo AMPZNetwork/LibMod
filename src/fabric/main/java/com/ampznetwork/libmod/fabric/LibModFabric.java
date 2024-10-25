@@ -10,8 +10,6 @@ import com.ampznetwork.libmod.fabric.adp.FabricPlayerAdapter;
 import com.ampznetwork.libmod.fabric.config.Config;
 import com.ampznetwork.libmod.fabric.config.LibModConfig;
 import com.ampznetwork.libmod.fabric.ticker.TickerEntity;
-import com.google.gson.JsonParseException;
-import com.mojang.serialization.JsonOps;
 import lombok.Value;
 import lombok.experimental.NonFinal;
 import net.fabricmc.api.ModInitializer;
@@ -20,7 +18,6 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.text.Text;
-import net.minecraft.text.TextCodecs;
 import org.comroid.api.Polyfill;
 
 import java.util.ArrayList;
@@ -35,15 +32,12 @@ public class LibModFabric extends SubMod$Fabric implements LibMod, ModInitialize
         ServerLifecycleEvents.ServerStarting, ServerLifecycleEvents.ServerStarted {
     public static LibModFabric INSTANCE;
 
-    public LibModFabric() {
-        super(Set.of(Capability.Database), Set.of(Player.class, NotifyEvent.class));
-    }
-
     public static Text component2text(Component component) {
+        /*1.21.1
         var json = GsonComponentSerializer.gson().serializeToTree(component);
-        return TextCodecs.STRINGIFIED_CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(JsonParseException::new);
+        return TextCodecs.STRINGIFIED_CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(JsonParseException::new);*/
+        return Text.of(GsonComponentSerializer.gson().serialize(component));
     }
-
     List<SubMod>             registeredSubMods = new ArrayList<>();
     FabricPlayerAdapter      playerAdapter     = new FabricPlayerAdapter(this);
     LibModConfig             config            = Config.createAndLoad(LibModConfig.class);
@@ -53,6 +47,10 @@ public class LibModFabric extends SubMod$Fabric implements LibMod, ModInitialize
 
     {
         INSTANCE = this;
+    }
+
+    public LibModFabric() {
+        super(Set.of(Capability.Database), Set.of(Player.class, NotifyEvent.class));
     }
 
     @Override

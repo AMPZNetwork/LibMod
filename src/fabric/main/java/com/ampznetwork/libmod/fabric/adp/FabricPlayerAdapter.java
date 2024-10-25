@@ -23,6 +23,7 @@ import org.intellij.lang.annotations.MagicConstant;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Stream;
@@ -43,6 +44,11 @@ public class FabricPlayerAdapter implements IPlayerAdapter {
                         .getOrCreate(spe.getUuid())
                         .setUpdateOriginal(player -> player.setName(spe.getName().getString()))
                         .complete(builder -> builder.name(spe.getName().getString()).id(spe.getUuid())));
+    }
+
+    @Override
+    public String getDisplayName(UUID playerId) {
+        return "";
     }
 
     @Override
@@ -112,9 +118,7 @@ public class FabricPlayerAdapter implements IPlayerAdapter {
     }
 
     @Override
-    public void openBook(UUID playerId, BookAdapter book) {
-        var plr = lib.getServer().getPlayerManager()
-                .getPlayer(playerId);
+    public void openBook(Player player, BookAdapter book) {
         ItemStack stack = new ItemStack(Items.WRITTEN_BOOK);
 
         // Set the stack's title, author, and pages
@@ -134,7 +138,9 @@ public class FabricPlayerAdapter implements IPlayerAdapter {
 
         tag.put("pages", pages);
 
-        plr.useBook(stack, Hand.MAIN_HAND);
+        Objects.requireNonNull(lib.getServer().getPlayerManager()
+                        .getPlayer(player.getId()), "Player not found")
+                .useBook(stack, Hand.MAIN_HAND);
     }
 
     @Override
