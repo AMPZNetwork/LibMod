@@ -1,5 +1,6 @@
 package com.ampznetwork.libmod.spigot;
 
+import com.ampznetwork.libmod.api.LibMod;
 import com.ampznetwork.libmod.api.SubMod;
 import com.ampznetwork.libmod.api.entity.DbObject;
 import com.ampznetwork.libmod.core.database.hibernate.HibernateEntityService;
@@ -40,7 +41,7 @@ public abstract class SubMod$Spigot extends SpigotPluginBase implements SubMod, 
     public void onDisable() {
         super.onDisable();
 
-        if (entityService != null)
+        if ((this instanceof LibMod || !lib.getEntityService().equals(entityService)) && entityService != null)
             entityService.close();
     }
 
