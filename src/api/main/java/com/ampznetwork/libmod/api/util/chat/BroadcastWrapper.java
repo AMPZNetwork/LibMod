@@ -3,6 +3,7 @@ package com.ampznetwork.libmod.api.util.chat;
 import com.ampznetwork.libmod.api.LibMod;
 import com.ampznetwork.libmod.api.entity.Player;
 import lombok.Value;
+import net.kyori.adventure.text.format.TextColor;
 import org.comroid.api.data.bind.DataStructure;
 import org.comroid.api.func.ext.StreamSupplier;
 import org.comroid.api.func.util.Streams;
@@ -17,6 +18,12 @@ public class BroadcastWrapper extends MessageWrapper {
     LibMod lib;
     String name;
 
+    public BroadcastWrapper(TextColor themeColor, LibMod lib, String name) {
+        super(themeColor);
+        this.lib  = lib;
+        this.name = name;
+    }
+
     @Override
     protected Stream<Player> getTargets() {
         return lib.getPlayerAdapter().getCurrentPlayers();
@@ -25,6 +32,11 @@ public class BroadcastWrapper extends MessageWrapper {
     @Override
     protected BroadcastWrapper wrapper() {
         return this;
+    }
+
+    public MessageWrapper target(String permission) {
+        return new TargetAudience(() -> lib.getPlayerAdapter().getCurrentPlayers()
+                .filter(player -> lib.getPlayerAdapter().checkPermission(player.getId(), permission).toBooleanOrElse(false)));
     }
 
     public MessageWrapper target(Object... playersAndIds) {
