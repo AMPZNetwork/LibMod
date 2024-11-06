@@ -19,7 +19,9 @@ public interface SubMod extends Specifiable<SubMod>, Command.ContextProvider {
 
     Set<Capability> getCapabilities();
 
-    Class<?> getModuleType();
+    default Class<?> getModuleType() {
+        return getClass();
+    }
 
     Set<Class<? extends DbObject>> getEntityTypes();
 
