@@ -2,7 +2,7 @@ package com.ampznetwork.libmod.api.util.chat;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
-import org.jetbrains.annotations.NotNull;
+import org.comroid.annotations.Doc;
 
 import static net.kyori.adventure.text.Component.*;
 
@@ -13,7 +13,7 @@ public interface Colorizer {
 
     TextColor getDecorationColor();
 
-    default Component colorize(String format, Object... args) {
+    default Component colorize(@Doc("{} styled format string") String format, Object... args) {
         var text  = text();
         var split = format.split("\\{}");
         for (int i = 0; i < split.length; i++) {
