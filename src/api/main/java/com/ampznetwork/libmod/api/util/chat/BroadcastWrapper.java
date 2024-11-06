@@ -58,9 +58,13 @@ public class BroadcastWrapper extends MessageWrapper {
         return new TargetAudience(players::stream);
     }
 
-    @Value
     public class TargetAudience extends MessageWrapper {
         StreamSupplier<Player> players;
+
+        public TargetAudience(StreamSupplier<Player> players) {
+            super(BroadcastWrapper.this.getThemeColor());
+            this.players = players;
+        }
 
         @Override
         protected Stream<Player> getTargets() {
