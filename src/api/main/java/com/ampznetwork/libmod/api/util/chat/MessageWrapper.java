@@ -27,8 +27,7 @@ public abstract class MessageWrapper {
     @Builder(builderClassName = "MessageBuilder", builderMethodName = "createMessage", buildMethodName = "send")
     public void sendMessage(Colorizer colorizer, @Doc("{} styled format string") String format, Object... args) {
         var prefix = text("")
-                .append(text("[", colorizer.getDecorationColor()))
-                .append(text(wrapper().getName(), getThemeColor()))
+                .append(text("[", colorizer.getDecorationColor())).append(text(wrapper().getName(), themeColor))
                 .append(text("] ", colorizer.getDecorationColor()));
         var       text = colorizer.colorize(format, args);
         final var msg  = prefix.append(text);
