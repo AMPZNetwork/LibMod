@@ -41,9 +41,7 @@ subprojects {
 
     dependencies {
         if (project.name != 'japi') {
-            if (findProject(":japi") != null)
-                api project(":japi")
-            else api 'org.comroid:japi:+'
+            api project(":japi")
         }
 
         if (project.name != 'api' && !project.name.startsWith('compile'))
