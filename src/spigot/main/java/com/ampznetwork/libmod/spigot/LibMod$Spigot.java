@@ -22,6 +22,7 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -31,13 +32,15 @@ import java.util.concurrent.ScheduledExecutorService;
 @Getter
 @FieldDefaults(level = AccessLevel.PROTECTED, makeFinal = true)
 public class LibMod$Spigot extends SubMod$Spigot implements LibMod {
-    @NonFinal LuckPerms luckPerms;
     List<SubMod>             registeredSubMods = new ArrayList<>();
     SpigotPlayerAdapter      playerAdapter     = new SpigotPlayerAdapter(this);
     ScheduledExecutorService scheduler         = Executors.newScheduledThreadPool(4);
+    @NonFinal LuckPerms luckPerms;
 
     public LibMod$Spigot() {
-        super(Set.of(Capability.Database), Set.of(Player.class, NotifyEvent.class));
+        super(Set.of(Capability.Database), new HashSet<>() {{add(Player.class);}});
+        if (getMessagingServiceConfig() instanceof MessagingService.PollingDatabase)
+            entityTypes.add(NotifyEvent.class);
     }
 
     @Override
@@ -47,28 +50,6 @@ public class LibMod$Spigot extends SubMod$Spigot implements LibMod {
                 Resources.DefaultDbUrl,
                 Resources.DefaultDbUsername,
                 Resources.DefaultDbPassword);
-    }
-
-    @Override
-    public void onLoad() {
-        super.onLoad();
-
-        lib = this;
-    }
-
-    @Override
-    public void onEnable() {
-        luckPerms = Objects.requireNonNull(Bukkit.getServicesManager().getRegistration(LuckPerms.class)).getProvider();
-        super.onEnable();
-
-        entityService = new HibernateEntityService(this, dataSource -> new PersistenceUnitBase(
-                "LibMod shared Database",
-                LibMod.class,
-                dataSource,
-                registeredSubMods.stream()
-                        .flatMap(sub -> sub.getEntityTypes().stream())
-                        .toArray(Class[]::new)
-        ));
     }
 
     @Override
@@ -96,6 +77,28 @@ public class LibMod$Spigot extends SubMod$Spigot implements LibMod {
             default:
                 throw new UnsupportedOperationException("Unknown messaging service type: " + getMessagingServiceTypeName());
         }
+    }
+
+    @Override
+    public void onLoad() {
+        super.onLoad();
+
+        lib = this;
+    }
+
+    @Override
+    public void onEnable() {
+        luckPerms = Objects.requireNonNull(Bukkit.getServicesManager().getRegistration(LuckPerms.class)).getProvider();
+        super.onEnable();
+
+        entityService = new HibernateEntityService(this, dataSource -> new PersistenceUnitBase(
+                "LibMod shared Database",
+                LibMod.class,
+                dataSource,
+                registeredSubMods.stream()
+                        .flatMap(sub -> sub.getEntityTypes().stream())
+                        .toArray(Class[]::new)
+        ));
     }
 
     @Contract("null,_,_,_,_ -> null; !null,_,_,_,_ -> new")
