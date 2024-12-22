@@ -12,6 +12,16 @@ import java.util.Collection;
 import java.util.concurrent.ScheduledExecutorService;
 
 public interface LibMod extends SubMod, MessagingService.Type.Provider {
+    static boolean equalResourceKey(String actual, String expected) {
+        var colonIndexActual   = actual.indexOf(':');
+        var colonIndexExpected = expected.indexOf(':');
+        if (colonIndexActual != colonIndexExpected) {
+            if (colonIndexActual != -1) actual = actual.substring(colonIndexActual + 1);
+            if (colonIndexExpected != -1) expected = expected.substring(colonIndexExpected + 1);
+        }
+        return expected.equalsIgnoreCase(actual);
+    }
+
     Collection<SubMod> getRegisteredSubMods();
 
     DatabaseInfo getDatabaseInfo();
@@ -29,8 +39,8 @@ public interface LibMod extends SubMod, MessagingService.Type.Provider {
 
     @UtilityClass
     final class Strings {
-        public static final String AddonName = "LibMod";
-        public static final String AddonId   = "libmod";
+        public static final String AddonName          = "LibMod";
+        public static final String AddonId            = "libmod";
         public static final String IssuesUrl          = "https://github.com/AMPZNetwork/BanMod/issues";
         public static final String PleaseCheckConsole = "Please check console for further information";
     }
