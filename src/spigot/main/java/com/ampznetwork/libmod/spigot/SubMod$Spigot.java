@@ -3,6 +3,7 @@ package com.ampznetwork.libmod.spigot;
 import com.ampznetwork.libmod.api.LibMod;
 import com.ampznetwork.libmod.api.SubMod;
 import com.ampznetwork.libmod.api.entity.DbObject;
+import com.ampznetwork.libmod.api.util.chat.BroadcastWrapper;
 import com.ampznetwork.libmod.core.database.hibernate.HibernateEntityService;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -25,6 +26,7 @@ public abstract class SubMod$Spigot extends SpigotPluginBase implements SubMod, 
     protected           Set<Capability>                capabilities;
     protected           Set<Class<? extends DbObject>> entityTypes;
     protected @NonFinal LibMod$Spigot                  lib;
+    protected @NonFinal BroadcastWrapper               chat;
     protected @NonFinal HibernateEntityService         entityService;
 
     @Override
@@ -35,22 +37,21 @@ public abstract class SubMod$Spigot extends SpigotPluginBase implements SubMod, 
 
         this.lib = getPlugin(LibMod$Spigot.class);
         lib.register(this);
+        this.chat = new BroadcastWrapper(getThemeColor(), lib, getName());
     }
 
     @Override
     public void onDisable() {
         super.onDisable();
 
-        if ((this instanceof LibMod || !lib.getEntityService().equals(entityService)) && entityService != null)
-            entityService.close();
+        if ((this instanceof LibMod || !lib.getEntityService().equals(entityService)) && entityService != null) entityService.close();
     }
 
     @Override
     public void onEnable() {
         super.onEnable();
 
-        if (lib != null)
-            this.entityService = lib.getEntityService();
+        if (lib != null) this.entityService = lib.getEntityService();
     }
 
     @Override
@@ -60,9 +61,7 @@ public abstract class SubMod$Spigot extends SpigotPluginBase implements SubMod, 
 
     @Override
     public boolean userHasPermission(Command.Usage usage, Object key) {
-        var userId = usage.getContext().stream()
-                .flatMap(Streams.cast(UUID.class))
-                .findAny().orElseThrow();
+        var userId = usage.getContext().stream().flatMap(Streams.cast(UUID.class)).findAny().orElseThrow();
         return lib.getLuckPerms()
                 .getPlayerAdapter(Player.class)
                 .getPermissionData(Objects.requireNonNull(Bukkit.getPlayer(userId), "Unexpected state: Player is offline " + userId))

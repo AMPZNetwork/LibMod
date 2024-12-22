@@ -3,6 +3,9 @@ package com.ampznetwork.libmod.api;
 import com.ampznetwork.libmod.api.entity.DbObject;
 import com.ampznetwork.libmod.api.interop.database.IEntityService;
 import com.ampznetwork.libmod.api.model.API;
+import com.ampznetwork.libmod.api.util.chat.BroadcastWrapper;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 import org.comroid.api.attr.Named;
 import org.comroid.api.func.Specifiable;
 import org.comroid.api.func.util.Command;
@@ -25,6 +28,12 @@ public interface SubMod extends Specifiable<SubMod>, Command.ContextProvider, AP
     }
 
     Set<Class<? extends DbObject>> getEntityTypes();
+
+    BroadcastWrapper getBroadcastWrapper();
+
+    default TextColor getThemeColor() {
+        return NamedTextColor.AQUA;
+    }
 
     void executeSync(Runnable task);
 
