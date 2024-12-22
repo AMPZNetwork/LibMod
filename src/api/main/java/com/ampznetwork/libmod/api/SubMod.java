@@ -29,7 +29,7 @@ public interface SubMod extends Specifiable<SubMod>, Command.ContextProvider, AP
 
     Set<Class<? extends DbObject>> getEntityTypes();
 
-    BroadcastWrapper getBroadcastWrapper();
+    BroadcastWrapper getChat();
 
     default TextColor getThemeColor() {
         return NamedTextColor.AQUA;

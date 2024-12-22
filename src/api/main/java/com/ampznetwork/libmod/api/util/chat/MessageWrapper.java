@@ -7,6 +7,7 @@ import lombok.Value;
 import lombok.experimental.NonFinal;
 import net.kyori.adventure.text.format.TextColor;
 import org.comroid.annotations.Doc;
+import org.intellij.lang.annotations.MagicConstant;
 
 import java.util.stream.Stream;
 
@@ -25,7 +26,7 @@ public abstract class MessageWrapper {
     }
 
     @Builder(builderClassName = "MessageBuilder", builderMethodName = "createMessage", buildMethodName = "send")
-    public void sendMessage(Colorizer colorizer, @Doc("{} styled format string") String format, Object... args) {
+    public void sendMessage(@MagicConstant(valuesFromClass = BroadcastType.class) Colorizer colorizer, @Doc("{} styled format string") String format, Object... args) {
         var prefix = text("")
                 .append(text("[", colorizer.getDecorationColor())).append(text(wrapper().getName(), themeColor))
                 .append(text("] ", colorizer.getDecorationColor()));
