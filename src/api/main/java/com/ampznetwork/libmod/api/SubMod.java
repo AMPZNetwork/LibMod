@@ -2,6 +2,7 @@ package com.ampznetwork.libmod.api;
 
 import com.ampznetwork.libmod.api.entity.DbObject;
 import com.ampznetwork.libmod.api.interop.database.IEntityService;
+import com.ampznetwork.libmod.api.model.API;
 import org.comroid.api.attr.Named;
 import org.comroid.api.func.Specifiable;
 import org.comroid.api.func.util.Command;
@@ -12,7 +13,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Stream;
 
-public interface SubMod extends Specifiable<SubMod>, Command.ContextProvider {
+public interface SubMod extends Specifiable<SubMod>, Command.ContextProvider, API.Delegate {
     LibMod getLib();
 
     Command.Manager getCmdr();
@@ -24,8 +25,6 @@ public interface SubMod extends Specifiable<SubMod>, Command.ContextProvider {
     }
 
     Set<Class<? extends DbObject>> getEntityTypes();
-
-    IEntityService getEntityService() throws UnsupportedOperationException;
 
     void executeSync(Runnable task);
 

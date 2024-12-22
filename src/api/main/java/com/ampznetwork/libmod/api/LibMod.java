@@ -1,7 +1,7 @@
 package com.ampznetwork.libmod.api;
 
-import com.ampznetwork.libmod.api.interop.game.IPlayerAdapter;
 import com.ampznetwork.libmod.api.messaging.MessagingService;
+import com.ampznetwork.libmod.api.model.API;
 import com.ampznetwork.libmod.api.model.info.DatabaseInfo;
 import lombok.experimental.UtilityClass;
 import org.comroid.api.func.util.Command;
@@ -9,9 +9,8 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
 import java.util.Collection;
-import java.util.concurrent.ScheduledExecutorService;
 
-public interface LibMod extends SubMod, MessagingService.Type.Provider {
+public interface LibMod extends SubMod, MessagingService.Type.Provider, API {
     static boolean equalResourceKey(String actual, String expected) {
         var colonIndexActual   = actual.indexOf(':');
         var colonIndexExpected = expected.indexOf(':');
@@ -22,18 +21,19 @@ public interface LibMod extends SubMod, MessagingService.Type.Provider {
         return expected.equalsIgnoreCase(actual);
     }
 
-    Collection<SubMod> getRegisteredSubMods();
-
-    DatabaseInfo getDatabaseInfo();
-
-    IPlayerAdapter getPlayerAdapter();
-
-    ScheduledExecutorService getScheduler();
+    @Override
+    default LibMod getLib() {
+        return this;
+    }
 
     @Override
     default Class<?> getModuleType() {
         return LibMod.class;
     }
+
+    Collection<SubMod> getRegisteredSubMods();
+
+    DatabaseInfo getDatabaseInfo();
 
     void register(SubMod mod);
 
