@@ -1,3 +1,4 @@
 apply from: "$rootProject.projectDir/gradle/scripts/java-lib.gradle"
+apply from: "$rootProject.projectDir/gradle/scripts/setup/sql.gradle"
 
 group = 'com.ampznetwork.libmod'
