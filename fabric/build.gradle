@@ -81,7 +81,7 @@ dependencies {
     include project("$prefix:core")
 
     // japi
-    include project(":japi")
+    include 'org.comroid:japi:+'
 
     include 'com.fasterxml.jackson.core:jackson-databind:2.17.2'
     include 'javax.persistence:javax.persistence-api:2.2'
