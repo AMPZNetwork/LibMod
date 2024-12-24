@@ -10,7 +10,7 @@ import org.slf4j.Logger;
 
 import java.util.Collection;
 
-public interface LibMod extends SubMod, MessagingService.Type.Provider, API {
+public interface LibMod extends SubMod, MessagingService.Type.Provider, API.Delegate {
     static boolean equalResourceKey(String actual, String expected) {
         var colonIndexActual   = actual.indexOf(':');
         var colonIndexExpected = expected.indexOf(':');
