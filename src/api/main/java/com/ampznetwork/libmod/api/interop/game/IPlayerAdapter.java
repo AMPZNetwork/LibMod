@@ -54,6 +54,6 @@ public interface IPlayerAdapter extends Command.PermissionChecker.Adapter {
     Optional<UUID> getIdFromNativePlayer(Object nativePlayer);
 
     default Optional<Player> convertNativePlayer(Object nativePlayer) {
-        return getIdFromNativePlayer(nativePlayer).flatMap(this::getPlayer);
+        return nativePlayer instanceof Player player ? Optional.of(player) : getIdFromNativePlayer(nativePlayer).flatMap(this::getPlayer);
     }
 }
