@@ -10,7 +10,7 @@ import lombok.experimental.FieldDefaults;
 import org.comroid.api.attr.Named;
 import org.hibernate.dialect.H2Dialect;
 import org.hibernate.dialect.MariaDBDialect;
-import org.hibernate.dialect.MySQLDialect;
+import org.hibernate.dialect.MySQL8Dialect;
 import org.jetbrains.annotations.Nullable;
 
 import javax.persistence.EntityManager;
@@ -38,7 +38,7 @@ public interface IEntityService {
     @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
     enum DatabaseType implements Named {
         h2(org.h2.Driver.class, H2Dialect.class),
-        MySQL(com.mysql.jdbc.Driver.class, MySQLDialect.class),
+        MySQL(com.mysql.jdbc.Driver.class, MySQL8Dialect.class),
         MariaDB(org.mariadb.jdbc.Driver.class, MariaDBDialect.class);
 
         Class<?> driverClass;
