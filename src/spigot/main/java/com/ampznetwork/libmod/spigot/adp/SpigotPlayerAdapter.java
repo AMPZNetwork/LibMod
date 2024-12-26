@@ -132,6 +132,16 @@ public class SpigotPlayerAdapter implements IPlayerAdapter {
     }
 
     @Override
+    public Optional<UUID> getIdFromNativePlayer(Object nativePlayer) {
+        if (nativePlayer == null) return Optional.empty();
+        return Optional.ofNullable(switch (nativePlayer) {
+            case org.bukkit.entity.Player player -> player.getUniqueId();
+            case OfflinePlayer offlinePlayer -> offlinePlayer.getUniqueId();
+            default -> null;
+        });
+    }
+
+    @Override
     public boolean checkOpLevel(UUID playerId, int $) {
         if ($ > 1) Bukkit.getLogger().warning("Spigot API does not properly support validating a certain OP level.");
         var player = lib.getServer().getPlayer(playerId);

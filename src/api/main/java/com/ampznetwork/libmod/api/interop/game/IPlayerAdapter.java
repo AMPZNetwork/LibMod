@@ -50,4 +50,10 @@ public interface IPlayerAdapter extends Command.PermissionChecker.Adapter {
     void broadcast(@Nullable String recieverPermission, Component component);
 
     void openBook(Player player, BookAdapter book);
+
+    Optional<UUID> getIdFromNativePlayer(Object nativePlayer);
+
+    default Optional<Player> convertNativePlayer(Object nativePlayer) {
+        return getIdFromNativePlayer(nativePlayer).flatMap(this::getPlayer);
+    }
 }
