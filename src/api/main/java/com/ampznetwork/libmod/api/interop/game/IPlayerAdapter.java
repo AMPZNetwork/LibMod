@@ -12,13 +12,18 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Stream;
 
-public interface IPlayerAdapter extends Command.PermissionChecker.Adapter {
+public interface IPlayerAdapter extends Command.PermissionChecker.Adapter, PlayerIdentifierAdapter {
     LibMod getLib();
 
-    Stream<Player> getCurrentPlayers();
+    @Override
+    default PlayerFactory getPlayerFactory() {
+        return (id, name) -> getLib().getEntityService().getAccessor(Player.TYPE)
+                .getOrCreate(id)
+                .setUpdateOriginal(player -> player.setName(name))
+                .complete(builder -> builder.name(name));
+    }
 
-    String getDisplayName(UUID playerId);
-
+    @Override
     default Optional<Player> getPlayer(UUID playerId) {
         return getCurrentPlayers()
                 .filter(plr -> plr.getId().equals(playerId))
@@ -26,11 +31,24 @@ public interface IPlayerAdapter extends Command.PermissionChecker.Adapter {
                 .or(() -> getLib().getEntityService().getAccessor(Player.TYPE).get(playerId));
     }
 
+    @Override
     default Optional<Player> getPlayer(String name) {
-        return Optional.ofNullable(getId(name)).flatMap(this::getPlayer);
+        return Optional.ofNullable(getIdOrThrow(name)).flatMap(this::getPlayer);
     }
 
-    default UUID getId(String name) {
+    Stream<Player> getCurrentPlayers();
+
+    String getDisplayName(UUID playerId);
+
+    default Optional<UUID> getId(String name) {
+        try {
+            return Optional.of(getIdOrThrow(name));
+        } catch (Throwable ignored) {
+            return Optional.empty();
+        }
+    }
+
+    default UUID getIdOrThrow(String name) {
         return Player.fetchId(name).join();
     }
 

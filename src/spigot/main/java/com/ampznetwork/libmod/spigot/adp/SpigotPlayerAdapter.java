@@ -3,6 +3,7 @@ package com.ampznetwork.libmod.spigot.adp;
 import com.ampznetwork.libmod.api.adapter.BookAdapter;
 import com.ampznetwork.libmod.api.entity.Player;
 import com.ampznetwork.libmod.api.interop.game.IPlayerAdapter;
+import com.ampznetwork.libmod.core.adapter.HeadlessPlayerAdapter;
 import com.ampznetwork.libmod.spigot.LibMod$Spigot;
 import lombok.Value;
 import net.kyori.adventure.text.Component;
@@ -26,7 +27,7 @@ import static net.kyori.adventure.text.serializer.bungeecord.BungeeComponentSeri
 import static net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.*;
 
 @Value
-public class SpigotPlayerAdapter implements IPlayerAdapter {
+public class SpigotPlayerAdapter extends HeadlessPlayerAdapter implements IPlayerAdapter {
     LibMod$Spigot lib;
 
     @Override
@@ -46,7 +47,7 @@ public class SpigotPlayerAdapter implements IPlayerAdapter {
     }
 
     @Override
-    public UUID getId(String name) {
+    public UUID getIdOrThrow(String name) {
         final var fetch = Player.fetchId(name);
         return Arrays.stream(Bukkit.getOfflinePlayers())
                 .filter(player -> name.equals(player.getName()))

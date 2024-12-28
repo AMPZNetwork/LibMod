@@ -12,6 +12,7 @@ import org.comroid.annotations.Doc;
 import org.comroid.api.Polyfill;
 import org.comroid.api.net.REST;
 import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.Nullable;
 
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
@@ -51,21 +52,12 @@ public class Player extends DbObject {
     fuck you, java. fix your type generics.
      */
     public static final EntityType<Player, Builder<Player, ?>> TYPE
-            = Polyfill.uncheckedCast(new EntityType<>(Player::builder, null, Player.class, Builder.class));
-    public static       BiConsumer<UUID, String>          CACHE_NAME         = null;
-    public static final Comparator<Map.Entry<?, Instant>> MOST_RECENTLY_SEEN = Comparator.comparingLong(e -> e.getValue().toEpochMilli());
-    @Singular
-    @ElementCollection
-    @Column(name = "seen")
-    @MapKeyColumn(name = "name")
-    @CollectionTable(name = "libmod_playerdata_names", joinColumns = @JoinColumn(name = "id"))
-    Map<@Doc("name") String, @Doc("seen") Instant> knownNames = new HashMap<>();
-    @Singular
-    @ElementCollection
-    @Column(name = "seen")
-    @MapKeyColumn(name = "ip")
-    @CollectionTable(name = "libmod_playerdata_ips", joinColumns = @JoinColumn(name = "id"))
-    Map<@Doc("ip") String, @Doc("seen") Instant>   knownIPs   = new HashMap<>();
+                                                                                  = Polyfill.uncheckedCast(new EntityType<>(Player::builder,
+            null,
+            Player.class,
+            Builder.class));
+    public static final Comparator<Map.Entry<?, Instant>>      MOST_RECENTLY_SEEN = Comparator.comparingLong(e -> e.getValue().toEpochMilli());
+    public static       BiConsumer<UUID, String>               CACHE_NAME         = null;
 
     public static CompletableFuture<UUID> fetchId(String name) {
         var future = REST.get("https://api.mojang.com/users/profiles/minecraft/" + name)
@@ -85,9 +77,22 @@ public class Player extends DbObject {
         return future;
     }
 
+    @Singular
+    @ElementCollection
+    @Column(name = "seen")
+    @MapKeyColumn(name = "name")
+    @CollectionTable(name = "libmod_playerdata_names", joinColumns = @JoinColumn(name = "id"))
+    Map<@Doc("name") String, @Doc("seen") Instant> knownNames = new HashMap<>();
+    @Singular
+    @ElementCollection
+    @Column(name = "seen")
+    @MapKeyColumn(name = "ip")
+    @CollectionTable(name = "libmod_playerdata_ips", joinColumns = @JoinColumn(name = "id"))
+    Map<@Doc("ip") String, @Doc("seen") Instant>   knownIPs   = new HashMap<>();
     private String name;
 
-    @Transient @JsonIgnore
+    @Transient
+    @JsonIgnore
     public CompletableFuture<String> getOrFetchUsername() {
         return Optional.ofNullable(name)
                 .map(CompletableFuture::completedFuture)
@@ -106,6 +111,10 @@ public class Player extends DbObject {
         return knownIPs.entrySet().stream()
                 .max(Player.MOST_RECENTLY_SEEN)
                 .map(Map.Entry::getKey);
+    }
+
+    public @Nullable String getHeadUrl() {
+        return "https://mc-heads.net/avatar/" + name;
     }
 
     @Contract(value = "!null->this", pure = true)
