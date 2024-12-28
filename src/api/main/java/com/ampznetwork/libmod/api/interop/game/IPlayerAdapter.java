@@ -26,6 +26,10 @@ public interface IPlayerAdapter extends Command.PermissionChecker.Adapter {
                 .or(() -> getLib().getEntityService().getAccessor(Player.TYPE).get(playerId));
     }
 
+    default Optional<Player> getPlayer(String name) {
+        return Optional.ofNullable(getId(name)).flatMap(this::getPlayer);
+    }
+
     default UUID getId(String name) {
         return Player.fetchId(name).join();
     }

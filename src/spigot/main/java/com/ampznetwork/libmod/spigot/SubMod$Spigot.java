@@ -14,6 +14,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.comroid.api.func.util.Command;
 import org.comroid.api.func.util.Streams;
+import org.jetbrains.annotations.MustBeInvokedByOverriders;
 
 import java.util.Objects;
 import java.util.Set;
@@ -30,17 +31,19 @@ public abstract class SubMod$Spigot extends SpigotPluginBase implements SubMod, 
     protected @NonFinal HibernateEntityService         entityService;
 
     @Override
+    @MustBeInvokedByOverriders
     public void onLoad() {
-        super.onLoad();
+        this.lib = getPlugin(LibMod$Spigot.class);
 
+        super.onLoad();
         saveDefaultConfig();
 
-        this.lib = getPlugin(LibMod$Spigot.class);
         lib.register(this);
         this.chat = new BroadcastWrapper(getThemeColor(), lib, getName());
     }
 
     @Override
+    @MustBeInvokedByOverriders
     public void onDisable() {
         super.onDisable();
 
@@ -48,6 +51,7 @@ public abstract class SubMod$Spigot extends SpigotPluginBase implements SubMod, 
     }
 
     @Override
+    @MustBeInvokedByOverriders
     public void onEnable() {
         super.onEnable();
 
