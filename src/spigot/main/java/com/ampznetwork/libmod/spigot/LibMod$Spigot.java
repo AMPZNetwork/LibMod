@@ -9,7 +9,7 @@ import com.ampznetwork.libmod.api.messaging.NotifyEvent;
 import com.ampznetwork.libmod.api.model.info.DatabaseInfo;
 import com.ampznetwork.libmod.core.database.hibernate.HibernateEntityService;
 import com.ampznetwork.libmod.core.database.hibernate.PersistenceUnitBase;
-import com.ampznetwork.libmod.spigot.adp.SpigotPlayerAdapter;
+import com.ampznetwork.libmod.spigot.adapter.SpigotPlayerAdapter;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.experimental.FieldDefaults;

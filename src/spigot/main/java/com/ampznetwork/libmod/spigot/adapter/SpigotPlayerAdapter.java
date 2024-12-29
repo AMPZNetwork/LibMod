@@ -1,4 +1,4 @@
-package com.ampznetwork.libmod.spigot.adp;
+package com.ampznetwork.libmod.spigot.adapter;
 
 import com.ampznetwork.libmod.api.adapter.BookAdapter;
 import com.ampznetwork.libmod.api.entity.Player;
