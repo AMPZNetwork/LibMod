@@ -13,4 +13,8 @@ public interface PlayerIdentifierAdapter {
     Optional<Player> getPlayer(UUID playerId);
 
     Optional<Player> getPlayer(String name);
+
+    default String getDisplayName(UUID playerId) {
+        return getPlayer(playerId).map(Player::getName).orElseThrow();
+    }
 }
