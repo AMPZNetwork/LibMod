@@ -63,9 +63,11 @@ public class LibMod$Spigot extends SubMod$Spigot implements LibMod {
     }
 
     @Override
-    public MessagingService.Config getMessagingServiceConfig() {
+    public @Nullable MessagingService.Config getMessagingServiceConfig() {
         var cfg = getConfig();
         switch (getMessagingServiceTypeName()) {
+            case "none":
+                return null;
             case "polling-db":
                 var interval = Polyfill.parseDuration(cfg.getString("messaging-service.interval", "2s"));
                 var dbInfo = getDatabaseInfo(cfg.getConfigurationSection("messaging-service.database"),

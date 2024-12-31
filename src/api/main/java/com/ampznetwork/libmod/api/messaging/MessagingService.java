@@ -58,10 +58,12 @@ public interface MessagingService {
         public interface Provider {
             String getMessagingServiceTypeName();
 
-            MessagingService.Config getMessagingServiceConfig();
+            @Nullable MessagingService.Config getMessagingServiceConfig();
 
             default Optional<Type<?, ?>> getMessagingServiceType() {
                 var messagingServiceTypeName = getMessagingServiceTypeName();
+                if ("none".equals(messagingServiceTypeName))
+                    return Optional.empty();
                 return Type.REGISTRY.stream()
                         .filter(type -> Capitalization.equalsIgnoreCase(type.name, messagingServiceTypeName))
                         .findAny();
