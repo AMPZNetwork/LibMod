@@ -42,11 +42,6 @@ public class SpigotPlayerAdapter extends HeadlessPlayerAdapter implements IPlaye
     }
 
     @Override
-    public String getDisplayName(UUID playerId) {
-        return lib.getServer().getPlayer(playerId).getDisplayName();
-    }
-
-    @Override
     public UUID getIdOrThrow(String name) {
         final var fetch = Player.fetchId(name);
         return Arrays.stream(Bukkit.getOfflinePlayers())
@@ -140,6 +135,13 @@ public class SpigotPlayerAdapter extends HeadlessPlayerAdapter implements IPlaye
             case OfflinePlayer offlinePlayer -> offlinePlayer.getUniqueId();
             default -> null;
         });
+    }
+
+    @Override
+    public String getDisplayName(UUID playerId) {
+        return Optional.ofNullable(lib.getServer().getPlayer(playerId))
+                .map(org.bukkit.entity.Player::getDisplayName)
+                .orElseGet(() -> getName(playerId));
     }
 
     @Override
