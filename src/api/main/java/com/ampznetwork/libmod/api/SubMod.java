@@ -1,7 +1,6 @@
 package com.ampznetwork.libmod.api;
 
 import com.ampznetwork.libmod.api.entity.DbObject;
-import com.ampznetwork.libmod.api.interop.database.IEntityService;
 import com.ampznetwork.libmod.api.model.API;
 import com.ampznetwork.libmod.api.util.chat.BroadcastWrapper;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -16,8 +15,13 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Stream;
 
-public interface SubMod extends Specifiable<SubMod>, Command.ContextProvider, API.Delegate {
+public interface SubMod extends Specifiable<SubMod>, Command.ContextProvider, API.Delegate, Named {
     LibMod getLib();
+
+    @Override
+    default String getName() {
+        return getClass().getSimpleName().split("[.$]")[0];
+    }
 
     Command.Manager getCmdr();
 
