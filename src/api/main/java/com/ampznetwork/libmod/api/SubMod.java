@@ -6,7 +6,6 @@ import com.ampznetwork.libmod.api.util.chat.BroadcastWrapper;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import org.comroid.api.attr.Named;
-import org.comroid.api.func.Specifiable;
 import org.comroid.api.func.util.Command;
 import org.comroid.api.func.util.Streams;
 
@@ -15,7 +14,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Stream;
 
-public interface SubMod extends Specifiable<SubMod>, Command.ContextProvider, API.Delegate, Named {
+public interface SubMod extends BroadcastWrapper.Delegate, Command.ContextProvider, API.Delegate, Named {
     LibMod getLib();
 
     @Override
@@ -32,8 +31,6 @@ public interface SubMod extends Specifiable<SubMod>, Command.ContextProvider, AP
     }
 
     Set<Class<? extends DbObject>> getEntityTypes();
-
-    BroadcastWrapper getChat();
 
     default TextColor getThemeColor() {
         return NamedTextColor.AQUA;

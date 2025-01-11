@@ -58,6 +58,10 @@ public class BroadcastWrapper extends MessageWrapper {
         return new TargetAudience(players::stream);
     }
 
+    public interface Delegate {
+        BroadcastWrapper chat();
+    }
+
     public class TargetAudience extends MessageWrapper {
         StreamSupplier<Player> players;
 

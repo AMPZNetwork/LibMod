@@ -59,6 +59,11 @@ public abstract class SubMod$Spigot extends SpigotPluginBase implements SubMod, 
     }
 
     @Override
+    public BroadcastWrapper chat() {
+        return chat;
+    }
+
+    @Override
     public final void executeSync(Runnable task) {
         Bukkit.getScheduler().runTask(this, task);
     }
