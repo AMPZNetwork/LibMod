@@ -3,6 +3,7 @@ package com.ampznetwork.libmod.api;
 import com.ampznetwork.libmod.api.messaging.MessagingService;
 import com.ampznetwork.libmod.api.model.API;
 import com.ampznetwork.libmod.api.model.info.DatabaseInfo;
+import com.ampznetwork.libmod.api.model.info.ServerInfoProvider;
 import lombok.experimental.UtilityClass;
 import org.comroid.api.func.util.Command;
 import org.jetbrains.annotations.NotNull;
@@ -10,7 +11,7 @@ import org.slf4j.Logger;
 
 import java.util.Collection;
 
-public interface LibMod extends SubMod, MessagingService.Type.Provider, API.Delegate {
+public interface LibMod extends SubMod, ServerInfoProvider, MessagingService.Type.Provider, API.Delegate {
     static boolean equalResourceKey(String actual, String expected) {
         var colonIndexActual   = actual.indexOf(':');
         var colonIndexExpected = expected.indexOf(':');

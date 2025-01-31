@@ -1,3 +1,6 @@
+server:
+  name: '&eMC'
+
 # database for storing punishments and userdata
 database:
   type: h2 # h2, MariaDB or MySQL
