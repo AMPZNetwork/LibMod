@@ -1,6 +1,7 @@
 package com.ampznetwork.libmod.api.model;
 
 import com.ampznetwork.libmod.api.entity.DbObject;
+import lombok.ToString;
 import lombok.Value;
 import org.comroid.api.Polyfill;
 import org.comroid.api.map.Cache;
@@ -14,6 +15,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 
 @Value
+@ToString(of = { "entityType", "parent" })
 public class EntityType<Entity extends DbObject, Builder> {
     public static final Map<String, EntityType<?, ?>> REGISTRY = new ConcurrentHashMap<>();
 
