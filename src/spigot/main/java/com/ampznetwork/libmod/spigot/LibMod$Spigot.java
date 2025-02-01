@@ -17,18 +17,23 @@ import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
 import net.luckperms.api.LuckPerms;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.entity.EntityType;
 import org.comroid.api.Polyfill;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.stream.Stream;
 
 @Getter
 @FieldDefaults(level = AccessLevel.PROTECTED, makeFinal = true)
@@ -55,6 +60,21 @@ public class LibMod$Spigot extends SubMod$Spigot implements LibMod {
     @Override
     public void register(SubMod mod) {
         registeredSubMods.add(mod);
+    }
+
+    @Override
+    public Stream<String> worldNames() {
+        return Bukkit.getWorlds().stream().map(World::getName);
+    }
+
+    @Override
+    public Stream<String> materials() {
+        return Arrays.stream(Material.values()).map(mat -> mat.getKey().toString());
+    }
+
+    @Override
+    public Stream<String> entityTypes() {
+        return Arrays.stream(EntityType.values()).map(typ -> typ.getKey().toString());
     }
 
     @Override

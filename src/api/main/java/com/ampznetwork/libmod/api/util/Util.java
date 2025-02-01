@@ -3,6 +3,12 @@ package com.ampznetwork.libmod.api.util;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.serializer.ComponentSerializer;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collector;
 
 import static net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.*;
 import static net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer.*;
@@ -28,6 +34,25 @@ public interface Util {
             if (first != null) string = last.serialize(first.deserialize(string));
             var out = last.deserialize(string);
             return output.serialize(out);
+        }
+
+        public static Collector<Component, List<Component>, Component> collector() {
+            return collector(null);
+        }
+
+        public static Collector<Component, List<Component>, Component> collector(@Nullable Component delimiter) {
+            return Collector.of(ArrayList::new, Collection::add, (l, r) -> {
+                l.addAll(r);
+                return l;
+            }, ls -> {
+                var txt = Component.text();
+                for (var iterator = ls.iterator(); iterator.hasNext(); ) {
+                    Component l = iterator.next();
+                    txt.append(l);
+                    if (iterator.hasNext() && delimiter != null) txt.append(delimiter);
+                }
+                return txt.build();
+            });
         }
     }
 }

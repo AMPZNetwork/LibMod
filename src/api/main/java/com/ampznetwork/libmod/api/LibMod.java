@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
 import java.util.Collection;
+import java.util.stream.Stream;
 
 public interface LibMod extends SubMod, ServerInfoProvider, MessagingService.Type.Provider, API.Delegate {
     static boolean equalResourceKey(String actual, String expected) {
@@ -37,6 +38,12 @@ public interface LibMod extends SubMod, ServerInfoProvider, MessagingService.Typ
     DatabaseInfo getDatabaseInfo();
 
     void register(SubMod mod);
+
+    Stream<String> worldNames();
+
+    Stream<String> materials();
+
+    Stream<String> entityTypes();
 
     @UtilityClass
     final class Strings {
