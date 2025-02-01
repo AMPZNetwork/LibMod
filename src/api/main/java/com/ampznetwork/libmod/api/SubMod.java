@@ -36,6 +36,8 @@ public interface SubMod extends BroadcastWrapper.Delegate, Command.ContextProvid
         return NamedTextColor.AQUA;
     }
 
+    String getConfigDir();
+
     void executeSync(Runnable task);
 
     default boolean hasCapability(Capability capability) {

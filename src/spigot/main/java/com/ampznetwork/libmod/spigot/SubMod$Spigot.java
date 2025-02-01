@@ -31,6 +31,16 @@ public abstract class SubMod$Spigot extends SpigotPluginBase implements SubMod, 
     protected @NonFinal HibernateEntityService         entityService;
 
     @Override
+    public String getConfigDir() {
+        return "plugins/" + getName();
+    }
+
+    @Override
+    public final void executeSync(Runnable task) {
+        Bukkit.getScheduler().runTask(this, task);
+    }
+
+    @Override
     @MustBeInvokedByOverriders
     public void onLoad() {
         this.lib = getPlugin(LibMod$Spigot.class);
@@ -61,11 +71,6 @@ public abstract class SubMod$Spigot extends SpigotPluginBase implements SubMod, 
     @Override
     public BroadcastWrapper chat() {
         return chat;
-    }
-
-    @Override
-    public final void executeSync(Runnable task) {
-        Bukkit.getScheduler().runTask(this, task);
     }
 
     @Override
