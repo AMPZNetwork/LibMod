@@ -50,6 +50,10 @@ public interface SubMod extends BroadcastWrapper.Delegate, Command.ContextProvid
                 .flatMap(Streams.expand(it -> it instanceof UUID id ? getLib().getPlayerAdapter().getPlayer(id).stream() : Stream.empty()));
     }
 
+    default <T extends SubMod> T sub(Class<T> type) {
+        return getLib().getRegisteredSubMods().stream().flatMap(Streams.cast(type)).findAny().orElseThrow();
+    }
+
     enum Capability implements Named {
         Database
     }
