@@ -84,10 +84,10 @@ public class HibernateEntityService extends Container.Base implements IEntitySer
             @MagicConstant(stringValues = { "update", "validate" }) String hbm2ddl
     ) {
         var config = Map.of("hibernate.connection.driver_class", info.type().getDriverClass().getCanonicalName(),
-                "hibernate.connection.url", info.url(),
+                "hibernate.connection.url", info.url() + (info.url().contains("?") ? '&' : '?') + "useUnicode=true&amp;character_set_server=utf8mb4",
                 "hibernate.connection.username", info.user(),
                 "hibernate.connection.password", info.pass(),
-                "hibernate.connection.CharSet", "utf8",
+                "hibernate.connection.CharSet", "utf8mb4",
                 "hibernate.connection.characterEncoding", "utf8",
                 "hibernate.connection.useUnicode", true,
                 "hibernate.dialect", info.type().getDialectClass().getCanonicalName(),
