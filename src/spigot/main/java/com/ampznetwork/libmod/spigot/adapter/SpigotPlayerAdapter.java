@@ -34,7 +34,8 @@ public class SpigotPlayerAdapter extends HeadlessPlayerAdapter implements IPlaye
     public Stream<Player> getCurrentPlayers() {
         var service = lib.getEntityService();
         return lib.getServer()
-                .getOnlinePlayers().stream()
+                .getOnlinePlayers()
+                .stream()
                 .map(player -> service.getAccessor(Player.TYPE)
                         .getOrCreate(player.getUniqueId())
                         .setUpdateOriginal(original -> original.setName(player.getName()))
@@ -49,7 +50,8 @@ public class SpigotPlayerAdapter extends HeadlessPlayerAdapter implements IPlaye
                 .findAny()
                 .map(OfflinePlayer::getUniqueId)
                 .or(() -> lib.getEntityService()
-                        .getAccessor(Player.TYPE).all()
+                        .getAccessor(Player.TYPE)
+                        .all()
                         .filter(pd -> pd.getName().equals(name))
                         .map(Player::getId)
                         .filter($ -> !fetch.isDone() || fetch.cancel(false))
@@ -62,7 +64,8 @@ public class SpigotPlayerAdapter extends HeadlessPlayerAdapter implements IPlaye
         final var fetch = Player.fetchUsername(playerId);
         return Optional.ofNullable(lib.getServer().getOfflinePlayer(playerId).getName())
                 .or(() -> lib.getEntityService()
-                        .getAccessor(Player.TYPE).get(playerId)
+                        .getAccessor(Player.TYPE)
+                        .get(playerId)
                         .map(Player::getName)
                         .filter($ -> !fetch.isDone() || fetch.cancel(false)))
                 .orElseGet(fetch::join);
@@ -87,8 +90,7 @@ public class SpigotPlayerAdapter extends HeadlessPlayerAdapter implements IPlaye
     @Override
     public void kick(UUID playerId, Component component) {
         var player = Bukkit.getPlayer(playerId);
-        if (player == null)
-            return;
+        if (player == null) return;
         var serialize = legacySection().serialize(component);
         player.kickPlayer(serialize);
     }
@@ -104,25 +106,25 @@ public class SpigotPlayerAdapter extends HeadlessPlayerAdapter implements IPlaye
     @Override
     public void broadcast(@Nullable String receiverPermission, Component component) {
         final var serialize = get().serialize(component);
-        lib.getServer().getOnlinePlayers().stream()
+        lib.getServer()
+                .getOnlinePlayers()
+                .stream()
                 .filter(player -> receiverPermission == null || player.hasPermission(receiverPermission))
                 .forEach(player -> player.spigot().sendMessage(serialize));
     }
 
     @Override
     public void openBook(Player player, BookAdapter book) {
-        if (!isOnline(player.getId()))
-            throw new AssertionError("Target player is not online");
+        if (!isOnline(player.getId())) throw new AssertionError("Target player is not online");
         var stack = new ItemStack(Material.WRITTEN_BOOK, 1);
         var meta  = Objects.requireNonNull((BookMeta) stack.getItemMeta(), "item meta");
         meta.setTitle(BookAdapter.TITLE);
         meta.setAuthor(BookAdapter.AUTHOR);
-        meta.spigot().setPages(book.getPages().stream()
-                .map(page -> Arrays.stream(page)
-                        .map(component -> get().serialize(component))
-                        .flatMap(Arrays::stream)
-                        .toArray(BaseComponent[]::new))
-                .toList());
+        meta.spigot()
+                .setPages(book.getPages()
+                        .stream()
+                        .map(page -> Arrays.stream(page).map(component -> get().serialize(component)).flatMap(Arrays::stream).toArray(BaseComponent[]::new))
+                        .toList());
         stack.setItemMeta(meta);
         lib.getServer().getPlayer(player.getId()).openBook(stack);
     }
@@ -139,9 +141,7 @@ public class SpigotPlayerAdapter extends HeadlessPlayerAdapter implements IPlaye
 
     @Override
     public String getDisplayName(UUID playerId) {
-        return Optional.ofNullable(lib.getServer().getPlayer(playerId))
-                .map(org.bukkit.entity.Player::getDisplayName)
-                .orElseGet(() -> getName(playerId));
+        return Optional.ofNullable(lib.getServer().getPlayer(playerId)).map(org.bukkit.entity.Player::getDisplayName).orElseGet(() -> getName(playerId));
     }
 
     @Override
@@ -155,19 +155,32 @@ public class SpigotPlayerAdapter extends HeadlessPlayerAdapter implements IPlaye
     public TriState checkPermission(UUID playerId, String _key, boolean explicit) {
         var key    = _key.endsWith(".*") ? _key.substring(0, _key.length() - 1) : _key;
         var player = lib.getServer().getPlayer(playerId);
-        if (player == null)
-            return TriState.NOT_SET;
-        if (explicit)
-            return player.getEffectivePermissions().stream()
-                    .filter(info -> info.getPermission().toLowerCase()
-                            .startsWith(key.toLowerCase()))
-                    .map(info -> info.getValue() ? TriState.TRUE : TriState.FALSE)
-                    .findAny()
-                    .orElse(TriState.NOT_SET);
-        return player.hasPermission(key)
-               ? TriState.TRUE
-               : player.isPermissionSet(key)
-                 ? TriState.FALSE
-                 : TriState.NOT_SET;
+        if (player == null) return TriState.NOT_SET;
+        if (explicit) return player.getEffectivePermissions()
+                .stream()
+                .filter(info -> info.getPermission().toLowerCase().startsWith(key.toLowerCase()))
+                .map(info -> info.getValue() ? TriState.TRUE : TriState.FALSE)
+                .findAny()
+                .orElse(TriState.NOT_SET);
+        return player.hasPermission(key) ? TriState.TRUE : player.isPermissionSet(key) ? TriState.FALSE : TriState.NOT_SET;
+    }
+
+    @Override
+    public Optional<Player> getPlayer(UUID playerId) {
+        return Optional.ofNullable(Bukkit.getPlayer(playerId))
+                .map(org.bukkit.entity.Player::getName)
+                .map(name -> lib.getEntityService()
+                        .getAccessor(Player.TYPE)
+                        .getOrCreate(playerId)
+                        .setUpdateOriginal(player -> player.setName(name))
+                        .complete(builder -> builder.name(name)))
+                .or(() -> requestPlayer(playerId).thenApply(Optional::ofNullable).join());
+    }
+
+    @Override
+    public Optional<Player> getPlayer(String name) {
+        return Optional.ofNullable(Bukkit.getPlayer(name))
+                .map(player -> getPlayerFactory().createPlayer(player.getUniqueId(), player.getName()))
+                .or(() -> requestPlayer(name).thenApply(Optional::ofNullable).join());
     }
 }
