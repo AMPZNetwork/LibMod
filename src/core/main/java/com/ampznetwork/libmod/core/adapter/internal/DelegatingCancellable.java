@@ -66,4 +66,9 @@ public class DelegatingCancellable<Prop> implements Cancellable {
     public void force() {
         property.accept(forcedWhenValue);
     }
+
+    @Override
+    public String toString() {
+        return property.<Accessor.Linked<?, ?>>cast().getDelegate().getClass().getSimpleName();
+    }
 }

@@ -36,4 +36,9 @@ public class SpigotPropagationAdapter implements Cancellable, org.bukkit.event.C
         cancellable.setCancelled(false);
         forced = true;
     }
+
+    @Override
+    public String toString() {
+        return cancellable.getClass().getSimpleName();
+    }
 }
