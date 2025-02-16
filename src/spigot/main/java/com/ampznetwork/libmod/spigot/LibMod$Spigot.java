@@ -22,6 +22,7 @@ import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.EntityType;
 import org.comroid.api.Polyfill;
+import org.comroid.api.java.StackTraceUtils;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
 
@@ -38,6 +39,10 @@ import java.util.stream.Stream;
 @Getter
 @FieldDefaults(level = AccessLevel.PROTECTED, makeFinal = true)
 public class LibMod$Spigot extends SubMod$Spigot implements LibMod {
+    static {
+        StackTraceUtils.EXTRA_FILTER_NAMES.add("com.ampznetwork");
+    }
+
     List<SubMod>             registeredSubMods = new ArrayList<>();
     SpigotPlayerAdapter      playerAdapter     = new SpigotPlayerAdapter(this);
     ScheduledExecutorService scheduler         = Executors.newScheduledThreadPool(4);
