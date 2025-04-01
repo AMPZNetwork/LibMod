@@ -10,7 +10,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
@@ -62,7 +61,7 @@ public enum NameGenerator implements IntFunction<String>, Function<Capitalizatio
         if (length < 1)
             length = defaultLength;
         return nameLists.stream()
-                .flatMap(Collection::stream)
+                .flatMap(strings -> strings.stream().limit(1))
                 .limit(length)
                 .map(String::toLowerCase)
                 .collect(Collectors.joining("_"));
