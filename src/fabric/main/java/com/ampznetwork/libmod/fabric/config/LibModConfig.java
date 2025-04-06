@@ -9,6 +9,7 @@ import org.jetbrains.annotations.Nullable;
 @Data
 @Name(LibMod.Strings.AddonId)
 public class LibModConfig extends Config {
+    String serverName = "Minecraft";
     DatabaseInfo     database;
     MessagingService messagingService;
 

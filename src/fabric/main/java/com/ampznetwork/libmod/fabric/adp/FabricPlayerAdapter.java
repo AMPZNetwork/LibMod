@@ -9,6 +9,7 @@ import lombok.extern.log4j.Log4j2;
 import me.lucko.fabric.api.permissions.v0.Permissions;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.util.TriState;
+import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
@@ -18,6 +19,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.Hand;
 import org.comroid.api.data.Vector;
 import org.comroid.api.func.util.Command;
+import org.comroid.api.func.util.Optionals;
 import org.comroid.api.net.REST;
 import org.intellij.lang.annotations.MagicConstant;
 import org.jetbrains.annotations.Nullable;
@@ -141,6 +143,13 @@ public class FabricPlayerAdapter implements IPlayerAdapter {
         Objects.requireNonNull(lib.getServer().getPlayerManager()
                         .getPlayer(player.getId()), "Player not found")
                 .useBook(stack, Hand.MAIN_HAND);
+    }
+
+    @Override
+    public Optional<UUID> getIdFromNativePlayer(Object nativePlayer) {
+        return Optional.ofNullable(nativePlayer)
+                .flatMap(Optionals.cast(net.minecraft.entity.player.PlayerEntity.class))
+                .map(Entity::getUuid);
     }
 
     @Override

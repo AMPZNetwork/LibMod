@@ -16,9 +16,12 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.RegistryKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.text.Text;
 import org.comroid.api.Polyfill;
+import org.comroid.api.func.util.Streams;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,10 +29,10 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.stream.Stream;
 
 @Value
-public class LibModFabric extends SubMod$Fabric implements LibMod, ModInitializer,
-        ServerLifecycleEvents.ServerStarting, ServerLifecycleEvents.ServerStarted {
+public class LibModFabric extends SubMod$Fabric implements LibMod, ModInitializer, ServerLifecycleEvents.ServerStarting, ServerLifecycleEvents.ServerStarted {
     public static LibModFabric INSTANCE;
 
     public static Text component2text(Component component) {
@@ -38,6 +41,7 @@ public class LibModFabric extends SubMod$Fabric implements LibMod, ModInitialize
         return TextCodecs.STRINGIFIED_CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(JsonParseException::new);*/
         return Text.of(GsonComponentSerializer.gson().serialize(component));
     }
+
     List<SubMod>             registeredSubMods = new ArrayList<>();
     FabricPlayerAdapter      playerAdapter     = new FabricPlayerAdapter(this);
     LibModConfig             config            = Config.createAndLoad(LibModConfig.class);
@@ -59,8 +63,8 @@ public class LibModFabric extends SubMod$Fabric implements LibMod, ModInitialize
     }
 
     @Override
-    public void register(SubMod mod) {
-        registeredSubMods.add(mod);
+    public String getServerName() {
+        return config.getServerName();
     }
 
     @Override
@@ -81,6 +85,26 @@ public class LibModFabric extends SubMod$Fabric implements LibMod, ModInitialize
             default:
                 throw new UnsupportedOperationException("Unknown messaging service type: " + getMessagingServiceTypeName());
         }
+    }
+
+    @Override
+    public void register(SubMod mod) {
+        registeredSubMods.add(mod);
+    }
+
+    @Override
+    public Stream<String> worldNames() {
+        return Streams.of(server.getWorlds()).map(world -> world.getRegistryKey().toString());
+    }
+
+    @Override
+    public Stream<String> materials() {
+        return Stream.of(Registries.BLOCK, Registries.ITEM).flatMap(reg -> reg.getKeys().stream()).map(RegistryKey::toString);
+    }
+
+    @Override
+    public Stream<String> entityTypes() {
+        return Registries.ENTITY_TYPE.getKeys().stream().map(RegistryKey::toString);
     }
 
     @Override
