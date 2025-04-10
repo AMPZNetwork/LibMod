@@ -26,7 +26,6 @@ public abstract class MessageWrapper {
         sendMessage(BroadcastType.INFO, format, args);
     }
 
-    @Builder(builderClassName = "MessageDraft", builderMethodName = "draftAndSend", buildMethodName = "send")
     public void sendMessage(
             @Nullable @MagicConstant(valuesFromClass = BroadcastType.class) Colorizer colorizer, @Doc("{} styled format string") String format,
             @Nullable Object... args
@@ -37,7 +36,14 @@ public abstract class MessageWrapper {
         wrapper().getTargets().map(DbObject::getId).forEach(p -> wrapper().getLib().getPlayerAdapter().send(p, msg));
     }
 
-    @Builder(builderClassName = "MessageBuilder", builderMethodName = "draft")
+    public Component createMessage(
+            @Doc("{} styled format string") String format,
+            @Nullable Object... args
+    ) {
+        return createMessage(null, format, args);
+    }
+
+    @Builder(builderClassName = "MessageDraft", builderMethodName = "draft")
     public Component createMessage(
             @Nullable @MagicConstant(valuesFromClass = BroadcastType.class) Colorizer colorizer, @Doc("{} styled format string") String format,
             @Nullable Object... args

@@ -2,6 +2,7 @@ package com.ampznetwork.libmod.api.interop.database;
 
 import com.ampznetwork.libmod.api.entity.DbObject;
 import org.comroid.api.func.util.GetOrCreate;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 import java.util.function.Function;
@@ -16,7 +17,11 @@ public interface QueryOps<Key, It extends DbObject, Builder extends DbObject.Bui
 
     Optional<It> get(Key key);
 
-    GetOrCreate<It, Builder> getOrCreate(Key key);
+    GetOrCreate<It, Builder> getOrCreate(@Nullable Key key);
+
+    default GetOrCreate<It, Builder> create() {
+        return getOrCreate(null);
+    }
 
     default <NewKey> QueryOps<NewKey, It, Builder> by(final Function<It, NewKey> keyFunction) {
         final var parent = this;

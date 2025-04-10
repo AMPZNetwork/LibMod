@@ -304,7 +304,8 @@ public class HibernateEntityService extends Container.Base implements IEntitySer
         }
 
         @Override
-        public GetOrCreate<T, B> getOrCreate(UUID key) {
+        public GetOrCreate<T, B> getOrCreate(@Nullable UUID key0) {
+            final var key = key0 == null ? UUID.randomUUID() : key0;
             return new GetOrCreate<>(key == null ? () -> null : () -> get(key).orElse(null),
                     () -> type.builder().id(key),
                     DbObject.Builder::build,
