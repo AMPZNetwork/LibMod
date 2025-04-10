@@ -10,6 +10,10 @@ import java.util.stream.Stream;
 public interface QueryOps<Key, It extends DbObject, Builder extends DbObject.Builder<It, ?>> {
     Stream<It> all();
 
+    default Optional<It> any() {
+        return all().findAny();
+    }
+
     Optional<It> get(Key key);
 
     GetOrCreate<It, Builder> getOrCreate(Key key);
@@ -29,8 +33,7 @@ public interface QueryOps<Key, It extends DbObject, Builder extends DbObject.Bui
 
             @Override
             public GetOrCreate<It, Builder> getOrCreate(NewKey key) {
-                return parent.getOrCreate(null)
-                        .setGet(() -> get(key).orElse(null));
+                return parent.getOrCreate(null).setGet(() -> get(key).orElse(null));
             }
         };
     }

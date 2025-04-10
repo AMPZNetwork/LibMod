@@ -51,4 +51,12 @@ public interface EntityAccessor<It extends DbObject, Builder extends DbObject.Bu
             parameters.forEach(q::setParameter);
         return querySelect(q);
     }
+
+    default void queryUpdate(@Language("SQL") String query, @Nullable Map<String, Object> parameters) {
+        //noinspection SqlSourceToSinkFlow
+        var q = getManager().createNativeQuery(query, getEntityType());
+        if (parameters != null)
+            parameters.forEach(q::setParameter);
+        queryUpdate(q);
+    }
 }

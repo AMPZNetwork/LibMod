@@ -1,6 +1,8 @@
 package com.ampznetwork.libmod.api.model;
 
 import com.ampznetwork.libmod.api.LibMod;
+import com.ampznetwork.libmod.api.entity.DbObject;
+import com.ampznetwork.libmod.api.interop.database.EntityAccessor;
 import com.ampznetwork.libmod.api.interop.database.IEntityService;
 import com.ampznetwork.libmod.api.interop.game.IPlayerAdapter;
 
@@ -12,6 +14,10 @@ public interface API {
     ScheduledExecutorService getScheduler();
 
     IEntityService getEntityService() throws UnsupportedOperationException;
+
+    default <T extends DbObject, B extends DbObject.Builder<T, ?>> EntityAccessor<T, B> getEntityAccessor(EntityType<T, B> type) {
+        return getEntityService().getAccessor(type);
+    }
 
     interface Delegate extends API {
         LibMod getLib();

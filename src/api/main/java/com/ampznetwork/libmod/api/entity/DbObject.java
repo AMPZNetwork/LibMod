@@ -10,6 +10,8 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import org.comroid.annotations.Default;
+import org.comroid.annotations.Ignore;
+import org.comroid.api.attr.UUIDContainer;
 import org.comroid.api.text.Capitalization;
 import org.hibernate.annotations.Type;
 
@@ -32,13 +34,19 @@ import java.util.UUID;
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
-public abstract class DbObject {
+public abstract class DbObject implements UUIDContainer {
+    @Transient @JsonIgnore protected final                                                   EntityType<?, ?> dtype = EntityType.REGISTRY.get(getClass().getSimpleName());
     @Id @lombok.Builder.Default @Convert(converter = UuidVarchar36Converter.class) @Type(type = "uuid-char")
     //@GeneratedValue(generator = "UUID") @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
-    @Column(columnDefinition = "varchar(36)", updatable = false, nullable = false)
-    protected UUID             id    = UUID.randomUUID();
-    @Transient @JsonIgnore
-    protected final EntityType<?, ?> dtype = EntityType.REGISTRY.get(getClass().getSimpleName());
+    @Column(columnDefinition = "varchar(36)", updatable = false, nullable = false) protected UUID             id    = UUID.randomUUID();
+
+    @Ignore
+    @Override
+    @Transient
+    @JsonIgnore
+    public UUID getUuid() {
+        return getId();
+    }
 
     @Data
     @Entity
