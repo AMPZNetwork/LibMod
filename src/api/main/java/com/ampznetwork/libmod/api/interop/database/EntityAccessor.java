@@ -11,7 +11,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
-import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 public interface EntityAccessor<It extends DbObject, Builder extends DbObject.Builder<It, ?>> extends QueryOps<UUID, It, Builder> {
@@ -40,12 +39,6 @@ public interface EntityAccessor<It extends DbObject, Builder extends DbObject.Bu
             getService().save(it);
             return true;
         });
-    }
-
-    default Stream<It> update(Predicate<It> filter, Consumer<It> modify) {
-        return all().filter(filter)
-                .peek(modify)
-                .peek(getService()::save);
     }
 
     default GetOrCreate<It, Builder> create() {

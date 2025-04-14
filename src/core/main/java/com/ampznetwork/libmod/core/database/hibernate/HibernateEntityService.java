@@ -79,20 +79,29 @@ public class HibernateEntityService extends Container.Base implements IEntitySer
     }
 
     public static Unit buildPersistenceUnit(
-            DatabaseInfo info,
-            Function<DataSource, PersistenceUnitInfo> unitProvider,
+            DatabaseInfo info, Function<DataSource, PersistenceUnitInfo> unitProvider,
             @MagicConstant(stringValues = { "update", "validate" }) String hbm2ddl
     ) {
-        var config = Map.of("hibernate.connection.driver_class", info.type().getDriverClass().getCanonicalName(),
-                "hibernate.connection.url", info.url() + (info.url().contains("?") ? '&' : '?') + "useUnicode=true&amp;character_set_server=utf8mb4",
-                "hibernate.connection.username", info.user(),
-                "hibernate.connection.password", info.pass(),
-                "hibernate.connection.CharSet", "utf8mb4",
-                "hibernate.connection.characterEncoding", "utf8",
-                "hibernate.connection.useUnicode", true,
-                "hibernate.dialect", info.type().getDialectClass().getCanonicalName(),
-                "hibernate.show_sql", String.valueOf("true".equals(System.getenv("TRACE"))),
-                "hibernate.hbm2ddl.auto", hbm2ddl);
+        var config = Map.of("hibernate.connection.driver_class",
+                info.type().getDriverClass().getCanonicalName(),
+                "hibernate.connection.url",
+                info.url() + (info.url().contains("?") ? '&' : '?') + "useUnicode=true&amp;character_set_server=utf8mb4",
+                "hibernate.connection.username",
+                info.user(),
+                "hibernate.connection.password",
+                info.pass(),
+                "hibernate.connection.CharSet",
+                "utf8mb4",
+                "hibernate.connection.characterEncoding",
+                "utf8",
+                "hibernate.connection.useUnicode",
+                true,
+                "hibernate.dialect",
+                info.type().getDialectClass().getCanonicalName(),
+                "hibernate.show_sql",
+                String.valueOf("true".equals(System.getenv("TRACE"))),
+                "hibernate.hbm2ddl.auto",
+                hbm2ddl);
         var dataSource = new HikariDataSource() {{
             setDriverClassName(info.type().getDriverClass().getCanonicalName());
             setJdbcUrl(info.url());
@@ -113,9 +122,10 @@ public class HibernateEntityService extends Container.Base implements IEntitySer
 
     @ApiStatus.Experimental
     public HibernateEntityService(LibMod lib) {
-        this(lib, dataSource -> new PersistenceUnitBase(LibMod.class, dataSource, lib.getRegisteredSubMods().stream()
-                .flatMap(it -> it.getEntityTypes().stream())
-                .toArray(Class[]::new)));
+        this(lib,
+                dataSource -> new PersistenceUnitBase(LibMod.class,
+                        dataSource,
+                        lib.getRegisteredSubMods().stream().flatMap(it -> it.getEntityTypes().stream()).toArray(Class[]::new)));
     }
 
     public HibernateEntityService(LibMod lib, SubMod mod) {
@@ -167,10 +177,8 @@ public class HibernateEntityService extends Container.Base implements IEntitySer
         });
         if (!(object instanceof NotifyEvent)) Polyfill.<Cache<UUID, DbObject>>uncheckedCast(EntityType.REGISTRY.get(object.getDtype().getDtype()).getCache())
                 .push(persistent);
-        if (messagingService != null)
-            messagingService.push().complete(bld -> bld
-                    .relatedId(object.getId())
-                    .relatedType(Polyfill.uncheckedCast(object.getDtype())));
+        if (messagingService != null) messagingService.push()
+                .complete(bld -> bld.relatedId(object.getId()).relatedType(Polyfill.uncheckedCast(object.getDtype())));
         return persistent;
     }
 
@@ -178,15 +186,13 @@ public class HibernateEntityService extends Container.Base implements IEntitySer
     public void refresh(EntityType<?, ?> type, UUID... ids) {
         for (UUID id : ids) {
             DbObject dbObject = type.getCache().get(id);
-            if (dbObject != null)
-                manager.refresh(dbObject);
+            if (dbObject != null) manager.refresh(dbObject);
         }
     }
 
     @Override
     public void uncache(UUID id, @Nullable DbObject obj) {
-        if (obj != null)
-            obj.getDtype().getCache().remove(id);
+        if (obj != null) obj.getDtype().getCache().remove(id);
     }
 
     @Override
@@ -263,6 +269,12 @@ public class HibernateEntityService extends Container.Base implements IEntitySer
         }
     }
 
+    @Override
+    public void closeSelf() {
+        scheduler.shutdown();
+        manager.close();
+    }
+
     @Value
     private class EntityContainer<T extends DbObject, B extends DbObject.Builder<T, B>> implements EntityAccessor<T, B> {
         @lombok.experimental.Delegate EntityType<T, B> type;
@@ -298,8 +310,7 @@ public class HibernateEntityService extends Container.Base implements IEntitySer
                     .wrap(id)
                     .stream()
                     .map(Polyfill::<T>uncheckedCast)
-                    .collect(Streams.or(() -> Stream.ofNullable(manager.find(getEntityType(), id))
-                            .peek(type.getCache()::push)))
+                    .collect(Streams.or(() -> Stream.ofNullable(manager.find(getEntityType(), id)).peek(type.getCache()::push)))
                     .findAny();
         }
 
@@ -309,17 +320,14 @@ public class HibernateEntityService extends Container.Base implements IEntitySer
             return new GetOrCreate<>(key == null ? () -> null : () -> get(key).orElse(null),
                     () -> type.builder().id(key),
                     DbObject.Builder::build,
-                    HibernateEntityService.this::save)
-                    .addCompletionCallback(it -> {
-                        // push to cache
-                        type.getCache().push(it);
+                    HibernateEntityService.this::save).addCompletionCallback(it -> {
+                // push to cache
+                type.getCache().push(it);
 
-                        // push to messaging service
-                        if (messagingService != null)
-                            messagingService.push()
-                                    .complete(notif -> notif.relatedId(it.getId())
-                                            .relatedType(Polyfill.uncheckedCast(it.getDtype())));
-                    });
+                // push to messaging service
+                if (messagingService != null) messagingService.push()
+                        .complete(notif -> notif.relatedId(it.getId()).relatedType(Polyfill.uncheckedCast(it.getDtype())));
+            });
         }
     }
 
