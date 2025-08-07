@@ -5,7 +5,7 @@ import com.ampznetwork.libmod.api.interop.database.IEntityService;
 public record DatabaseInfo(
         IEntityService.DatabaseType type,
         String url,
-        String user,
-        String pass
+        String username,
+        String password
 ) {
 }

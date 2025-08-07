@@ -92,9 +92,9 @@ public class HibernateEntityService extends Container.Base implements IEntitySer
                               ? '&'
                               : '?') + "useUnicode=true&amp;character_set_server=utf8mb4",
                 "hibernate.connection.username",
-                info.user(),
+                info.username(),
                 "hibernate.connection.password",
-                info.pass(),
+                info.password(),
                 "hibernate.connection.CharSet",
                 "utf8mb4",
                 "hibernate.connection.characterEncoding",
@@ -110,8 +110,8 @@ public class HibernateEntityService extends Container.Base implements IEntitySer
         var dataSource = new HikariDataSource() {{
             setDriverClassName(info.type().getDriverClass().getCanonicalName());
             setJdbcUrl(info.url());
-            setUsername(info.user());
-            setPassword(info.pass());
+            setUsername(info.username());
+            setPassword(info.password());
         }};
         var unit    = unitProvider.apply(dataSource);
         var factory = SPI.createContainerEntityManagerFactory(unit, config);
