@@ -36,6 +36,7 @@ import javax.persistence.spi.PersistenceUnitInfo;
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -82,10 +83,14 @@ public class HibernateEntityService extends Container.Base implements IEntitySer
             DatabaseInfo info, Function<DataSource, PersistenceUnitInfo> unitProvider,
             @MagicConstant(stringValues = { "update", "validate" }) String hbm2ddl
     ) {
+        Objects.requireNonNull(info, "Not database configuration provided!");
+
         var config = Map.of("hibernate.connection.driver_class",
                 info.type().getDriverClass().getCanonicalName(),
                 "hibernate.connection.url",
-                info.url() + (info.url().contains("?") ? '&' : '?') + "useUnicode=true&amp;character_set_server=utf8mb4",
+                info.url() + (info.url().contains("?")
+                              ? '&'
+                              : '?') + "useUnicode=true&amp;character_set_server=utf8mb4",
                 "hibernate.connection.username",
                 info.user(),
                 "hibernate.connection.password",
@@ -125,28 +130,40 @@ public class HibernateEntityService extends Container.Base implements IEntitySer
         this(lib,
                 dataSource -> new PersistenceUnitBase(LibMod.class,
                         dataSource,
-                        lib.getRegisteredSubMods().stream().flatMap(it -> it.getEntityTypes().stream()).toArray(Class[]::new)));
+                        lib.getRegisteredSubMods()
+                                .stream()
+                                .flatMap(it -> it.getEntityTypes().stream())
+                                .toArray(Class[]::new)));
     }
 
     public HibernateEntityService(LibMod lib, SubMod mod) {
-        this(lib, dataSource -> new PersistenceUnitBase(mod.getModuleType(), dataSource, mod.getEntityTypes().toArray(new Class[0])));
+        this(lib,
+                dataSource -> new PersistenceUnitBase(mod.getModuleType(),
+                        dataSource,
+                        mod.getEntityTypes().toArray(new Class[0])));
     }
 
-    public HibernateEntityService(LibMod mod, Function<DataSource, PersistenceUnitInfo> persistenceUnitProvider) {
+    public HibernateEntityService(SubMod mod, Function<DataSource, PersistenceUnitInfo> persistenceUnitProvider) {
         this(mod, persistenceUnitProvider, mod.getDatabaseInfo());
     }
 
-    public HibernateEntityService(LibMod mod, Function<DataSource, PersistenceUnitInfo> persistenceUnitProvider, DatabaseInfo dbInfo) {
+    public HibernateEntityService(
+            SubMod mod, Function<DataSource, PersistenceUnitInfo> persistenceUnitProvider,
+            DatabaseInfo dbInfo
+    ) {
         // boot up hibernate
-        this.lib = mod;
+        this.lib = mod.getLib();
         var unit = buildPersistenceUnit(dbInfo, persistenceUnitProvider, "update");
         this.manager = unit.manager;
 
         // boot up messaging service
-        this.scheduler        = Executors.newScheduledThreadPool(2);
-        this.messagingService = mod.getMessagingServiceType()
-                .map(ThrowingFunction.fallback(type -> type.createService(mod, this, uncheckedCast(mod.getMessagingServiceConfig())), Wrap.empty()))
+        this.scheduler = Executors.newScheduledThreadPool(2);
+        if (mod instanceof MessagingService.Type.Provider provider) this.messagingService = provider.getMessagingServiceType()
+                .map(ThrowingFunction.fallback(type -> type.createService(mod,
+                        this,
+                        uncheckedCast(provider.getMessagingServiceConfig())), Wrap.empty()))
                 .orElse(null);
+        else this.messagingService = null;
         log.info("Using MessagingService " + messagingService);
         addChildren(unit, scheduler, messagingService);
 
@@ -158,8 +175,11 @@ public class HibernateEntityService extends Container.Base implements IEntitySer
     }
 
     @Override
-    public <T extends DbObject, B extends DbObject.Builder<T, ?>> EntityAccessor<T, B> getAccessor(EntityType<T, ? super B> type) {
-        return uncheckedCast(accessors.computeIfAbsent(type.getDtype(), k -> new EntityContainer<>(uncheckedCast(type))));
+    public <T extends DbObject, B extends DbObject.Builder<T, ?>> EntityAccessor<T, B> getAccessor(
+            EntityType<T, ? super B> type
+    ) {
+        return uncheckedCast(accessors.computeIfAbsent(type.getDtype(),
+                k -> new EntityContainer<>(uncheckedCast(type))));
     }
 
     @Override
@@ -175,8 +195,8 @@ public class HibernateEntityService extends Container.Base implements IEntitySer
             // try merging as a fallback action
             return manager.merge(object);
         });
-        if (!(object instanceof NotifyEvent)) Polyfill.<Cache<UUID, DbObject>>uncheckedCast(EntityType.REGISTRY.get(object.getDtype().getDtype()).getCache())
-                .push(persistent);
+        if (!(object instanceof NotifyEvent)) Polyfill.<Cache<UUID, DbObject>>uncheckedCast(EntityType.REGISTRY.get(
+                object.getDtype().getDtype()).getCache()).push(persistent);
         if (messagingService != null) messagingService.push()
                 .complete(bld -> bld.relatedId(object.getId()).relatedType(Polyfill.uncheckedCast(object.getDtype())));
         return persistent;
@@ -223,10 +243,15 @@ public class HibernateEntityService extends Container.Base implements IEntitySer
     }
 
     @SuppressWarnings("UnusedReturnValue")
-    public <T> T wrapQuery(Function<Query, T> executor, Query query) {return wrapQuery(Connection.TRANSACTION_READ_COMMITTED, executor, query);}
+    public <T> T wrapQuery(Function<Query, T> executor, Query query) {
+        return wrapQuery(Connection.TRANSACTION_READ_COMMITTED, executor, query);
+    }
 
     @SuppressWarnings("UnusedReturnValue")
-    public <T> T wrapQuery(@MagicConstant(valuesFromClass = Connection.class) int isolation, Function<Query, T> executor, Query query) {
+    public <T> T wrapQuery(
+            @MagicConstant(valuesFromClass = Connection.class) int isolation, Function<Query, T> executor,
+            Query query
+    ) {
         return wrapTransaction(isolation, new Supplier<>() {
             @Override
             public T get() {
@@ -244,7 +269,8 @@ public class HibernateEntityService extends Container.Base implements IEntitySer
         return wrapTransaction(Connection.TRANSACTION_READ_COMMITTED, executor);
     }
 
-    public <T> T wrapTransaction(@MagicConstant(valuesFromClass = Connection.class) int isolation, Supplier<T> executor) {
+    public <T> T wrapTransaction(
+            @MagicConstant(valuesFromClass = Connection.class) int isolation, Supplier<T> executor) {
         var transaction = manager.getTransaction();
 
         synchronized (transaction) {
@@ -276,7 +302,8 @@ public class HibernateEntityService extends Container.Base implements IEntitySer
     }
 
     @Value
-    private class EntityContainer<T extends DbObject, B extends DbObject.Builder<T, B>> implements EntityAccessor<T, B> {
+    private class EntityContainer<T extends DbObject, B extends DbObject.Builder<T, B>>
+            implements EntityAccessor<T, B> {
         @lombok.experimental.Delegate EntityType<T, B> type;
 
         @Override
@@ -301,7 +328,9 @@ public class HibernateEntityService extends Container.Base implements IEntitySer
 
         @Override
         public Stream<T> all() {
-            return manager.createQuery("select it from %s it".formatted(type.getDtype()), getEntityType()).getResultStream().peek(type.getCache()::push);
+            return manager.createQuery("select it from %s it".formatted(type.getDtype()), getEntityType())
+                    .getResultStream()
+                    .peek(type.getCache()::push);
         }
 
         @Override
@@ -310,7 +339,8 @@ public class HibernateEntityService extends Container.Base implements IEntitySer
                     .wrap(id)
                     .stream()
                     .map(Polyfill::<T>uncheckedCast)
-                    .collect(Streams.or(() -> Stream.ofNullable(manager.find(getEntityType(), id)).peek(type.getCache()::push)))
+                    .collect(Streams.or(() -> Stream.ofNullable(manager.find(getEntityType(), id))
+                            .peek(type.getCache()::push)))
                     .findAny();
         }
 
@@ -326,7 +356,8 @@ public class HibernateEntityService extends Container.Base implements IEntitySer
 
                 // push to messaging service
                 if (messagingService != null) messagingService.push()
-                        .complete(notif -> notif.relatedId(it.getId()).relatedType(Polyfill.uncheckedCast(it.getDtype())));
+                        .complete(notif -> notif.relatedId(it.getId())
+                                .relatedType(Polyfill.uncheckedCast(it.getDtype())));
             });
         }
     }

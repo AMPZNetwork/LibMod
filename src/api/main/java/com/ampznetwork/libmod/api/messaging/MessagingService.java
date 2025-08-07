@@ -1,6 +1,6 @@
 package com.ampznetwork.libmod.api.messaging;
 
-import com.ampznetwork.libmod.api.LibMod;
+import com.ampznetwork.libmod.api.SubMod;
 import com.ampznetwork.libmod.api.entity.DbObject;
 import com.ampznetwork.libmod.api.interop.database.IEntityService;
 import com.ampznetwork.libmod.api.model.info.DatabaseInfo;
@@ -53,7 +53,7 @@ public interface MessagingService {
         public static final Set<Type<?, ?>> REGISTRY = new HashSet<>();
         String name;
 
-        public abstract @Nullable Implementation createService(LibMod mod, IEntityService entities, Config config);
+        public abstract @Nullable Implementation createService(SubMod mod, IEntityService entities, Config config);
 
         public interface Provider {
             String getMessagingServiceTypeName();

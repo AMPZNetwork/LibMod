@@ -3,8 +3,11 @@ package com.ampznetwork.libmod.spigot;
 import com.ampznetwork.libmod.api.LibMod;
 import com.ampznetwork.libmod.api.SubMod;
 import com.ampznetwork.libmod.api.entity.DbObject;
+import com.ampznetwork.libmod.api.interop.database.IEntityService;
+import com.ampznetwork.libmod.api.model.config.DatabaseConfigAdapter;
 import com.ampznetwork.libmod.api.util.chat.BroadcastWrapper;
 import com.ampznetwork.libmod.core.database.hibernate.HibernateEntityService;
+import com.ampznetwork.libmod.core.database.hibernate.PersistenceUnitBase;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -19,16 +22,17 @@ import org.jetbrains.annotations.MustBeInvokedByOverriders;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 @Getter
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PROTECTED, makeFinal = true)
 public abstract class SubMod$Spigot extends SpigotPluginBase implements SubMod, Command.PermissionChecker {
-    protected           Set<Capability>                capabilities;
+    protected           Set<Capability>  capabilities;
     protected           Set<Class<? extends DbObject>> entityTypes;
-    protected @NonFinal LibMod$Spigot                  lib;
-    protected @NonFinal BroadcastWrapper               chat;
-    protected @NonFinal HibernateEntityService         entityService;
+    protected @NonFinal LibMod$Spigot    lib;
+    protected @NonFinal BroadcastWrapper chat;
+    protected @NonFinal IEntityService   entityService;
 
     @Override
     public String getConfigDir() {
@@ -57,7 +61,8 @@ public abstract class SubMod$Spigot extends SpigotPluginBase implements SubMod, 
     public void onDisable() {
         super.onDisable();
 
-        if ((this instanceof LibMod || !lib.getEntityService().equals(entityService)) && entityService != null) entityService.close();
+        if ((this instanceof LibMod || !lib.getEntityService()
+                .equals(entityService)) && entityService != null) entityService.close();
     }
 
     @Override
@@ -65,7 +70,13 @@ public abstract class SubMod$Spigot extends SpigotPluginBase implements SubMod, 
     public void onEnable() {
         super.onEnable();
 
-        if (lib != null) this.entityService = lib.getEntityService();
+        this.entityService = createEntityService();
+    }
+
+    protected IEntityService createEntityService() {
+        return this instanceof DatabaseConfigAdapter && getDatabaseInfo() != null ? createHibernate(this,
+                getModuleType(),
+                entityTypes.stream().map(c -> c)) : lib.getEntityService();
     }
 
     @Override
@@ -78,8 +89,20 @@ public abstract class SubMod$Spigot extends SpigotPluginBase implements SubMod, 
         var userId = usage.getContext().stream().flatMap(Streams.cast(UUID.class)).findAny().orElseThrow();
         return lib.getLuckPerms()
                 .getPlayerAdapter(Player.class)
-                .getPermissionData(Objects.requireNonNull(Bukkit.getPlayer(userId), "Unexpected state: Player is offline " + userId))
+                .getPermissionData(Objects.requireNonNull(Bukkit.getPlayer(userId),
+                        "Unexpected state: Player is offline " + userId))
                 .checkPermission(key.toString())
                 .asBoolean();
+    }
+
+    protected static HibernateEntityService createHibernate(
+            SubMod mod, Class<?> modClass,
+            Stream<Class<?>> entityTypes
+    ) {
+        return new HibernateEntityService(mod,
+                dataSource -> new PersistenceUnitBase(modClass.getSimpleName() + " shared Database",
+                        modClass,
+                        dataSource,
+                        entityTypes.toArray(Class[]::new)));
     }
 }

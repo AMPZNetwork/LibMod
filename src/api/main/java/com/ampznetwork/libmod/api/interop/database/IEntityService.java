@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.FieldDefaults;
 import org.comroid.api.attr.Named;
+import org.comroid.api.tree.UncheckedCloseable;
 import org.hibernate.dialect.H2Dialect;
 import org.hibernate.dialect.MariaDBDialect;
 import org.hibernate.dialect.MySQL8Dialect;
@@ -18,7 +19,7 @@ import javax.persistence.Query;
 import java.util.UUID;
 import java.util.function.Function;
 
-public interface IEntityService {
+public interface IEntityService extends UncheckedCloseable {
     LibMod getLib();
 
     <T extends DbObject, B extends DbObject.Builder<T, ?>> EntityAccessor<T, B> getAccessor(EntityType<T, ? super B> type);

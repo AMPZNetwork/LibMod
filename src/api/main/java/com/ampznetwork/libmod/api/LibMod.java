@@ -3,6 +3,7 @@ package com.ampznetwork.libmod.api;
 import com.ampznetwork.libmod.api.messaging.MessagingService;
 import com.ampznetwork.libmod.api.model.API;
 import com.ampznetwork.libmod.api.model.config.LibModConfigAdapter;
+import com.ampznetwork.libmod.api.model.info.DatabaseInfo;
 import lombok.experimental.UtilityClass;
 import org.comroid.api.func.util.Command;
 import org.jetbrains.annotations.NotNull;
@@ -26,6 +27,9 @@ public interface LibMod extends SubMod, MessagingService.Type.Provider, API.Dele
     default LibMod getLib() {
         return this;
     }
+
+    @Override
+    @NotNull DatabaseInfo getDatabaseInfo();
 
     @Override
     default Class<?> getModuleType() {
@@ -59,7 +63,9 @@ public interface LibMod extends SubMod, MessagingService.Type.Provider, API.Dele
         public static String DefaultMessagingServiceType = "polling-db";
 
         public static void printExceptionWithIssueReportUrl(Logger log, String message, Throwable t) {
-            log.error(message, new RuntimeException("An unexpected internal error occurred. Please open a bugreport at " + Strings.IssuesUrl, t));
+            log.error(message,
+                    new RuntimeException("An unexpected internal error occurred. Please open a bugreport at " + Strings.IssuesUrl,
+                            t));
         }
 
         public static Command.@NotNull Error couldNotSaveError() {

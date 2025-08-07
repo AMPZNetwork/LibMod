@@ -9,7 +9,6 @@ import com.ampznetwork.libmod.api.messaging.NotifyEvent;
 import com.ampznetwork.libmod.api.model.info.DatabaseInfo;
 import com.ampznetwork.libmod.api.util.Util;
 import com.ampznetwork.libmod.core.database.hibernate.HibernateEntityService;
-import com.ampznetwork.libmod.core.database.hibernate.PersistenceUnitBase;
 import com.ampznetwork.libmod.spigot.adapter.SpigotPlayerAdapter;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -63,6 +62,38 @@ public class LibMod$Spigot extends SubMod$Spigot implements LibMod {
     }
 
     @Override
+    public String getMessagingServiceTypeName() {
+        return getConfig().getString("messaging-service.type", Resources.DefaultMessagingServiceType);
+    }
+
+    @Override
+    public @Nullable MessagingService.Config getMessagingServiceConfig() {
+        var cfg = getConfig();
+        switch (getMessagingServiceTypeName()) {
+            case "none":
+                return null;
+            case "polling-db":
+                var interval = Polyfill.parseDuration(cfg.getString("messaging-service.interval", "2s"));
+                var dbInfo = getDatabaseInfo(cfg.getConfigurationSection("messaging-service.database"),
+                        "MySQL",
+                        null,
+                        "anonymous",
+                        "anonymous");
+                return new MessagingService.PollingDatabase.Config(dbInfo, interval);
+            case "rabbit-mq":
+                return new MessagingService.RabbitMQ.Config(cfg.getString("messaging-service.uri",
+                        "amqp://anonymous:anonymous@localhost:5672/messaging"));
+            default:
+                throw new UnsupportedOperationException("Unknown messaging service type: " + getMessagingServiceTypeName());
+        }
+    }
+
+    @Override
+    public String getServerName() {
+        return Util.Kyori.sanitize(getConfig().getString("server.name"));
+    }
+
+    @Override
     public void register(SubMod mod) {
         registeredSubMods.add(mod);
     }
@@ -83,33 +114,6 @@ public class LibMod$Spigot extends SubMod$Spigot implements LibMod {
     }
 
     @Override
-    public String getMessagingServiceTypeName() {
-        return getConfig().getString("messaging-service.type", Resources.DefaultMessagingServiceType);
-    }
-
-    @Override
-    public @Nullable MessagingService.Config getMessagingServiceConfig() {
-        var cfg = getConfig();
-        switch (getMessagingServiceTypeName()) {
-            case "none":
-                return null;
-            case "polling-db":
-                var interval = Polyfill.parseDuration(cfg.getString("messaging-service.interval", "2s"));
-                var dbInfo = getDatabaseInfo(cfg.getConfigurationSection("messaging-service.database"), "MySQL", null, "anonymous", "anonymous");
-                return new MessagingService.PollingDatabase.Config(dbInfo, interval);
-            case "rabbit-mq":
-                return new MessagingService.RabbitMQ.Config(cfg.getString("messaging-service.uri", "amqp://anonymous:anonymous@localhost:5672/messaging"));
-            default:
-                throw new UnsupportedOperationException("Unknown messaging service type: " + getMessagingServiceTypeName());
-        }
-    }
-
-    @Override
-    public String getServerName() {
-        return Util.Kyori.sanitize(getConfig().getString("server.name"));
-    }
-
-    @Override
     public void onLoad() {
         super.onLoad();
 
@@ -119,17 +123,22 @@ public class LibMod$Spigot extends SubMod$Spigot implements LibMod {
     @Override
     public void onEnable() {
         luckPerms = Objects.requireNonNull(Bukkit.getServicesManager().getRegistration(LuckPerms.class)).getProvider();
-        super.onEnable();
 
-        entityService = new HibernateEntityService(this,
-                dataSource -> new PersistenceUnitBase("LibMod shared Database",
-                        LibMod.class,
-                        dataSource,
-                        registeredSubMods.stream().flatMap(sub -> sub.getEntityTypes().stream()).toArray(Class[]::new)));
+        super.onEnable();
+    }
+
+    @Override
+    protected HibernateEntityService createEntityService() {
+        return createHibernate(this,
+                LibMod.class,
+                registeredSubMods.stream().flatMap(sub -> sub.getEntityTypes().stream()));
     }
 
     @Contract("null,_,_,_,_ -> null; !null,_,_,_,_ -> new")
-    private DatabaseInfo getDatabaseInfo(@Nullable ConfigurationSection config, String defType, String defUrl, String defUser, String defPass) {
+    private DatabaseInfo getDatabaseInfo(
+            @Nullable ConfigurationSection config, String defType, String defUrl,
+            String defUser, String defPass
+    ) {
         if (config == null) return null;
         var dbType = IEntityService.DatabaseType.valueOf(config.getString("type", defType));
         var dbUrl  = config.getString("url", defUrl);
