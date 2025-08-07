@@ -155,23 +155,34 @@ public class HibernateEntityService extends Container.Base implements IEntitySer
         this.lib = mod.getLib();
         var unit = buildPersistenceUnit(dbInfo, persistenceUnitProvider, "update");
         this.manager = unit.manager;
+        addChildren(unit);
 
         // boot up messaging service
-        this.scheduler = Executors.newScheduledThreadPool(2);
-        if (mod instanceof MessagingService.Type.Provider provider) this.messagingService = provider.getMessagingServiceType()
-                .map(ThrowingFunction.fallback(type -> type.createService(mod,
-                        this,
-                        uncheckedCast(provider.getMessagingServiceConfig())), Wrap.empty()))
-                .orElse(null);
-        else this.messagingService = null;
-        log.info("Using MessagingService " + messagingService);
-        addChildren(unit, scheduler, messagingService);
+        if (mod instanceof MessagingService.Type.Provider provider) {
+            this.scheduler        = Executors.newScheduledThreadPool(4);
+            this.messagingService = provider.getMessagingServiceType()
+                    .map(ThrowingFunction.fallback(type -> type.createService(mod,
+                            this,
+                            uncheckedCast(provider.getMessagingServiceConfig())), Wrap.empty()))
+                    .orElse(null);
+            addChildren(scheduler, messagingService);
 
-        // cleanup task
-        scheduler.scheduleAtFixedRate(() -> {
-            if (messagingService instanceof PollingMessagingService polling) polling.cleanup();
-            EntityType.REGISTRY.values().stream().map(EntityType::getCache).forEach(Cache::clear);
-        }, 10, 10, TimeUnit.MINUTES);
+            // cleanup task
+            scheduler.scheduleAtFixedRate(() -> {
+                if (messagingService instanceof PollingMessagingService polling) polling.cleanup();
+                EntityType.REGISTRY.values().stream().map(EntityType::getCache).forEach(Cache::clear);
+            }, 10, 10, TimeUnit.MINUTES);
+        } else {
+            this.messagingService = null;
+            this.scheduler        = Executors.newScheduledThreadPool(1);
+
+            // cleanup task
+            scheduler.scheduleAtFixedRate(() -> EntityType.REGISTRY.values()
+                    .stream()
+                    .map(EntityType::getCache)
+                    .forEach(Cache::clear), 10, 10, TimeUnit.MINUTES);
+        }
+        log.info("Using MessagingService " + messagingService);
     }
 
     @Override
