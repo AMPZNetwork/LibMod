@@ -22,8 +22,9 @@ public interface SubMod
     LibMod getLib();
 
     @Override
-    default @Nullable DatabaseInfo getDatabaseInfo() {
-        return getLib().getDatabaseInfo();
+    @Nullable
+    default DatabaseInfo getDatabaseInfo() {
+        return null;
     }
 
     @Override
