@@ -131,7 +131,10 @@ public class LibMod$Spigot extends SubMod$Spigot implements LibMod {
     protected HibernateEntityService createEntityService() {
         return createHibernate(this,
                 LibMod.class,
-                registeredSubMods.stream().flatMap(sub -> sub.getEntityTypes().stream()));
+                Stream.concat(getEntityTypes().stream(),
+                        registeredSubMods.stream()
+                                .filter(mod -> mod.getDatabaseInfo() == null)
+                                .flatMap(mod -> mod.getEntityTypes().stream())));
     }
 
     @Contract("null,_,_,_,_ -> null; !null,_,_,_,_ -> new")

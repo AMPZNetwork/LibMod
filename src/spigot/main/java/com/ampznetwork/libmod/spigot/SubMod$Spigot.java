@@ -76,7 +76,7 @@ public abstract class SubMod$Spigot extends SpigotPluginBase implements SubMod, 
     protected IEntityService createEntityService() {
         return this instanceof DatabaseConfigAdapter && getDatabaseInfo() != null ? createHibernate(this,
                 getModuleType(),
-                entityTypes.stream().map(c -> c)) : lib.getEntityService();
+                Stream.concat(lib.getEntityTypes().stream(), entityTypes.stream())) : lib.getEntityService();
     }
 
     @Override

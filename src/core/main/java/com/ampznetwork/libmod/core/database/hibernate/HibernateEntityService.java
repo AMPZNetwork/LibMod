@@ -45,6 +45,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.comroid.api.Polyfill.*;
@@ -88,9 +89,11 @@ public class HibernateEntityService extends Container.Base implements IEntitySer
         var config = Map.of("hibernate.connection.driver_class",
                 info.type().getDriverClass().getCanonicalName(),
                 "hibernate.connection.url",
-                info.url() + (info.url().contains("?")
-                              ? '&'
-                              : '?') + "useUnicode=true&amp;character_set_server=utf8mb4",
+                info.url() + (info.type().collectUrlParams().findAny().isEmpty()
+                              ? ""
+                              : ((info.url().contains("?") ? '&' : '?') + info.type()
+                                      .collectUrlParams()
+                                      .collect(Collectors.joining("&")))),
                 "hibernate.connection.username",
                 info.username(),
                 "hibernate.connection.password",
