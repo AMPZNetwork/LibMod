@@ -11,8 +11,8 @@ dependencies {
     api 'com.fasterxml.jackson.core:jackson-databind:2.+'
 
     // kyori
-    api 'net.kyori:adventure-text-serializer-plain:4.+'
-    api 'net.kyori:adventure-text-serializer-legacy:4.+'
+    api 'net.kyori:adventure-text-serializer-plain:4.24.0'
+    api 'net.kyori:adventure-text-serializer-legacy:4.24.0'
 
     // persistence
     api 'javax.persistence:javax.persistence-api:2.2'
@@ -22,7 +22,7 @@ dependencies {
     compileOnly 'com.h2database:h2:2.2.224'
 
     // kyori
-    api 'net.kyori:adventure-api:4.11.+'
+    api 'net.kyori:adventure-api:4.24.0'
 
     // utility
     compileOnly 'org.projectlombok:lombok:+'
