@@ -19,7 +19,8 @@ public class TickerEntity extends Entity {
     }
 
     @Override
-    protected void initDataTracker() {
+    protected void initDataTracker(DataTracker.Builder builder) {
+        // todo
     }
 
     @Override
