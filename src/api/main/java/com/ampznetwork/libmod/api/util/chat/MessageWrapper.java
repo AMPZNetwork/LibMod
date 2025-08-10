@@ -33,7 +33,7 @@ public abstract class MessageWrapper {
         if (args == null) args = new Object[0];
         if (colorizer == null) colorizer = BroadcastType.INFO;
         var msg = createMessage(colorizer, format, args);
-        wrapper().getTargets().map(DbObject::getId).forEach(p -> wrapper().getLib().getPlayerAdapter().send(p, msg));
+        getTargets().map(DbObject::getId).forEach(p -> wrapper().getLib().getPlayerAdapter().send(p, msg));
     }
 
     public Component createMessage(
