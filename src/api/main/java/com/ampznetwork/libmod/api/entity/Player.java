@@ -3,6 +3,7 @@ package com.ampznetwork.libmod.api.entity;
 import com.ampznetwork.libmod.api.model.EntityType;
 import com.ampznetwork.libmod.api.model.convert.UuidVarchar36Converter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -78,17 +79,20 @@ public class Player extends DbObject {
     }
 
     @Singular
+    @JsonProperty
     @ElementCollection
     @Column(name = "seen")
     @MapKeyColumn(name = "name")
     @CollectionTable(name = "libmod_playerdata_names", joinColumns = @JoinColumn(name = "id"))
     Map<@Doc("name") String, @Doc("seen") Instant> knownNames = new HashMap<>();
     @Singular
+    @JsonProperty
     @ElementCollection
     @Column(name = "seen")
     @MapKeyColumn(name = "ip")
     @CollectionTable(name = "libmod_playerdata_ips", joinColumns = @JoinColumn(name = "id"))
     Map<@Doc("ip") String, @Doc("seen") Instant>   knownIPs   = new HashMap<>();
+    @JsonProperty
     private String name;
 
     @Transient
