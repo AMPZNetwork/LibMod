@@ -332,7 +332,8 @@ public class HibernateEntityService extends Container.Base implements IEntitySer
 
         @Override
         public Stream<T> querySelect(Query query) {
-            return HibernateEntityService.this.wrapQuery(q -> Polyfill.uncheckedCast(q.getResultStream()), query);
+            return HibernateEntityService.this.wrapQuery(q -> Polyfill.uncheckedCast(q.getResultList().stream()),
+                    query);
         }
 
         @Override
