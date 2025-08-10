@@ -45,6 +45,7 @@ public class LibMod$Spigot extends SubMod$Spigot implements LibMod {
     List<SubMod>             registeredSubMods = new ArrayList<>();
     SpigotPlayerAdapter      playerAdapter     = new SpigotPlayerAdapter(this);
     ScheduledExecutorService scheduler         = Executors.newScheduledThreadPool(4);
+    @NonFinal boolean placeholderApiPresent;
     @NonFinal LuckPerms luckPerms;
 
     public LibMod$Spigot() {
@@ -117,7 +118,8 @@ public class LibMod$Spigot extends SubMod$Spigot implements LibMod {
     public void onLoad() {
         super.onLoad();
 
-        lib = this;
+        lib                   = this;
+        placeholderApiPresent = getServer().getPluginManager().getPlugin("PlaceholderAPI") != null;
     }
 
     @Override

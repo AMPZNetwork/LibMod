@@ -6,7 +6,7 @@ group = 'com.ampznetwork.libmod'
 
 dependencies {
     // luckperms
-    compileOnly 'net.luckperms:api:5.4'
+    api 'net.luckperms:api:5.4'
     // placeholderapi
-    compileOnly 'me.clip:placeholderapi:2.+'
+    api 'me.clip:placeholderapi:2.+'
 }
