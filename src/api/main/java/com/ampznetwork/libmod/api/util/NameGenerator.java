@@ -25,7 +25,8 @@ public enum NameGenerator implements IntFunction<String>, Function<Capitalizatio
     NOUNS(1, "https://raw.githubusercontent.com/AMPZNetwork/WorldMod/main/src/api/main/resources/nouns.txt"),
 
     /** generates names for points of interest */
-    POI(2, "https://raw.githubusercontent.com/AMPZNetwork/WorldMod/main/src/api/main/resources/adverbs.txt",
+    POI(2,
+            "https://raw.githubusercontent.com/AMPZNetwork/WorldMod/main/src/api/main/resources/adverbs.txt",
             "https://raw.githubusercontent.com/AMPZNetwork/WorldMod/main/src/api/main/resources/nouns.txt");
 
     /** default length */
@@ -35,20 +36,15 @@ public enum NameGenerator implements IntFunction<String>, Function<Capitalizatio
 
     NameGenerator(int defaultLength, String... nameListResourceUrls) {
         this.defaultLength = defaultLength;
-        this.nameLists     = Arrays.stream(nameListResourceUrls)
-                .map(Polyfill::url)
-                .map(url -> {
-                    try (
-                            var is = url.openStream();
-                            var isr = new InputStreamReader(is);
-                            var br = new BufferedReader(isr)
-                    ) {
-                        return br.lines().collect(Collectors.toSet());
-                    } catch (IOException e) {
-                        throw new RuntimeException("Unable to load words", e);
-                    }
-                })
-                .collect(Collectors.toList());
+        this.nameLists = Arrays.stream(nameListResourceUrls).map(Polyfill::url).map(url -> {
+            try (
+                    var is = url.openStream(); var isr = new InputStreamReader(is); var br = new BufferedReader(isr)
+            ) {
+                return br.lines().collect(Collectors.toSet());
+            } catch (IOException e) {
+                throw new RuntimeException("Unable to load words", e);
+            }
+        }).collect(Collectors.toList());
     }
 
     /**
@@ -58,10 +54,9 @@ public enum NameGenerator implements IntFunction<String>, Function<Capitalizatio
      */
     @Override
     public String apply(int length) {
-        if (length < 1)
-            length = defaultLength;
+        if (length < 1) length = defaultLength;
         return nameLists.stream()
-                .flatMap(strings -> strings.stream().limit(1))
+                .flatMap(strings -> strings.stream().skip(rng.nextInt(strings.size() - 1)).limit(1))
                 .limit(length)
                 .map(String::toLowerCase)
                 .collect(Collectors.joining("_"));
