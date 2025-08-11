@@ -63,7 +63,7 @@ public interface SubMod
     }
 
     default <T extends SubMod> T sub(Class<T> type) {
-        return getLib().getRegisteredSubMods().stream().flatMap(Streams.cast(type)).findAny().orElseThrow();
+        return getLib().getRegisteredSubMods().stream().flatMap(Streams.cast(type)).findAny().orElse(null);
     }
 
     enum Capability implements Named {
