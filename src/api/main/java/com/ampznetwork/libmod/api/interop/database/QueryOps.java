@@ -4,6 +4,7 @@ import com.ampznetwork.libmod.api.entity.DbObject;
 import org.comroid.api.func.util.GetOrCreate;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Stream;
@@ -33,7 +34,7 @@ public interface QueryOps<Key, It extends DbObject, Builder extends DbObject.Bui
 
             @Override
             public Optional<It> get(NewKey key) {
-                return all().filter(it -> keyFunction.apply(it).equals(key)).findFirst();
+                return all().filter(it -> Objects.equals(keyFunction.apply(it), key)).findFirst();
             }
 
             @Override
