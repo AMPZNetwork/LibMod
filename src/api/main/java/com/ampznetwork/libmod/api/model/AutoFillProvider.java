@@ -2,7 +2,6 @@ package com.ampznetwork.libmod.api.model;
 
 import com.ampznetwork.libmod.api.SubMod;
 import com.ampznetwork.libmod.api.entity.Player;
-import lombok.Value;
 import org.comroid.annotations.Instance;
 import org.comroid.api.func.util.Command;
 import org.comroid.api.func.util.Streams;
@@ -10,12 +9,11 @@ import org.comroid.api.func.util.Streams;
 import java.util.stream.Stream;
 
 public interface AutoFillProvider {
-    @Value
-    class WorldNames implements Command.AutoFillProvider {
-        public static final @Instance WorldNames INSTANCE = new WorldNames();
+    enum WorldNames implements Command.AutoFillProvider.Strings {
+        @Instance INSTANCE;
 
         @Override
-        public Stream<String> autoFill(Command.Usage usage, String s, String s1) {
+        public Stream<String> strings(Command.Usage usage, String currentValue) {
             return usage.getContext()
                     .stream()
                     .flatMap(Streams.cast(SubMod.class))
@@ -23,12 +21,11 @@ public interface AutoFillProvider {
         }
     }
 
-    @Value
-    class PlayerNames implements Command.AutoFillProvider {
-        public static final @Instance WorldNames INSTANCE = new WorldNames();
+    enum PlayerNames implements Command.AutoFillProvider.Strings {
+        @Instance INSTANCE;
 
         @Override
-        public Stream<String> autoFill(Command.Usage usage, String s, String s1) {
+        public Stream<String> strings(Command.Usage usage, String currentValue) {
             return usage.getContext()
                     .stream()
                     .flatMap(Streams.cast(SubMod.class))
