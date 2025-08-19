@@ -11,6 +11,7 @@ import lombok.Singular;
 import lombok.experimental.SuperBuilder;
 import org.comroid.annotations.Doc;
 import org.comroid.api.Polyfill;
+import org.comroid.api.attr.Named;
 import org.comroid.api.net.REST;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
@@ -43,7 +44,7 @@ import static org.comroid.api.net.REST.Method.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "libmod_players")
-public class Player extends DbObject {
+public class Player extends DbObject implements Named {
     /*
     watch me literally not give a single fuck at this point.
     i've spent years and years trying to find a good solution to instantiate a self-referencing type generic

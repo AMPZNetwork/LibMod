@@ -21,15 +21,15 @@ public interface AutoFillProvider {
         }
     }
 
-    enum PlayerNames implements Command.AutoFillProvider.Strings {
+    enum PlayerNames implements Command.AutoFillProvider.Named<Player> {
         @Instance INSTANCE;
 
         @Override
-        public Stream<String> strings(Command.Usage usage, String currentValue) {
+        public Stream<Player> objects(Command.Usage usage, String currentValue) {
             return usage.getContext()
                     .stream()
                     .flatMap(Streams.cast(SubMod.class))
-                    .flatMap(sub -> sub.getPlayerAdapter().getCurrentPlayers().map(Player::getName));
+                    .flatMap(sub -> sub.getPlayerAdapter().getCurrentPlayers());
         }
     }
 }
