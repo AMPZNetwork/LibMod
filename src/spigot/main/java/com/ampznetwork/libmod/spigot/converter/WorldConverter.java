@@ -2,7 +2,7 @@ package com.ampznetwork.libmod.spigot.converter;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;
-import org.comroid.api.func.util.Command;
+import org.comroid.commands.model.CommandError;
 
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
@@ -18,7 +18,7 @@ public class WorldConverter implements AttributeConverter<World,String> {
     public World convertToEntityAttribute(String worldName) {
         var world = Bukkit.getWorld(worldName);
         if (world==null)
-            throw new Command.Error("World with name '"+worldName+"' could not be found");
+            throw new CommandError("World with name '" + worldName + "' could not be found");
         return world;
     }
 }

@@ -1,7 +1,7 @@
 package com.ampznetwork.libmod.api.model.info;
 
 import com.ampznetwork.libmod.api.LibMod;
-import org.comroid.api.func.util.Command;
+import org.comroid.commands.impl.CommandUsage;
 
 import java.util.function.Predicate;
 import java.util.stream.IntStream;
@@ -25,5 +25,5 @@ public interface ValueAutofillOptionsProvider {
                 Stream.of(value).map(num -> num + "..").flatMap(num -> Stream.concat(Stream.of(num), IntStream.range(0, 10).mapToObj(digit -> num + digit))));
     }
 
-    Stream<String> autoFillValue(Command.Usage usage, LibMod mod, String value);
+    Stream<String> autoFillValue(CommandUsage usage, LibMod mod, String value);
 }

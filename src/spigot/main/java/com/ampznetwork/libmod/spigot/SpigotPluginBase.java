@@ -5,8 +5,10 @@ import lombok.experimental.Delegate;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.comroid.api.func.util.Command;
 import org.comroid.api.java.StackTraceUtils;
+import org.comroid.commands.impl.CommandManager;
+import org.comroid.commands.impl.minecraft.SpigotCommandAdapter;
+import org.comroid.commands.model.CommandContextProvider;
 
 import java.util.stream.Stream;
 
@@ -15,14 +17,14 @@ public abstract class SpigotPluginBase extends JavaPlugin {
         StackTraceUtils.EXTRA_FILTER_NAMES.add("com.ampznetwork");
     }
 
-    @Getter protected Command.Manager                cmdr = new Command.Manager();
+    @Getter protected CommandManager       cmdr = new CommandManager();
     @Delegate(types = {
             TabCompleter.class, CommandExecutor.class
-    }) private final  Command.Manager.Adapter$Spigot adp  = cmdr.new Adapter$Spigot(SpigotPluginBase.this);
+    }) private final  SpigotCommandAdapter adp  = new SpigotCommandAdapter(cmdr, SpigotPluginBase.this);
 
     @Override
     public void onLoad() {
-        cmdr.<Command.ContextProvider>addChild(ctx -> Stream.of(this));
+        cmdr.<CommandContextProvider>addChild(ctx -> Stream.of(this));
         cmdr.addChild(this);
 
         super.onLoad();

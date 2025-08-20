@@ -8,8 +8,9 @@ import com.ampznetwork.libmod.api.util.chat.BroadcastWrapper;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import org.comroid.api.attr.Named;
-import org.comroid.api.func.util.Command;
 import org.comroid.api.func.util.Streams;
+import org.comroid.commands.impl.CommandManager;
+import org.comroid.commands.model.CommandContextProvider;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
@@ -18,7 +19,7 @@ import java.util.UUID;
 import java.util.stream.Stream;
 
 public interface SubMod
-        extends DatabaseConfigAdapter, BroadcastWrapper.Delegate, Command.ContextProvider, API.Delegate, Named {
+        extends DatabaseConfigAdapter, BroadcastWrapper.Delegate, CommandContextProvider, API.Delegate, Named {
     LibMod getLib();
 
     @Override
@@ -32,7 +33,7 @@ public interface SubMod
         return getClass().getSimpleName().split("[.$]")[0];
     }
 
-    Command.Manager getCmdr();
+    CommandManager getCmdr();
 
     Set<Capability> getCapabilities();
 

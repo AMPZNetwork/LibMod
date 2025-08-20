@@ -5,7 +5,6 @@ import com.ampznetwork.libmod.api.model.API;
 import com.ampznetwork.libmod.api.model.config.LibModConfigAdapter;
 import com.ampznetwork.libmod.api.model.info.DatabaseInfo;
 import lombok.experimental.UtilityClass;
-import org.comroid.api.func.util.Command;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
@@ -68,8 +67,8 @@ public interface LibMod extends SubMod, MessagingService.Type.Provider, API.Dele
                             t));
         }
 
-        public static Command.@NotNull Error couldNotSaveError() {
-            return new Command.Error("Could not save changes");
+        public static @NotNull Error couldNotSaveError() {
+            return new Error("Could not save changes");
         }
     }
 }

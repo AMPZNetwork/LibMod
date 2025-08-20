@@ -5,14 +5,14 @@ import com.ampznetwork.libmod.api.adapter.BookAdapter;
 import com.ampznetwork.libmod.api.entity.Player;
 import net.kyori.adventure.text.Component;
 import org.comroid.api.data.Vector;
-import org.comroid.api.func.util.Command;
+import org.comroid.commands.model.permission.PermissionAdapter;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Stream;
 
-public interface IPlayerAdapter extends Command.PermissionChecker.Adapter, PlayerIdentifierAdapter {
+public interface IPlayerAdapter extends PermissionAdapter, PlayerIdentifierAdapter {
     LibMod getLib();
 
     @Override
