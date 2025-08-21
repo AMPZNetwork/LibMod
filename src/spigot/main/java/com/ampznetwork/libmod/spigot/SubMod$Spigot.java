@@ -18,6 +18,7 @@ import org.bukkit.entity.Player;
 import org.comroid.api.func.util.Streams;
 import org.comroid.commands.Command;
 import org.comroid.commands.impl.CommandUsage;
+import org.comroid.commands.model.CommandError;
 import org.comroid.commands.model.CommandPrivacyLevel;
 import org.comroid.commands.model.permission.PermissionChecker;
 import org.jetbrains.annotations.MustBeInvokedByOverriders;
@@ -31,11 +32,11 @@ import java.util.stream.Stream;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PROTECTED, makeFinal = true)
 public abstract class SubMod$Spigot extends SpigotPluginBase implements SubMod, PermissionChecker {
-    protected           Set<Capability>  capabilities;
+    protected           Set<Capability> capabilities;
     protected           Set<Class<? extends DbObject>> entityTypes;
-    protected @NonFinal LibMod$Spigot    lib;
+    protected @NonFinal LibMod$Spigot   lib;
     protected @NonFinal BroadcastWrapper chat;
-    protected @NonFinal IEntityService   entityService;
+    protected @NonFinal IEntityService  entityService;
 
     @Override
     public String getConfigDir() {
@@ -89,7 +90,11 @@ public abstract class SubMod$Spigot extends SpigotPluginBase implements SubMod, 
 
     @Override
     public boolean userHasPermission(CommandUsage usage, Object key) {
-        var userId = usage.getContext().stream().flatMap(Streams.cast(UUID.class)).findAny().orElseThrow();
+        var userId = usage.getContext()
+                .stream()
+                .flatMap(Streams.cast(UUID.class))
+                .findAny()
+                .orElseThrow(() -> new CommandError("Could not find User"));
         return lib.getLuckPerms()
                 .getPlayerAdapter(Player.class)
                 .getPermissionData(Objects.requireNonNull(Bukkit.getPlayer(userId),
@@ -105,6 +110,7 @@ public abstract class SubMod$Spigot extends SpigotPluginBase implements SubMod, 
         onEnable();
         return "Reload complete!";
     }
+
     protected static HibernateEntityService createHibernate(
             SubMod mod, Class<?> modClass,
             Stream<Class<?>> entityTypes
