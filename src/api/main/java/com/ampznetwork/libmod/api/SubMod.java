@@ -13,7 +13,6 @@ import org.comroid.commands.impl.CommandManager;
 import org.comroid.commands.model.CommandContextProvider;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Arrays;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Stream;
@@ -56,11 +55,9 @@ public interface SubMod
     }
 
     @Override
-    default Stream<Object> expandContext(Object... context) {
-        return Arrays.stream(context)
-                .flatMap(Streams.expand(it -> it instanceof UUID id
-                                              ? getLib().getPlayerAdapter().getPlayer(id).stream()
-                                              : Stream.empty()));
+    default Stream<?> expandContext(Object context) {
+        if (context instanceof UUID id) return getLib().getPlayerAdapter().getPlayer(id).stream();
+        return Stream.empty();
     }
 
     default <T extends SubMod> T sub(Class<T> type) {

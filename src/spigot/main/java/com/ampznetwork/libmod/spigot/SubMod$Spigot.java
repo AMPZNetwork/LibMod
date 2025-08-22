@@ -32,11 +32,11 @@ import java.util.stream.Stream;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PROTECTED, makeFinal = true)
 public abstract class SubMod$Spigot extends SpigotPluginBase implements SubMod, PermissionChecker {
-    protected           Set<Capability> capabilities;
+    protected           Set<Capability>  capabilities;
     protected           Set<Class<? extends DbObject>> entityTypes;
-    protected @NonFinal LibMod$Spigot   lib;
+    protected @NonFinal LibMod$Spigot    lib;
     protected @NonFinal BroadcastWrapper chat;
-    protected @NonFinal IEntityService  entityService;
+    protected @NonFinal IEntityService   entityService;
 
     @Override
     public String getConfigDir() {
@@ -86,6 +86,11 @@ public abstract class SubMod$Spigot extends SpigotPluginBase implements SubMod, 
     @Override
     public BroadcastWrapper chat() {
         return chat;
+    }
+
+    @Override
+    public boolean acceptPermission(String key) {
+        return key.matches("[0-4]|\\w+(\\.\\w+)+");
     }
 
     @Override
