@@ -8,9 +8,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.comroid.api.java.StackTraceUtils;
 import org.comroid.commands.impl.CommandManager;
 import org.comroid.commands.impl.minecraft.SpigotCommandAdapter;
-import org.comroid.commands.model.CommandContextProvider;
-
-import java.util.stream.Stream;
 
 public abstract class SpigotPluginBase extends JavaPlugin {
     static {
@@ -24,7 +21,6 @@ public abstract class SpigotPluginBase extends JavaPlugin {
 
     @Override
     public void onLoad() {
-        cmdr.<CommandContextProvider>addChild(ctx -> Stream.of(this));
         cmdr.addChild(this);
 
         super.onLoad();
