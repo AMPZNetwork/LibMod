@@ -3,6 +3,8 @@ package com.ampznetwork.libmod.api.interop.database;
 import com.ampznetwork.libmod.api.LibMod;
 import com.ampznetwork.libmod.api.entity.DbObject;
 import com.ampznetwork.libmod.api.model.EntityType;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,8 +16,6 @@ import org.hibernate.dialect.MariaDBDialect;
 import org.hibernate.dialect.MySQL8Dialect;
 import org.jetbrains.annotations.Nullable;
 
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Stream;

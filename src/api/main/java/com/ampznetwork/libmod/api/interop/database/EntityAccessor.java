@@ -1,12 +1,12 @@
 package com.ampznetwork.libmod.api.interop.database;
 
 import com.ampznetwork.libmod.api.entity.DbObject;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
 import org.comroid.api.func.util.GetOrCreate;
 import org.intellij.lang.annotations.Language;
 import org.jetbrains.annotations.Nullable;
 
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;

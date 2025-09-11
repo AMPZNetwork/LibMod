@@ -1,9 +1,9 @@
 package com.ampznetwork.libmod.api.model.convert;
 
+import jakarta.persistence.AttributeConverter;
+import jakarta.persistence.Converter;
 import lombok.Value;
 
-import javax.persistence.AttributeConverter;
-import javax.persistence.Converter;
 import java.nio.ByteBuffer;
 import java.util.UUID;
 

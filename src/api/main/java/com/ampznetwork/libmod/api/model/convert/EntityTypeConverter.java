@@ -1,9 +1,8 @@
 package com.ampznetwork.libmod.api.model.convert;
 
 import com.ampznetwork.libmod.api.model.EntityType;
+import jakarta.persistence.AttributeConverter;
 import lombok.Value;
-
-import javax.persistence.AttributeConverter;
 
 @Value
 public class EntityTypeConverter implements AttributeConverter<EntityType<?, ?>, String> {

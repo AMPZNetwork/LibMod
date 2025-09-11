@@ -3,6 +3,8 @@ package com.ampznetwork.libmod.core.database.messaging;
 import com.ampznetwork.libmod.api.messaging.MessagingService;
 import com.ampznetwork.libmod.api.messaging.NotifyEvent;
 import com.ampznetwork.libmod.core.database.hibernate.HibernateEntityService;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
 import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 import org.comroid.api.Polyfill;
@@ -10,8 +12,6 @@ import org.comroid.api.func.util.Debug;
 import org.comroid.api.func.util.Stopwatch;
 import org.hibernate.Session;
 
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
 import java.math.BigInteger;
 import java.sql.Connection;
 import java.time.Duration;

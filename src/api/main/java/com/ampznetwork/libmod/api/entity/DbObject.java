@@ -4,6 +4,16 @@ import com.ampznetwork.libmod.api.model.EntityType;
 import com.ampznetwork.libmod.api.model.convert.UuidVarchar36Converter;
 import com.ampznetwork.libmod.api.util.NameGenerator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.Basic;
+import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
+import jakarta.persistence.UniqueConstraint;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -13,18 +23,9 @@ import org.comroid.annotations.Default;
 import org.comroid.annotations.Ignore;
 import org.comroid.api.attr.UUIDContainer;
 import org.comroid.api.text.Capitalization;
-import org.hibernate.annotations.Type;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.Convert;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-import javax.persistence.UniqueConstraint;
 import java.util.UUID;
 
 @Data
@@ -35,10 +36,12 @@ import java.util.UUID;
 @EqualsAndHashCode(of = "id")
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public abstract class DbObject implements UUIDContainer {
-    @Transient @JsonIgnore protected final                                                   EntityType<?, ?> dtype = EntityType.REGISTRY.get(getClass().getSimpleName());
-    @Id @lombok.Builder.Default @Convert(converter = UuidVarchar36Converter.class) @Type(type = "uuid-char")
+    @Transient @JsonIgnore protected final EntityType<?, ?> dtype = EntityType.REGISTRY.get(
+            getClass().getSimpleName());
+    @Id @lombok.Builder.Default @Convert(converter = UuidVarchar36Converter.class) @JdbcTypeCode(SqlTypes.UUID)
     //@GeneratedValue(generator = "UUID") @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
-    @Column(columnDefinition = "varchar(36)", updatable = false, nullable = false) protected UUID             id    = UUID.randomUUID();
+    @Column(columnDefinition = "varchar(36)", updatable = false, nullable = false)
+    protected                              UUID             id    = UUID.randomUUID();
 
     @Ignore
     @Override

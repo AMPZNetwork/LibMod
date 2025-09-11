@@ -4,7 +4,6 @@ import com.ampznetwork.libmod.api.messaging.MessagingService;
 import com.ampznetwork.libmod.api.model.API;
 import com.ampznetwork.libmod.api.model.config.LibModConfigAdapter;
 import com.ampznetwork.libmod.api.model.info.DatabaseInfo;
-import lombok.experimental.UtilityClass;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
@@ -45,16 +44,22 @@ public interface LibMod extends SubMod, MessagingService.Type.Provider, API.Dele
 
     Stream<String> entityTypes();
 
-    @UtilityClass
     final class Strings {
+        private Strings() {
+            throw new UnsupportedOperationException();
+        }
+
         public static final String AddonName          = "LibMod";
         public static final String AddonId            = "libmod";
         public static final String IssuesUrl          = "https://github.com/AMPZNetwork/BanMod/issues";
         public static final String PleaseCheckConsole = "Please check console for further information";
     }
 
-    @UtilityClass
     final class Resources {
+        private Resources() {
+            throw new UnsupportedOperationException();
+        }
+
         public static String DefaultDbType               = "h2";
         public static String DefaultDbUrl                = "jdbc:h2:file:./database.h2";
         public static String DefaultDbUsername           = "sa";

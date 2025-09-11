@@ -1,10 +1,10 @@
 package com.ampznetwork.libmod.api.model.convert;
 
+import jakarta.persistence.AttributeConverter;
+import jakarta.persistence.Converter;
 import lombok.Value;
 import org.jetbrains.annotations.Contract;
 
-import javax.persistence.AttributeConverter;
-import javax.persistence.Converter;
 import java.util.UUID;
 
 @Value

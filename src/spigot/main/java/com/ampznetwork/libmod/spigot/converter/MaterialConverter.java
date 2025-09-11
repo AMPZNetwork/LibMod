@@ -1,9 +1,9 @@
 package com.ampznetwork.libmod.spigot.converter;
 
+import jakarta.persistence.AttributeConverter;
+import jakarta.persistence.Converter;
 import org.bukkit.Material;
 
-import javax.persistence.AttributeConverter;
-import javax.persistence.Converter;
 import java.util.Arrays;
 
 @Converter(autoApply = true)
