@@ -1,20 +1,27 @@
 pluginManagement {
     repositories {
         maven {
+            name = 'comroid'
+            url = 'https://maven.comroid.org'
+        }
+        maven {
             name = 'Fabric'
-            url = 'https://maven.fabricmc.net/'
+            url = 'https://maven.fabricmc.net'
         }
         mavenCentral()
         gradlePluginPortal()
         maven {
             name = 'MinecraftForge'
-            url = 'https://maven.minecraftforge.net/'
+            url = 'https://maven.minecraftforge.net'
         }
+        mavenLocal()
     }
 }
 
 plugins {
     id 'org.gradle.toolchains.foojay-resolver-convention' version '0.8.0'
+    id 'org.comroid.codegen.spigot' version '+' apply false
+    id 'com.github.johnrengelman.shadow' version '+' apply false
 }
 
 rootProject.name = 'LibMod'
@@ -24,14 +31,7 @@ include('core')
 
 include('spigot')
 //include('forge')
-include('fabric')
+//include('fabric')
 
-var dirApi = file('../../java/japi/')
-if (!dirApi.exists())
-    dirApi = file('../../java/api')
-if (!dirApi.exists())
-    dirApi = file('../japi')
-if (dirApi.exists()) {
-    include(':japi')
-    project(':japi').projectDir = dirApi
-}
+include(':japi')
+project(':japi').projectDir = file('../japi/')

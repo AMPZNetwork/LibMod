@@ -13,9 +13,9 @@ static int getCommitTimestampMinutes() {
     return (int) seconds / 600
 }
 
-apply from: "$rootProject.projectDir/gradle/scripts/java-lib.gradle"
-apply from: "$rootProject.projectDir/gradle/scripts/setup/spigot.gradle"
-apply from: "$rootProject.projectDir/gradle/scripts/deploy/shadowJar.gradle"
+apply from: "$rootProject.projectDir/${rootProject.name == 'ModSuite' ? '.' : '..'}/gradle/scripts/java-lib.gradle"
+apply from: "$rootProject.projectDir/${rootProject.name == 'ModSuite' ? '.' : '..'}/gradle/scripts/setup/spigot.gradle"
+apply from: "$rootProject.projectDir/${rootProject.name == 'ModSuite' ? '.' : '..'}/gradle/scripts/deploy/shadowJar.gradle"
 
 group = 'com.ampznetwork.libmod'
 version = "0.1.${getCommitTimestampMinutes()}"

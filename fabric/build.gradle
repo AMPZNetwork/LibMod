@@ -1,5 +1,5 @@
-apply from: "$rootProject.projectDir/gradle/scripts/setup/fabric.gradle"
-apply from: "$rootProject.projectDir/gradle/scripts/java-lib.gradle"
+apply from: "$rootProject.projectDir/${rootProject.name == 'ModSuite' ? '.' : '..'}/gradle/scripts/setup/fabric.gradle"
+apply from: "$rootProject.projectDir/${rootProject.name == 'ModSuite' ? '.' : '..'}/gradle/scripts/java-lib.gradle"
 
 group = 'com.ampznetwork.libmod'
 

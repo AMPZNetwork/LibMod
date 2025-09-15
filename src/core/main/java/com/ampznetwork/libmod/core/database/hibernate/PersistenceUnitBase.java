@@ -43,6 +43,16 @@ public class PersistenceUnitBase implements PersistenceUnitInfo {
     }
 
     @Override
+    public String getScopeAnnotationName() {
+        return "";
+    }
+
+    @Override
+    public List<String> getQualifierAnnotationNames() {
+        return List.of();
+    }
+
+    @Override
     public PersistenceUnitTransactionType getTransactionType() {
         return PersistenceUnitTransactionType.RESOURCE_LOCAL;
     }

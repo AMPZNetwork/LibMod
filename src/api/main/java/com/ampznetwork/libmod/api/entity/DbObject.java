@@ -14,12 +14,11 @@ import jakarta.persistence.InheritanceType;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 import jakarta.persistence.UniqueConstraint;
-import lombok.AllArgsConstructor;
+import lombok.Builder.Default;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
-import org.comroid.annotations.Default;
 import org.comroid.annotations.Ignore;
 import org.comroid.api.attr.UUIDContainer;
 import org.comroid.api.text.Capitalization;
@@ -32,16 +31,19 @@ import java.util.UUID;
 @Entity
 @SuperBuilder
 @NoArgsConstructor
-@AllArgsConstructor
 @EqualsAndHashCode(of = "id")
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public abstract class DbObject implements UUIDContainer {
-    @Transient @JsonIgnore protected final EntityType<?, ?> dtype = EntityType.REGISTRY.get(
-            getClass().getSimpleName());
-    @Id @lombok.Builder.Default @Convert(converter = UuidVarchar36Converter.class) @JdbcTypeCode(SqlTypes.UUID)
-    //@GeneratedValue(generator = "UUID") @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
+    @Transient
+    @JsonIgnore
+    protected final EntityType<?, ?> dtype = EntityType.REGISTRY.get(getClass().getSimpleName());
+    @Id
+    @Default
+    @JdbcTypeCode(SqlTypes.UUID)
+    @Convert(converter = UuidVarchar36Converter.class)
     @Column(columnDefinition = "varchar(36)", updatable = false, nullable = false)
-    protected                              UUID             id    = UUID.randomUUID();
+    //@GeneratedValue(generator = "UUID") @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
+    protected       UUID             id    = UUID.randomUUID();
 
     @Ignore
     @Override
@@ -55,7 +57,6 @@ public abstract class DbObject implements UUIDContainer {
     @Entity
     @SuperBuilder
     @NoArgsConstructor
-    @AllArgsConstructor
     @Table(uniqueConstraints = @UniqueConstraint(columnNames = "name"))
     public static abstract class WithName extends DbObject {
         private @Basic @Default String name = NameGenerator.NOUNS.apply(Capitalization.lower_snake_case);
@@ -65,7 +66,6 @@ public abstract class DbObject implements UUIDContainer {
     @Entity
     @SuperBuilder
     @NoArgsConstructor
-    @AllArgsConstructor
     @Table(uniqueConstraints = @UniqueConstraint(columnNames = "name"))
     public static abstract class WithPoiName extends DbObject {
         private @Basic @Default String name = NameGenerator.POI.get();

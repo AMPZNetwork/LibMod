@@ -22,6 +22,7 @@ public abstract class SpigotPluginBase extends JavaPlugin {
     @Override
     public void onLoad() {
         cmdr.addChild(this);
+        cmdr.addChild(adp);
 
         super.onLoad();
 

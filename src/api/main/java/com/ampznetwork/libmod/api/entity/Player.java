@@ -54,10 +54,7 @@ public class Player extends DbObject implements Named {
     fuck you, java. fix your type generics.
      */
     public static final EntityType<Player, Builder<Player, ?>> TYPE
-                                                                                  = Polyfill.uncheckedCast(new EntityType<>(Player::builder,
-            null,
-            Player.class,
-            Builder.class));
+            = Polyfill.uncheckedCast(new EntityType<>(Player::builder, null, Player.class, Builder.class));
     public static final Comparator<Map.Entry<?, Instant>>      MOST_RECENTLY_SEEN = Comparator.comparingLong(e -> e.getValue().toEpochMilli());
     public static       BiConsumer<UUID, String>               CACHE_NAME         = null;
 

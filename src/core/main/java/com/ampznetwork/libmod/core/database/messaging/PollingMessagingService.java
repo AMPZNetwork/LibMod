@@ -22,7 +22,8 @@ import java.util.stream.Stream;
 
 @Value
 @Slf4j
-public class PollingMessagingService extends MessagingServiceBase<HibernateEntityService> implements MessagingService.PollingDatabase {
+public class PollingMessagingService extends MessagingServiceBase<HibernateEntityService>
+        implements MessagingService.PollingDatabase {
     public static final Duration EventExpireTime = Duration.ofHours(1);
     EntityManager manager;
     Session       session;
@@ -37,14 +38,15 @@ public class PollingMessagingService extends MessagingServiceBase<HibernateEntit
 
         // find recently used idents
         //noinspection unchecked
-        var occupied = ((Stream<BigInteger>) service.wrapQuery(Connection.TRANSACTION_SERIALIZABLE, Query::getResultList, session.createSQLQuery("""
-                select BIT_OR(ne.ident) as x
-                from messaging ne
-                group by ne.ident, ne.timestamp
-                order by ne.timestamp desc
-                limit 50;
-                """)).stream())
-                .map(BigInteger.class::cast)
+        var occupied = ((Stream<BigInteger>) service.wrapQuery(Connection.TRANSACTION_SERIALIZABLE,
+                Query::getResultList,
+                session.createNativeQuery("""
+                        select BIT_OR(ne.ident) as x
+                        from libmod_messaging ne
+                        group by ne.ident, ne.timestamp
+                        order by ne.timestamp desc
+                        limit 50;
+                        """)).stream()).map(BigInteger.class::cast)
                 .filter(x -> x.intValue() != 0)
                 .findAny()
                 .orElse(BigInteger.valueOf(0xFFFF_FFFFL));
@@ -87,13 +89,11 @@ public class PollingMessagingService extends MessagingServiceBase<HibernateEntit
         var stopwatch = Stopwatch.start(this);
         var events = entities.wrapTransaction(Connection.TRANSACTION_REPEATABLE_READ, () -> {
             var handle = Polyfill.<List<NotifyEvent>>uncheckedCast(manager.createNativeQuery("""
-                            select ne.*
-                            from messaging ne
-                            where ne.ident != :me and (ne.acknowledge & :me) = 0
-                            order by ne.timestamp
-                            """, NotifyEvent.class)
-                    .setParameter("me", ident)
-                    .getResultList());
+                    select ne.*
+                    from messaging ne
+                    where ne.ident != :me and (ne.acknowledge & :me) = 0
+                    order by ne.timestamp
+                    """, NotifyEvent.class).setParameter("me", ident).getResultList());
             for (var event : handle.toArray(new NotifyEvent[0])) {
                 // acknowledge
                 var ack = manager.createNativeQuery("""
@@ -114,8 +114,7 @@ public class PollingMessagingService extends MessagingServiceBase<HibernateEntit
         });
 
         var duration = stopwatch.stop();
-        if (!Debug.isDebug() && events.length == 0)
-            return events;
+        if (!Debug.isDebug() && events.length == 0) return events;
         Debug.log(log, "Accepting %d events took %sms".formatted(events.length, duration.toMillis()));
 
         return events;

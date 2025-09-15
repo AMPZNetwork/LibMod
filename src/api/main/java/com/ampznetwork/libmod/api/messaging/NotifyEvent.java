@@ -23,6 +23,8 @@ import org.comroid.api.ByteConverter;
 import org.comroid.api.Polyfill;
 import org.comroid.api.attr.Named;
 import org.comroid.api.data.seri.DataNode;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
@@ -53,8 +55,8 @@ public final class NotifyEvent extends DbObject implements DataNode {
     @lombok.Builder.Default Instant timestamp = Instant.now();
     @lombok.Builder.Default Type    type      = Type.SYNC;
     @lombok.Builder.Default @Nullable
+    @JdbcTypeCode(SqlTypes.UUID)
     @Column(columnDefinition = "varchar(36)")
-    @org.hibernate.annotations.Type(type = "uuid-char")
     @Convert(converter = UuidVarchar36Converter.class, disableConversion = true)
     UUID             relatedId   = null;
     @lombok.Builder.Default @Nullable @Convert(converter = EntityTypeConverter.class)
