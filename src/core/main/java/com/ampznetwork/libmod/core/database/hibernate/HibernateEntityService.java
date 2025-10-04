@@ -104,10 +104,10 @@ public class HibernateEntityService extends Container.Base implements IEntitySer
                 "utf8",
                 "hibernate.connection.useUnicode",
                 true,
+                "hibernate.connection.pool_size",
+                32,
                 "hibernate.dialect",
                 info.type().getDialectClass().getCanonicalName(),
-                "hibernate.show_sql",
-                String.valueOf("true".equals(System.getenv("TRACE"))),
                 "hibernate.hbm2ddl.auto",
                 hbm2ddl);
         var dataSource = new HikariDataSource() {{
