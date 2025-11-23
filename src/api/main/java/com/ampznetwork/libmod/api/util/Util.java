@@ -1,6 +1,7 @@
 package com.ampznetwork.libmod.api.util;
 
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.serializer.ComponentSerializer;
 import org.jetbrains.annotations.Nullable;
@@ -36,18 +37,20 @@ public interface Util {
             return output.serialize(out);
         }
 
-        public static Collector<Component, List<Component>, Component> collector() {
+        public static Collector<ComponentLike, List<ComponentLike>, Component> collector() {
             return collector(null);
         }
 
-        public static Collector<Component, List<Component>, Component> collector(@Nullable Component delimiter) {
+        public static Collector<ComponentLike, List<ComponentLike>, Component> collector(
+                @Nullable Component delimiter
+        ) {
             return Collector.of(ArrayList::new, Collection::add, (l, r) -> {
                 l.addAll(r);
                 return l;
             }, ls -> {
                 var txt = Component.text();
                 for (var iterator = ls.iterator(); iterator.hasNext(); ) {
-                    Component l = iterator.next();
+                    var l = iterator.next();
                     txt.append(l);
                     if (iterator.hasNext() && delimiter != null) txt.append(delimiter);
                 }

@@ -13,8 +13,8 @@ static int getCommitTimestampMinutes() {
     return (int) seconds / 600
 }
 
-apply from: "$rootProject.projectDir/${rootProject.name == 'ModSuite' ? '.' : '..'}/gradle/scripts/java-lib.gradle"
-apply from: "$rootProject.projectDir/${rootProject.name == 'ModSuite' ? '.' : '..'}/gradle/scripts/setup/sql.gradle"
+apply from: "$projectDir/../../gradle/scripts/java-lib.gradle"
+apply from: "$projectDir/../../gradle/scripts/setup/sql.gradle"
 
 group = 'com.ampznetwork.libmod'
 version = "0.1.${getCommitTimestampMinutes()}"
