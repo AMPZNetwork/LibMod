@@ -54,8 +54,13 @@ public class Player extends DbObject implements Named {
     fuck you, java. fix your type generics.
      */
     public static final EntityType<Player, Builder<Player, ?>> TYPE
-            = Polyfill.uncheckedCast(new EntityType<>(Player::builder, null, Player.class, Builder.class));
-    public static final Comparator<Map.Entry<?, Instant>>      MOST_RECENTLY_SEEN = Comparator.comparingLong(e -> e.getValue().toEpochMilli());
+                                                                                  = Polyfill.uncheckedCast(new EntityType<>(
+            Player::builder,
+            null,
+            Player.class,
+            Builder.class));
+    public static final Comparator<Map.Entry<?, Instant>>      MOST_RECENTLY_SEEN = Comparator.comparingLong(e -> e.getValue()
+            .toEpochMilli());
     public static       BiConsumer<UUID, String>               CACHE_NAME         = null;
 
     public static CompletableFuture<UUID> fetchId(String name) {
@@ -74,6 +79,10 @@ public class Player extends DbObject implements Named {
                 .thenApply(rsp -> rsp.getBody().get("name").asString());
         future.thenAccept(name -> CACHE_NAME.accept(id, name));
         return future;
+    }
+
+    public static Player basic(UUID id, String name) {
+        return builder().id(id).name(name).build();
     }
 
     @Singular

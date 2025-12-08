@@ -15,7 +15,7 @@ static int getCommitTimestampMinutes() {
 
 plugins {
     id 'java-library'
-    id 'org.comroid.codegen.spigot' version '+'
+//    id 'org.comroid.codegen.spigot' version '+'
 }
 apply from: "$projectDir/../../gradle/scripts/java-lib.gradle"
 
