@@ -17,10 +17,13 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.Singular;
 import lombok.experimental.SuperBuilder;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ComponentLike;
 import org.comroid.annotations.Doc;
 import org.comroid.api.Polyfill;
 import org.comroid.api.attr.Named;
 import org.comroid.api.net.REST;
+import org.comroid.api.text.minecraft.ComponentSupplier;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
 
@@ -44,7 +47,7 @@ import static org.comroid.api.net.REST.Method.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "libmod_players")
-public class Player extends DbObject implements Named {
+public class Player extends DbObject implements Named, ComponentSupplier {
     /*
     watch me literally not give a single fuck at this point.
     i've spent years and years trying to find a good solution to instantiate a self-referencing type generic
@@ -142,5 +145,10 @@ public class Player extends DbObject implements Named {
         map = new HashMap<>(map);
         map.compute(ip2string(ip), ($0, $1) -> now());
         return this;
+    }
+
+    @Override
+    public ComponentLike toComponent() {
+        return Component.text(getName());
     }
 }

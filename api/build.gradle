@@ -29,6 +29,7 @@ dependencies {
     api 'com.fasterxml.jackson.core:jackson-databind:2.+'
 
     // kyori
+    api 'net.kyori:adventure-api:4.24.0'
     api 'net.kyori:adventure-text-serializer-plain:4.24.0'
     api 'net.kyori:adventure-text-serializer-legacy:4.24.0'
 
@@ -38,8 +39,8 @@ dependencies {
     compileOnly 'com.mysql:mysql-connector-j:8.4.0'
     compileOnly 'com.h2database:h2:2.2.224'
 
-    // kyori
-    api 'net.kyori:adventure-api:4.24.0'
+    // bukkit
+    compileOnly 'org.spigotmc:spigot-api:1.20-R0.1-SNAPSHOT'
 
     // utility
     compileOnly 'org.projectlombok:lombok:+'
