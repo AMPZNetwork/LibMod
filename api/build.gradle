@@ -15,7 +15,7 @@ static int getCommitTimestampMinutes() {
 
 plugins {
     id 'java-library'
-//    id 'org.comroid.codegen.spigot' version '+'
+    id 'org.comroid.codegen.spigot' version '+'
 }
 apply from: "$projectDir/../../gradle/scripts/java-lib.gradle"
 
@@ -45,6 +45,10 @@ dependencies {
     // utility
     compileOnly 'org.projectlombok:lombok:+'
     annotationProcessor 'org.projectlombok:lombok:+'
+}
+
+tasks.generateSpigotResourceClasses.configure {
+    pluginYml = file("$projectDir/../src/spigot/main/resources/plugin.yml")
 }
 
 // workaround to get generated classes because gradle will not fucking work properly

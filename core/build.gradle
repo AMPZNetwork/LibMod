@@ -18,3 +18,7 @@ apply from: "$projectDir/../../gradle/scripts/setup/sql.gradle"
 
 group = 'com.ampznetwork.libmod'
 version = "0.1.${getCommitTimestampMinutes()}"
+
+dependencies {
+    api project(':LibMod:api')
+}
