@@ -80,7 +80,9 @@ public class Player extends DbObject implements Named, ComponentSupplier {
         var future = REST.request(GET, "https://sessionserver.mojang.com/session/minecraft/profile/" + id).execute()
                 .thenApply(REST.Response::validate2xxOK)
                 .thenApply(rsp -> rsp.getBody().get("name").asString());
-        future.thenAccept(name -> CACHE_NAME.accept(id, name));
+        future.thenAccept(name -> {
+            if (CACHE_NAME != null) CACHE_NAME.accept(id, name);
+        });
         return future;
     }
 
