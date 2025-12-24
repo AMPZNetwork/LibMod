@@ -3,6 +3,7 @@ package com.ampznetwork.libmod.api.util;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.flattener.ComponentFlattener;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.serializer.ComponentSerializer;
@@ -39,6 +40,9 @@ public interface Util {
                     var str = text.content();
                     for (var feat : feats)
                         str = feat.apply(str);
+                    if (text.clickEvent() instanceof ClickEvent event && event.action() == ClickEvent.Action.OPEN_URL && event.payload() instanceof ClickEvent.Payload.Text payload) str = "[%s](%s)".formatted(
+                            str,
+                            payload.value());
                     return str;
                 })
                 .build();
