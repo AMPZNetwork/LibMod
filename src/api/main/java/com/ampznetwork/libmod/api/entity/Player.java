@@ -86,8 +86,16 @@ public class Player extends DbObject implements Named, ComponentSupplier {
         return future;
     }
 
+    public static Player basic(UUID id) {
+        return fetchUsername(id).thenApply(name -> basic(id, name)).join();
+    }
+
     public static Player basic(UUID id, String name) {
         return builder().id(id).name(name).build();
+    }
+
+    public static Player basic(org.bukkit.entity.Player bukkitPlayer) {
+        return builder().id(bukkitPlayer.getUniqueId()).name(bukkitPlayer.getName()).build();
     }
 
     @Singular
