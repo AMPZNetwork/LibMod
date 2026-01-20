@@ -94,10 +94,6 @@ public class Player extends DbObject implements Named, ComponentSupplier {
         return builder().id(id).name(name).build();
     }
 
-    public static Player basic(org.bukkit.entity.Player bukkitPlayer) {
-        return builder().id(bukkitPlayer.getUniqueId()).name(bukkitPlayer.getName()).build();
-    }
-
     @Singular
     @JsonProperty
     @ElementCollection
