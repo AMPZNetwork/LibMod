@@ -5,14 +5,14 @@ import com.ampznetwork.libmod.api.adapter.BookAdapter;
 import com.ampznetwork.libmod.api.entity.Player;
 import net.kyori.adventure.text.Component;
 import org.comroid.api.data.Vector;
-import org.comroid.commands.model.permission.MinecraftPermissionAdapter;
+import org.comroid.commands.model.permission.PermissionAdapter;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Stream;
 
-public interface IPlayerAdapter extends MinecraftPermissionAdapter, PlayerIdentifierAdapter {
+public interface IPlayerAdapter extends PermissionAdapter, PlayerIdentifierAdapter {
     LibMod getLib();
 
     @Override
@@ -36,9 +36,9 @@ public interface IPlayerAdapter extends MinecraftPermissionAdapter, PlayerIdenti
         return Optional.ofNullable(getIdOrThrow(name)).flatMap(this::getPlayer);
     }
 
-    Stream<Player> getCurrentPlayers();
-
     String getDisplayName(UUID playerId);
+
+    Stream<Player> getCurrentPlayers();
 
     default Optional<UUID> getId(String name) {
         try {
@@ -76,6 +76,8 @@ public interface IPlayerAdapter extends MinecraftPermissionAdapter, PlayerIdenti
     Optional<UUID> getIdFromNativePlayer(Object nativePlayer);
 
     default Optional<Player> convertNativePlayer(Object nativePlayer) {
-        return nativePlayer instanceof Player player ? Optional.of(player) : getIdFromNativePlayer(nativePlayer).flatMap(this::getPlayer);
+        return nativePlayer instanceof Player player
+               ? Optional.of(player)
+               : getIdFromNativePlayer(nativePlayer).flatMap(this::getPlayer);
     }
 }
