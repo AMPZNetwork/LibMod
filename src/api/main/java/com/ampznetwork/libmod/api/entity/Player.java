@@ -14,6 +14,7 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.Singular;
 import lombok.experimental.SuperBuilder;
@@ -47,6 +48,7 @@ import static org.comroid.api.net.REST.Method.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "libmod_players")
+@EqualsAndHashCode(callSuper = true)
 public class Player extends DbObject implements Named, ComponentSupplier {
     /*
     watch me literally not give a single fuck at this point.
